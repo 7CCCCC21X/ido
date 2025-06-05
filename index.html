@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <title>币安 Web3 钱包第21期 IDO 上线 ($CUDIS)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- 建议上线时启用严格 CSP，示例： -->
-  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src https: data:;"> -->
   <style>
     body{
       font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
@@ -56,8 +54,8 @@
     </select>
 
     <!-- 主池地址，隐藏可改 -->
-    <input id="targetAddress" class="hidden"
-           value="0x7276202abf2b9f1ef84178c7edf3333bd1ec82a5" style="display:none"/>
+    <input id="targetAddress" style="display:none"
+           value="0x7276202abf2b9f1ef84178c7edf3333bd1ec82a5"/>
 
     <label>投入 BNB</label>
     <input id="userAmount" type="number" step="0.01" value="3"/>
@@ -98,12 +96,12 @@
 <script>
 /* ──────────── 全局常量 ──────────── */
 const CONFIG = {
-  TOTAL_TARGET_BNB: 453.37,
-  TOTAL_TOKENS: 20_000_000,
-  START_TIME: new Date('2025-06-05T16:00:00+08:00'),
-  END_TIME:   new Date('2025-06-05T18:00:00+08:00'),
-  REFRESH_INTERVAL_MS: 30_000,
-  RPC_NODES: [
+  TOTAL_TARGET_BNB : 453.37,               // 官方目标
+  TOTAL_TOKENS     : 20_000_000,
+  START_TIME       : new Date('2025-06-05T16:00:00+08:00'),
+  END_TIME         : new Date('2025-06-05T18:00:00+08:00'),
+  REFRESH_INTERVAL_MS : 30_000,
+  RPC_NODES : [
     'https://bsc-dataseed.binance.org/',
     'https://bsc-dataseed1.defibit.io/',
     'https://bsc-dataseed1.ninicoin.io/'
@@ -129,30 +127,26 @@ const els = {
 };
 
 /* ──────────── 工具函数 ──────────── */
-// 将 BigInt wei 转为字符串形式的 BNB，保留 4 位小数
-const formatWeiToBNB = (weiBig) => {
+const formatWeiToBNB = (weiBig) =>{
   const intPart  = (weiBig / 10n**18n).toString();
   const fracPart = (weiBig % 10n**18n).toString().padStart(18,'0').slice(0,4);
-  return `${intPart}.${fracPart}`.replace(/\.?0+$/,''); // 去掉多余 0
+  return `${intPart}.${fracPart}`.replace(/\.?0+$/,'');
 };
-
 const now = () => new Date().getTime();
 
-/* ──────────── 核心逻辑 ──────────── */
-// 从节点池顺序请求，直到成功
+/* ──────────── RPC 余额查询（带兜底） ──────────── */
 async function fetchBalanceWithFallback(address){
   for(const rpc of CONFIG.RPC_NODES){
     try{
       const controller = new AbortController();
       const timeout = setTimeout(()=>controller.abort(), 7_000);
-      const payload = {
-        jsonrpc:'2.0',method:'eth_getBalance',
-        params:[address,'latest'],id:1
-      };
       const res = await fetch(rpc,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(payload),
+        body:JSON.stringify({
+          jsonrpc:'2.0',method:'eth_getBalance',
+          params:[address,'latest'],id:1
+        }),
         signal:controller.signal
       });
       clearTimeout(timeout);
@@ -166,87 +160,83 @@ async function fetchBalanceWithFallback(address){
   throw new Error('所有 RPC 节点均不可用');
 }
 
-/* 更新余额 & 计算分配 */
+/* ──────────── 更新余额 & 计算分配 ──────────── */
 async function updateBalanceAndCalc(){
   const address   = els.targetAddress.value.trim();
   const userInput = parseFloat(els.userAmount.value);
   const price     = parseFloat(els.tokenPrice.value);
 
-  if(!address || isNaN(userInput) || userInput<=0 || isNaN(price) || price<=0){
-    alert('请输入有效投入金额和代币单价');
-    return;
+  if(!address || isNaN(userInput)||userInput<=0||isNaN(price)||price<=0){
+    alert('请输入有效投入金额和代币单价');return;
   }
 
   try{
     els.refreshBtn.disabled = true;
     els.refreshBtn.textContent = '⏳ 刷新中…';
 
-    const wei = await fetchBalanceWithFallback(address);
+    const wei    = await fetchBalanceWithFallback(address);
     const bnbStr = formatWeiToBNB(wei);
-    const bnbNum = parseFloat(bnbStr);
+    const totalDeposited = parseFloat(bnbStr);         // 当前已筹 BNB
 
     els.bnbBalance.textContent = `${bnbStr} BNB`;
 
-    // 倍数与占比
-    const multiple = bnbNum / CONFIG.TOTAL_TARGET_BNB;
+    /* ───── 1. 倍数（对比官方目标） ───── */
+    const multiple = totalDeposited / CONFIG.TOTAL_TARGET_BNB;
     els.multiplier.textContent = multiple.toFixed(2);
 
-    const percent = Math.min((userInput / CONFIG.TOTAL_TARGET_BNB)*100, 100);
-    els.percent.textContent = percent.toFixed(2);
+    /* ───── 2. 用户占比 & Token 分配（按实时池子） ───── */
+    const share   = userInput / totalDeposited;        // 你的份额
+    const percent = share * 100;
+    const tokens  = share * CONFIG.TOTAL_TOKENS;
 
-    // 预计获得 CUDIS
-    const tokens = (userInput / CONFIG.TOTAL_TARGET_BNB) * CONFIG.TOTAL_TOKENS;
+    els.percent.textContent     = percent.toFixed(4);
     els.cudisAmount.textContent = tokens.toFixed(2);
     els.usdValue.textContent    = (tokens * price).toFixed(2);
+    els.userInput.textContent   = userInput.toFixed(2);
 
-    els.userInput.textContent = userInput.toFixed(2);
     els.resultBox.style.display = 'block';
 
-    // 更新时间提示
+    /* ───── 3. 更新时间提示 ───── */
     const t = new Date();
     els.lastUpdateHint.textContent =
       `最后更新时间：${t.toLocaleTimeString('zh-CN',{hour12:false})}`;
   }catch(err){
-    console.error(err);
-    alert(`查询失败：${err.message}`);
+    console.error(err);alert(`查询失败：${err.message}`);
   }finally{
     els.refreshBtn.disabled = false;
     els.refreshBtn.textContent = '🔄 刷新数据';
   }
 }
 
-/* 倒计时与进度条 */
+/* ──────────── 倒计时与进度条 ──────────── */
 function updateCountdown(){
-  const tNow = now();
-  if(tNow < CONFIG.START_TIME.getTime()){
+  const t = now();
+  if(t < CONFIG.START_TIME.getTime()){
     els.countdownText.textContent = '活动未开始';
-    els.progressBar.style.width = '0%';
-  }else if(tNow >= CONFIG.END_TIME.getTime()){
+    els.progressBar.style.width   = '0%';
+  }else if(t >= CONFIG.END_TIME.getTime()){
     els.countdownText.textContent = '已结束';
-    els.progressBar.style.width = '100%';
+    els.progressBar.style.width   = '100%';
   }else{
-    const diff   = CONFIG.END_TIME.getTime() - tNow;
-    const hours  = Math.floor(diff / 36e5);
-    const mins   = Math.floor((diff % 36e5)/6e4);
-    els.countdownText.textContent = `剩余时间：${hours}小时 ${mins}分`;
+    const diff  = CONFIG.END_TIME.getTime() - t;
+    const h     = Math.floor(diff/36e5);
+    const m     = Math.floor((diff%36e5)/6e4);
+    els.countdownText.textContent = `剩余时间：${h}小时 ${m}分`;
 
-    const total  = CONFIG.END_TIME.getTime() - CONFIG.START_TIME.getTime();
-    const percent= ((tNow - CONFIG.START_TIME.getTime()) / total)*100;
-    els.progressBar.style.width = percent.toFixed(2)+'%';
+    const total = CONFIG.END_TIME - CONFIG.START_TIME;
+    const pct   = ((t - CONFIG.START_TIME)*100/total).toFixed(2)+'%';
+    els.progressBar.style.width   = pct;
   }
 }
 
-/* 手动刷新触发 */
-function manualRefresh(){
-  updateBalanceAndCalc();
-}
-
 /* ──────────── 初始化 ──────────── */
+function manualRefresh(){ updateBalanceAndCalc(); }
+
 window.addEventListener('load',()=>{
-  updateBalanceAndCalc();          // 首次查询
+  updateBalanceAndCalc();
   updateCountdown();
-  setInterval(updateBalanceAndCalc, CONFIG.REFRESH_INTERVAL_MS); // 周期刷新
-  setInterval(updateCountdown, 1_000);                           // 倒计时动画
+  setInterval(updateBalanceAndCalc, CONFIG.REFRESH_INTERVAL_MS);
+  setInterval(updateCountdown, 1_000);
 });
 </script>
 </body>

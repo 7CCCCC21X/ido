@@ -36,11 +36,11 @@
     .result p{margin:10px 0;font-size:15px}
     .highlight{color:#d32f2f;font-weight:700}
     .success{color:#2e7d32;font-weight:700}
-    .tutorial-link{
+    .link{
       display:block;text-align:center;margin-top:15px;font-weight:700;
       text-decoration:none;color:#0078d4
     }
-    .tutorial-link:hover{text-decoration:underline}
+    .link:hover{text-decoration:underline}
     .updateHint{text-align:right;font-size:13px;color:#666;margin-top:8px}
   </style>
 </head>
@@ -53,7 +53,6 @@
       <option value="CUDIS">CUDIS</option>
     </select>
 
-    <!-- 主池地址，隐藏可改 -->
     <input id="targetAddress" style="display:none"
            value="0x7276202abf2b9f1ef84178c7edf3333bd1ec82a5"/>
 
@@ -66,9 +65,13 @@
     <button id="refreshBtn" onclick="manualRefresh()">🔄 刷新数据</button>
     <div class="updateHint" id="lastUpdateHint">—</div>
 
-    <a class="tutorial-link"
+    <a class="link"
        href="https://x.com/0xXIAOc/status/1930520238988333193" target="_blank">
       📘 提前授权 CUDIS 教程入口
+    </a>
+    <a class="link"
+       href="https://x.com/0xXIAOc" target="_blank">
+      🐦 作者推特 @0xXIAOc
     </a>
 
     <div class="progress-container">
@@ -94,9 +97,8 @@
   </div>
 
 <script>
-/* ──────────── 全局常量 ──────────── */
 const CONFIG = {
-  TOTAL_TARGET_BNB : 453.37,               // 官方目标
+  TOTAL_TARGET_BNB : 453.37,
   TOTAL_TOKENS     : 20_000_000,
   START_TIME       : new Date('2025-06-05T16:00:00+08:00'),
   END_TIME         : new Date('2025-06-05T18:00:00+08:00'),
@@ -108,7 +110,6 @@ const CONFIG = {
   ]
 };
 
-/* ──────────── DOM 缓存 ──────────── */
 const els = {
   targetAddress : document.getElementById('targetAddress'),
   userAmount    : document.getElementById('userAmount'),
@@ -126,15 +127,12 @@ const els = {
   lastUpdateHint: document.getElementById('lastUpdateHint')
 };
 
-/* ──────────── 工具函数 ──────────── */
 const formatWeiToBNB = (weiBig) =>{
   const intPart  = (weiBig / 10n**18n).toString();
   const fracPart = (weiBig % 10n**18n).toString().padStart(18,'0').slice(0,4);
   return `${intPart}.${fracPart}`.replace(/\.?0+$/,'');
 };
-const now = () => new Date().getTime();
 
-/* ──────────── RPC 余额查询（带兜底） ──────────── */
 async function fetchBalanceWithFallback(address){
   for(const rpc of CONFIG.RPC_NODES){
     try{
@@ -153,90 +151,62 @@ async function fetchBalanceWithFallback(address){
       if(!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       if(data.result) return BigInt(data.result);
-    }catch(e){
-      console.warn(`⚠ 节点 ${rpc} 失败：`,e.message);
-    }
+    }catch(e){ console.warn(`节点 ${rpc} 失败:`,e.message); }
   }
   throw new Error('所有 RPC 节点均不可用');
 }
 
-/* ──────────── 更新余额 & 计算分配 ──────────── */
 async function updateBalanceAndCalc(){
-  const address   = els.targetAddress.value.trim();
-  const userInput = parseFloat(els.userAmount.value);
-  const price     = parseFloat(els.tokenPrice.value);
-
-  if(!address || isNaN(userInput)||userInput<=0||isNaN(price)||price<=0){
+  const addr = els.targetAddress.value.trim();
+  const user = parseFloat(els.userAmount.value);
+  const price= parseFloat(els.tokenPrice.value);
+  if(!addr||isNaN(user)||user<=0||isNaN(price)||price<=0){
     alert('请输入有效投入金额和代币单价');return;
   }
-
   try{
-    els.refreshBtn.disabled = true;
-    els.refreshBtn.textContent = '⏳ 刷新中…';
+    els.refreshBtn.disabled=true;els.refreshBtn.textContent='⏳ 刷新中…';
+    const wei=await fetchBalanceWithFallback(addr);
+    const bnbStr=formatWeiToBNB(wei);
+    const deposited=parseFloat(bnbStr);
+    els.bnbBalance.textContent=`${bnbStr} BNB`;
 
-    const wei    = await fetchBalanceWithFallback(address);
-    const bnbStr = formatWeiToBNB(wei);
-    const totalDeposited = parseFloat(bnbStr);         // 当前已筹 BNB
+    const multiple=deposited/CONFIG.TOTAL_TARGET_BNB;
+    els.multiplier.textContent=multiple.toFixed(2);
 
-    els.bnbBalance.textContent = `${bnbStr} BNB`;
+    const share=user/deposited;
+    els.percent.textContent=(share*100).toFixed(4);
+    const tokens=share*CONFIG.TOTAL_TOKENS;
+    els.cudisAmount.textContent=tokens.toFixed(2);
+    els.usdValue.textContent=(tokens*price).toFixed(2);
+    els.userInput.textContent=user.toFixed(2);
+    els.resultBox.style.display='block';
 
-    /* ───── 1. 倍数（对比官方目标） ───── */
-    const multiple = totalDeposited / CONFIG.TOTAL_TARGET_BNB;
-    els.multiplier.textContent = multiple.toFixed(2);
-
-    /* ───── 2. 用户占比 & Token 分配（按实时池子） ───── */
-    const share   = userInput / totalDeposited;        // 你的份额
-    const percent = share * 100;
-    const tokens  = share * CONFIG.TOTAL_TOKENS;
-
-    els.percent.textContent     = percent.toFixed(4);
-    els.cudisAmount.textContent = tokens.toFixed(2);
-    els.usdValue.textContent    = (tokens * price).toFixed(2);
-    els.userInput.textContent   = userInput.toFixed(2);
-
-    els.resultBox.style.display = 'block';
-
-    /* ───── 3. 更新时间提示 ───── */
-    const t = new Date();
-    els.lastUpdateHint.textContent =
-      `最后更新时间：${t.toLocaleTimeString('zh-CN',{hour12:false})}`;
-  }catch(err){
-    console.error(err);alert(`查询失败：${err.message}`);
-  }finally{
-    els.refreshBtn.disabled = false;
-    els.refreshBtn.textContent = '🔄 刷新数据';
-  }
+    const t=new Date();
+    els.lastUpdateHint.textContent=`最后更新时间：${t.toLocaleTimeString('zh-CN',{hour12:false})}`;
+  }catch(err){console.error(err);alert(`查询失败：${err.message}`);}
+  finally{els.refreshBtn.disabled=false;els.refreshBtn.textContent='🔄 刷新数据';}
 }
 
-/* ──────────── 倒计时与进度条 ──────────── */
 function updateCountdown(){
-  const t = now();
-  if(t < CONFIG.START_TIME.getTime()){
-    els.countdownText.textContent = '活动未开始';
-    els.progressBar.style.width   = '0%';
-  }else if(t >= CONFIG.END_TIME.getTime()){
-    els.countdownText.textContent = '已结束';
-    els.progressBar.style.width   = '100%';
-  }else{
-    const diff  = CONFIG.END_TIME.getTime() - t;
-    const h     = Math.floor(diff/36e5);
-    const m     = Math.floor((diff%36e5)/6e4);
-    els.countdownText.textContent = `剩余时间：${h}小时 ${m}分`;
-
-    const total = CONFIG.END_TIME - CONFIG.START_TIME;
-    const pct   = ((t - CONFIG.START_TIME)*100/total).toFixed(2)+'%';
-    els.progressBar.style.width   = pct;
+  const t=Date.now();
+  if(t<CONFIG.START_TIME){els.countdownText.textContent='活动未开始';els.progressBar.style.width='0%';}
+  else if(t>=CONFIG.END_TIME){els.countdownText.textContent='已结束';els.progressBar.style.width='100%';}
+  else{
+    const diff=CONFIG.END_TIME-t;
+    const h=Math.floor(diff/36e5),m=Math.floor((diff%36e5)/6e4);
+    els.countdownText.textContent=`剩余时间：${h}小时 ${m}分`;
+    const pct=((t-CONFIG.START_TIME)/(CONFIG.END_TIME-CONFIG.START_TIME)*100).toFixed(2)+'%';
+    els.progressBar.style.width=pct;
   }
 }
 
-/* ──────────── 初始化 ──────────── */
-function manualRefresh(){ updateBalanceAndCalc(); }
+function manualRefresh(){updateBalanceAndCalc();}
 
 window.addEventListener('load',()=>{
   updateBalanceAndCalc();
   updateCountdown();
-  setInterval(updateBalanceAndCalc, CONFIG.REFRESH_INTERVAL_MS);
-  setInterval(updateCountdown, 1_000);
+  setInterval(updateBalanceAndCalc,CONFIG.REFRESH_INTERVAL_MS);
+  setInterval(updateCountdown,1_000);
 });
 </script>
 </body>

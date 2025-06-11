@@ -112,7 +112,7 @@
 <script>
 /* ──────────── 全局常量 ──────────── */
 const CONFIG = {
-  TOTAL_TARGET_BNB : 300.32,                // 已更新正式目标
+  TOTAL_TARGET_BNB : 300.32,
   TOTAL_TOKENS     : 96_000_000,
   START_TIME       : new Date('2025-06-11T16:00:00+08:00'),
   END_TIME         : new Date('2025-06-11T18:00:00+08:00'),
@@ -180,6 +180,8 @@ async function fetchBalanceWithFallback(address){
 
 /* ──────────── 更新余额 & 计算分配 ──────────── */
 async function updateBalanceAndCalc(){
+  if(Date.now() >= CONFIG.END_TIME) return;          // 结束后停止刷新
+
   const address   = els.targetAddress.value.trim();
   const userInput = parseFloat(els.userAmount.value);
   const price     = parseFloat(els.tokenPrice.value);
@@ -192,7 +194,7 @@ async function updateBalanceAndCalc(){
 
     const wei        = await fetchBalanceWithFallback(address);
     const bnbStr     = formatWeiToBNB(wei);
-    const deposited  = parseFloat(bnbStr);           // 当前已筹 BNB
+    const deposited  = parseFloat(bnbStr);
 
     /* —— 1. 显示链上余额 & 倍数 —— */
     els.bnbBalance.textContent = `${bnbStr} BNB`;
@@ -226,13 +228,19 @@ async function updateBalanceAndCalc(){
 /* ──────────── 倒计时 & 进度条 ──────────── */
 function updateCountdown(){
   const now = Date.now();
-  if(now < CONFIG.START_TIME){           // 未开始
+  if(now < CONFIG.START_TIME){
     els.countdownText.textContent='活动未开始';
     els.progressBar.style.width='0%';
-  }else if(now >= CONFIG.END_TIME){      // 已结束
+  }else if(now >= CONFIG.END_TIME){
     els.countdownText.textContent='已结束';
     els.progressBar.style.width='100%';
-  }else{                                 // 进行中
+
+    /* —— 停止所有定时器，冻结页面数据 —— */
+    clearInterval(balanceTimer);
+    clearInterval(countdownTimer);
+    els.refreshBtn.disabled = true;
+    els.refreshBtn.textContent = '⏹ 已结束';
+  }else{
     const diff = CONFIG.END_TIME - now;
     const h    = Math.floor(diff/36e5);
     const m    = Math.floor((diff%36e5)/6e4);
@@ -247,11 +255,13 @@ function updateCountdown(){
 /* ──────────── 初始化 ──────────── */
 function manualRefresh(){ updateBalanceAndCalc(); }
 
+let balanceTimer, countdownTimer;
+
 window.addEventListener('load',()=>{
   updateBalanceAndCalc();
   updateCountdown();
-  setInterval(updateBalanceAndCalc, CONFIG.REFRESH_INTERVAL_MS);
-  setInterval(updateCountdown, 1_000);
+  balanceTimer   = setInterval(updateBalanceAndCalc, CONFIG.REFRESH_INTERVAL_MS);
+  countdownTimer = setInterval(updateCountdown, 1_000);
 });
 </script>
 </body>

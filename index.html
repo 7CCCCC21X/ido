@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>币安 Web3 钱包第21期 IDO 上线 ($CUDIS)</title>
+  <title>币安 Web3 钱包第22期 IDO 上线 ($IDOL)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body{
@@ -51,22 +51,22 @@
 </head>
 <body>
   <div class="container">
-    <h2>币安 Web3 钱包第21期 IDO 上线 ($CUDIS)</h2>
+    <h2>币安 Web3 钱包第22期 IDO 上线 ($IDOL)</h2>
 
     <label>选择代币</label>
     <select id="tokenSelect">
-      <option value="CUDIS">CUDIS</option>
+      <option value="IDOL">IDOL</option>
     </select>
 
-    <!-- 主池地址（隐藏，可按需更改） -->
+    <!-- 主池地址 -->
     <input id="targetAddress" style="display:none"
-           value="0x7276202abf2b9f1ef84178c7edf3333bd1ec82a5"/>
+           value="0xa060cccc78e44bf94081d32a08bbea90face512e"/>
 
     <label>投入 BNB</label>
     <input id="userAmount" type="number" step="0.01" value="3"/>
 
-    <label>代币单价（单位：USD，可自定义修改，默认 0.09）</label>
-    <input id="tokenPrice" type="number" step="0.0001" value="0.09"/>
+    <label>代币单价（单位：USD，可自定义修改，默认 0.02083）</label>
+    <input id="tokenPrice" type="number" step="0.00001" value="0.02083"/>
 
     <button id="refreshBtn" onclick="manualRefresh()">🔄 刷新数据</button>
     <div class="updateHint" id="lastUpdateHint">—</div>
@@ -74,7 +74,7 @@
     <!-- 教程与作者推特两个链接 -->
     <a class="tutorial-link"
        href="https://x.com/0xXIAOc/status/1930520238988333193" target="_blank">
-      📘 提前授权 CUDIS 教程入口
+      📘 提前授权 IDOL 教程入口
     </a>
     <a class="tutorial-link"
        href="https://x.com/0xXIAOc" target="_blank">
@@ -92,14 +92,14 @@
     <!-- 结果显示区 -->
     <div class="result" id="resultBox" style="display:none">
       <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance"></span></p>
-      <p>🎯 募集目标：453.37 BNB</p>
-      <p>🔥 当前进度：<span class="highlight" id="multiplier"></span> 倍超募</p>
-      <p>💰 总销售量：20,000,000 CUDIS</p>
+      <p>🎯 募集目标：<span id="targetShow">待公布</span></p>
+      <p>🔥 当前进度：<span class="highlight" id="multiplier">—</span></p>
+      <p>💰 总销售量：96,000,000 IDOL</p>
       <hr>
       <p>
         🚀 你投入 <span class="highlight" id="userInput"></span> BNB
         （占比 <span class="highlight" id="percent"></span>%）<br>
-        可获得 <span class="success" id="cudisAmount"></span> 枚 CUDIS
+        可获得 <span class="success" id="cudisAmount"></span> 枚 IDOL
         ≈ <span class="success" id="usdValue"></span> USD
       </p>
     </div>
@@ -108,11 +108,11 @@
 <script>
 /* ──────────── 全局常量 ──────────── */
 const CONFIG = {
-  TOTAL_TARGET_BNB : 453.37,                 // 官方目标
-  TOTAL_TOKENS     : 20_000_000,
-  START_TIME       : new Date('2025-06-05T16:00:00+08:00'),
-  END_TIME         : new Date('2025-06-05T18:00:00+08:00'),
-  REFRESH_INTERVAL_MS : 30_000,
+  TOTAL_TARGET_BNB : 0,                      // TODO 下午更新正式数值
+  TOTAL_TOKENS     : 96_000_000,
+  START_TIME       : new Date('2025-06-11T16:00:00+08:00'),
+  END_TIME         : new Date('2025-06-11T18:00:00+08:00'),
+  REFRESH_INTERVAL_MS : 60_000,
   RPC_NODES : [
     'https://bsc-dataseed.binance.org/',
     'https://bsc-dataseed1.defibit.io/',
@@ -135,7 +135,8 @@ const els = {
   countdownText : document.getElementById('countdownText'),
   progressBar   : document.getElementById('progressBar'),
   refreshBtn    : document.getElementById('refreshBtn'),
-  lastUpdateHint: document.getElementById('lastUpdateHint')
+  lastUpdateHint: document.getElementById('lastUpdateHint'),
+  targetShow    : document.getElementById('targetShow')
 };
 
 /* ──────────── 工具函数 ──────────── */
@@ -191,11 +192,17 @@ async function updateBalanceAndCalc(){
 
     /* —— 1. 显示链上余额 & 倍数 —— */
     els.bnbBalance.textContent = `${bnbStr} BNB`;
-    const multiple = deposited / CONFIG.TOTAL_TARGET_BNB;
-    els.multiplier.textContent = multiple.toFixed(2);
+    if(CONFIG.TOTAL_TARGET_BNB > 0){
+      const multiple = deposited / CONFIG.TOTAL_TARGET_BNB;
+      els.multiplier.textContent = multiple.toFixed(2);
+      els.targetShow.textContent = `${CONFIG.TOTAL_TARGET_BNB} BNB`;
+    }else{
+      els.multiplier.textContent = '—';
+      els.targetShow.textContent = '待公布';
+    }
 
     /* —— 2. 用户份额、占比、预计 Token —— */
-    const share   = userInput / deposited;
+    const share   = deposited>0 ? userInput / deposited : 0;
     const tokens  = share * CONFIG.TOTAL_TOKENS;
     els.percent.textContent     = (share*100).toFixed(4);
     els.cudisAmount.textContent = tokens.toFixed(2);

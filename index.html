@@ -92,7 +92,7 @@
     <!-- 结果显示区 -->
     <div class="result" id="resultBox" style="display:none">
       <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance"></span></p>
-      <p>🎯 募集目标：<span id="targetShow">待公布</span></p>
+      <p>🎯 募集目标：<span id="targetShow">300.32 BNB</span></p>
       <p>🔥 当前进度：<span class="highlight" id="multiplier">—</span></p>
       <p>💰 总销售量：96,000,000 IDOL</p>
       <hr>
@@ -108,7 +108,7 @@
 <script>
 /* ──────────── 全局常量 ──────────── */
 const CONFIG = {
-  TOTAL_TARGET_BNB : 0,                      // TODO 下午更新正式数值
+  TOTAL_TARGET_BNB : 300.32,                // 已更新正式目标
   TOTAL_TOKENS     : 96_000_000,
   START_TIME       : new Date('2025-06-11T16:00:00+08:00'),
   END_TIME         : new Date('2025-06-11T18:00:00+08:00'),
@@ -192,14 +192,9 @@ async function updateBalanceAndCalc(){
 
     /* —— 1. 显示链上余额 & 倍数 —— */
     els.bnbBalance.textContent = `${bnbStr} BNB`;
-    if(CONFIG.TOTAL_TARGET_BNB > 0){
-      const multiple = deposited / CONFIG.TOTAL_TARGET_BNB;
-      els.multiplier.textContent = multiple.toFixed(2);
-      els.targetShow.textContent = `${CONFIG.TOTAL_TARGET_BNB} BNB`;
-    }else{
-      els.multiplier.textContent = '—';
-      els.targetShow.textContent = '待公布';
-    }
+    const multiple = deposited / CONFIG.TOTAL_TARGET_BNB;
+    els.multiplier.textContent = multiple.toFixed(2);
+    els.targetShow.textContent = `${CONFIG.TOTAL_TARGET_BNB} BNB`;
 
     /* —— 2. 用户份额、占比、预计 Token —— */
     const share   = deposited>0 ? userInput / deposited : 0;

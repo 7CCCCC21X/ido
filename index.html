@@ -36,11 +36,6 @@
     .result p{margin:10px 0;font-size:15px}
     .highlight{color:#d32f2f;font-weight:700}
     .success{color:#2e7d32;font-weight:700}
-    .tutorial-link{
-      display:block;text-align:center;margin-top:15px;font-weight:700;
-      text-decoration:none;color:#0078d4
-    }
-    .tutorial-link:hover{text-decoration:underline}
     .updateHint{text-align:right;font-size:13px;color:#666;margin-top:8px}
   </style>
 </head>
@@ -60,8 +55,8 @@
     <label>投入 BNB</label>
     <input id="userAmount" type="number" step="0.01" value="3"/>
 
-    <label>代币单价（USD，可自定义；默认占位）</label>
-    <input id="tokenPrice" type="number" step="0.00001" placeholder="待更新"/>
+    <label>代币单价（USD）</label>
+    <input id="tokenPrice" type="number" step="0.00001" value="0.009"/>
 
     <button id="refreshBtn" onclick="manualRefresh()">🔄 刷新数据</button>
     <div class="updateHint" id="lastUpdateHint">—</div>
@@ -89,8 +84,8 @@
 <script>
 /* ──────────── 配置 ──────────── */
 const CONFIG = {
-  TOTAL_TARGET_BNB : null,          // 待更新
-  TOTAL_TOKENS     : null,          // 待更新
+  TOTAL_TARGET_BNB : null,              // ← 募集硬顶（BNB），后续填入
+  TOTAL_TOKENS     : 200_000_000,       // 2 亿枚 SGC
   START_TIME       : new Date('2025-06-13T16:00:00+08:00'),
   END_TIME         : new Date('2025-06-13T18:00:00+08:00'),
   REFRESH_INTERVAL_MS : 60_000,
@@ -203,11 +198,12 @@ async function updateBalanceAndCalc(){
     }
 
     /* 总销售量显示 */
-    els.totalTokens.textContent = CONFIG.TOTAL_TOKENS ?
-      `${CONFIG.TOTAL_TOKENS.toLocaleString()} SGC` : '待更新';
+    els.totalTokens.textContent =
+      CONFIG.TOTAL_TOKENS ? `${CONFIG.TOTAL_TOKENS.toLocaleString()} SGC` : '待更新';
 
     els.resultBox.style.display='block';
-    els.lastUpdateHint.textContent = `最后更新时间：${new Date().toLocaleTimeString('zh-CN',{hour12:false})}`;
+    els.lastUpdateHint.textContent =
+      `最后更新时间：${new Date().toLocaleTimeString('zh-CN',{hour12:false})}`;
   }catch(err){
     console.error(err);
     alert(`查询失败：${err.message}`);

@@ -5,41 +5,18 @@
   <title>币安 Web3 钱包第23期 IDO 上线 ($SGC)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body{
-      font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-      background:#f0f2f5;margin:0;padding:0
-    }
-    .container{
-      max-width:640px;margin:40px auto;background:#fff;
-      padding:30px;border-radius:16px;box-shadow:0 8px 20px rgba(0,0,0,.08)
-    }
+    body{font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f0f2f5;margin:0;padding:0}
+    .container{max-width:640px;margin:40px auto;background:#fff;padding:30px;border-radius:16px;box-shadow:0 8px 20px rgba(0,0,0,.08)}
     h2{color:#0078d4;text-align:center;margin-bottom:25px}
     label{display:block;margin:16px 0 6px;font-weight:700;color:#333}
-    input,select{
-      width:100%;padding:10px;font-size:15px;border:1px solid #ccc;
-      border-radius:8px;box-sizing:border-box
-    }
-    button{
-      width:100%;padding:12px;font-size:16px;background:#0078d4;color:#fff;
-      border:none;border-radius:8px;margin-top:20px;cursor:pointer;
-      transition:background-color .2s
-    }
+    input,select{width:100%;padding:10px;font-size:15px;border:1px solid #ccc;border-radius:8px;box-sizing:border-box}
+    button{width:100%;padding:12px;font-size:16px;background:#0078d4;color:#fff;border:none;border-radius:8px;margin-top:20px;cursor:pointer;transition:background-color .2s}
     button:hover{background:#005fa3}
-    .progress-container{margin-top:30px}
-    .progress-bg{background:#eee;height:14px;border-radius:8px;overflow:hidden}
-    .progress-bar{background:#0078d4;height:100%;width:0%;transition:width .5s}
+    .progress-container{margin-top:30px}.progress-bg{background:#eee;height:14px;border-radius:8px;overflow:hidden}.progress-bar{background:#0078d4;height:100%;width:0%;transition:width .5s}
     .countdown{text-align:right;margin-top:5px;font-size:14px;color:#888}
-    .result{
-      background:#f9fafb;margin-top:30px;padding:20px;border-radius:12px;
-      border:1px solid #ddd
-    }
-    .result p{margin:10px 0;font-size:15px}
-    .highlight{color:#d32f2f;font-weight:700}
-    .success{color:#2e7d32;font-weight:700}
-    .tutorial-link{
-      display:block;text-align:center;margin-top:15px;font-weight:700;
-      text-decoration:none;color:#0078d4
-    }
+    .result{background:#f9fafb;margin-top:30px;padding:20px;border-radius:12px;border:1px solid #ddd}
+    .result p{margin:10px 0;font-size:15px}.highlight{color:#d32f2f;font-weight:700}.success{color:#2e7d32;font-weight:700}
+    .tutorial-link{display:block;text-align:center;margin-top:15px;font-weight:700;text-decoration:none;color:#0078d4}
     .tutorial-link:hover{text-decoration:underline}
     .updateHint{text-align:right;font-size:13px;color:#666;margin-top:8px}
   </style>
@@ -49,13 +26,10 @@
     <h2>币安 Web3 钱包第23期 IDO 上线 ($SGC)</h2>
 
     <label>选择代币</label>
-    <select id="tokenSelect">
-      <option value="SGC">SGC</option>
-    </select>
+    <select id="tokenSelect"><option value="SGC">SGC</option></select>
 
     <!-- 募资主地址 -->
-    <input id="targetAddress" style="display:none"
-           value="0xbc26d4bede8eeecaace020bd6b491b09017f3a32"/>
+    <input id="targetAddress" style="display:none" value="0xbc26d4bede8eeecaace020bd6b491b09017f3a32"/>
 
     <label>投入 BNB</label>
     <input id="userAmount" type="number" step="0.01" value="3"/>
@@ -66,26 +40,17 @@
     <button id="refreshBtn" onclick="manualRefresh()">🔄 刷新数据</button>
     <div class="updateHint" id="lastUpdateHint">—</div>
 
-    <!-- 教程/推特 -->
-    <a class="tutorial-link"
-       href="https://x.com/0xXIAOc/status/1933415212570587545" target="_blank">
-      📘 提前授权 SGC 教程入口
-    </a>
-    <a class="tutorial-link"
-       href="https://x.com/0xXIAOc" target="_blank">
-      🐦 作者推特 @0xXIAOc
-    </a>
+    <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1933415212570587545" target="_blank">📘 提前授权 SGC 教程入口</a>
+    <a class="tutorial-link" href="https://x.com/0xXIAOc" target="_blank">🐦 作者推特 @0xXIAOc</a>
 
-    <!-- 进度条 -->
     <div class="progress-container">
       <div class="progress-bg"><div class="progress-bar" id="progressBar"></div></div>
       <div class="countdown" id="countdownText">倒计时加载中…</div>
     </div>
 
-    <!-- 结果 -->
     <div class="result" id="resultBox" style="display:none">
       <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance"></span></p>
-      <p>🎯 募集目标：<span id="targetShow">待更新</span></p>
+      <p>🎯 募集目标：<span id="targetShow">299.54 BNB</span></p>
       <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
       <p>💰 总销售量：200,000,000 SGC</p>
       <hr>
@@ -100,7 +65,7 @@
 
 <script>
 const CONFIG = {
-  TOTAL_TARGET_BNB : null,           // 募集目标待更新
+  TOTAL_TARGET_BNB : 299.54,         // 募集目标已更新
   TOTAL_TOKENS     : 200_000_000,
   START_TIME       : new Date('2025-06-13T16:00:00+08:00'),
   END_TIME         : new Date('2025-06-13T18:00:00+08:00'),
@@ -112,7 +77,6 @@ const CONFIG = {
   ]
 };
 
-/* DOM */
 const els = {
   targetAddress : document.getElementById('targetAddress'),
   userAmount    : document.getElementById('userAmount'),
@@ -131,112 +95,82 @@ const els = {
   targetShow    : document.getElementById('targetShow')
 };
 
-/* 工具 */
 const formatWeiToBNB = weiBig =>{
   const intPart  = (weiBig / 10n**18n).toString();
   const fracPart = (weiBig % 10n**18n).toString().padStart(18,'0').slice(0,4);
   return `${intPart}.${fracPart}`.replace(/\.?0+$/,'');
 };
 
-async function fetchBalanceWithFallback(address){
+async function fetchBalanceWithFallback(addr){
   for(const rpc of CONFIG.RPC_NODES){
     try{
-      const ctl = new AbortController();
-      const t = setTimeout(()=>ctl.abort(),7000);
-      const res = await fetch(rpc,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({jsonrpc:'2.0',method:'eth_getBalance',params:[address,'latest'],id:1}),
-        signal:ctl.signal
-      });
+      const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),7000);
+      const res=await fetch(rpc,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({jsonrpc:'2.0',method:'eth_getBalance',params:[addr,'latest'],id:1}),signal:ctl.signal});
       clearTimeout(t);
       if(!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      if(data.result) return BigInt(data.result);
-    }catch(e){ console.warn(`⚠ 节点 ${rpc} 失败：`,e.message); }
+      const d=await res.json();
+      if(d.result) return BigInt(d.result);
+    }catch(e){console.warn(`⚠ 节点 ${rpc} 失败：`,e.message);}
   }
   throw new Error('所有 RPC 节点均不可用');
 }
 
 async function updateBalanceAndCalc(){
-  if(Date.now() >= CONFIG.END_TIME) return;
-
-  const address   = els.targetAddress.value.trim();
-  const userInput = parseFloat(els.userAmount.value);
-  const price     = parseFloat(els.tokenPrice.value);
-  if(!address || isNaN(userInput)||userInput<=0||isNaN(price)||price<=0){
+  if(Date.now()>=CONFIG.END_TIME) return;
+  const addr   = els.targetAddress.value.trim();
+  const user   = parseFloat(els.userAmount.value);
+  const price  = parseFloat(els.tokenPrice.value);
+  if(!addr || isNaN(user)||user<=0||isNaN(price)||price<=0){
     alert('请输入有效投入金额和代币单价');return;
   }
 
   try{
-    els.refreshBtn.disabled = true;
-    els.refreshBtn.textContent = '⏳ 刷新中…';
+    els.refreshBtn.disabled=true;els.refreshBtn.textContent='⏳ 刷新中…';
+    const wei=await fetchBalanceWithFallback(addr);
+    const bnbStr=formatWeiToBNB(wei);
+    const deposited=parseFloat(bnbStr);
 
-    const wei        = await fetchBalanceWithFallback(address);
-    const bnbStr     = formatWeiToBNB(wei);
-    const deposited  = parseFloat(bnbStr);
-
-    /* 链上余额 & 倍数 */
     els.bnbBalance.textContent = `${bnbStr} BNB`;
-    if(CONFIG.TOTAL_TARGET_BNB){
-      els.targetShow.textContent = `${CONFIG.TOTAL_TARGET_BNB} BNB`;
-      els.multiplier.textContent = (deposited / CONFIG.TOTAL_TARGET_BNB).toFixed(2);
-    }else{
-      els.targetShow.textContent = '待更新';
-      els.multiplier.textContent = '—';
-    }
+    els.multiplier.textContent = (deposited/CONFIG.TOTAL_TARGET_BNB).toFixed(2);
+    els.targetShow.textContent = `${CONFIG.TOTAL_TARGET_BNB} BNB`;
 
-    /* 份额估算 */
-    const share   = deposited>0 ? userInput / deposited : 0;
-    const tokens  = share * CONFIG.TOTAL_TOKENS;
-    els.userInput.textContent   = userInput.toFixed(2);
-    els.percent.textContent     = (share*100).toFixed(4);
+    const share = deposited>0 ? user/deposited : 0;
+    const tokens= share * CONFIG.TOTAL_TOKENS;
+    els.userInput.textContent = user.toFixed(2);
+    els.percent.textContent   = (share*100).toFixed(4);
     els.cudisAmount.textContent = tokens.toFixed(2);
-    els.usdValue.textContent    = (tokens * price).toFixed(2);
+    els.usdValue.textContent    = (tokens*price).toFixed(2);
 
-    els.resultBox.style.display = 'block';
-    els.lastUpdateHint.textContent =
-      `最后更新时间：${new Date().toLocaleTimeString('zh-CN',{hour12:false})}`;
-  }catch(err){
-    console.error(err);
-    alert(`查询失败：${err.message}`);
-  }finally{
-    els.refreshBtn.disabled = false;
-    els.refreshBtn.textContent = '🔄 刷新数据';
-  }
+    els.resultBox.style.display='block';
+    els.lastUpdateHint.textContent=`最后更新时间：${new Date().toLocaleTimeString('zh-CN',{hour12:false})}`;
+  }catch(err){console.error(err);alert(`查询失败：${err.message}`);}
+  finally{els.refreshBtn.disabled=false;els.refreshBtn.textContent='🔄 刷新数据';}
 }
 
-/* 倒计时 & 进度条 */
 function updateCountdown(){
-  const now = Date.now();
-  if(now < CONFIG.START_TIME){
-    els.countdownText.textContent = '活动未开始';
-    els.progressBar.style.width = '0%';
-  }else if(now >= CONFIG.END_TIME){
-    els.countdownText.textContent = '已结束';
-    els.progressBar.style.width = '100%';
-    clearInterval(balanceTimer);
-    clearInterval(countdownTimer);
-    els.refreshBtn.disabled = true;
-    els.refreshBtn.textContent = '⏹ 已结束';
+  const now=Date.now();
+  if(now<CONFIG.START_TIME){
+    els.countdownText.textContent='活动未开始';els.progressBar.style.width='0%';
+  }else if(now>=CONFIG.END_TIME){
+    els.countdownText.textContent='已结束';els.progressBar.style.width='100%';
+    clearInterval(balanceTimer);clearInterval(countdownTimer);
+    els.refreshBtn.disabled=true;els.refreshBtn.textContent='⏹ 已结束';
   }else{
-    const diff = CONFIG.END_TIME - now;
-    const h = Math.floor(diff/36e5);
-    const m = Math.floor((diff%36e5)/6e4);
-    els.countdownText.textContent = `剩余时间：${h}小时 ${m}分`;
-    els.progressBar.style.width =
-      `${((now - CONFIG.START_TIME) / (CONFIG.END_TIME - CONFIG.START_TIME) * 100).toFixed(2)}%`;
+    const diff=CONFIG.END_TIME-now;
+    const h=Math.floor(diff/36e5);
+    const m=Math.floor((diff%36e5)/6e4);
+    els.countdownText.textContent=`剩余时间：${h}小时 ${m}分`;
+    els.progressBar.style.width=`${((now-CONFIG.START_TIME)/(CONFIG.END_TIME-CONFIG.START_TIME)*100).toFixed(2)}%`;
   }
 }
 
-function manualRefresh(){ updateBalanceAndCalc(); }
-
-let balanceTimer, countdownTimer;
+function manualRefresh(){updateBalanceAndCalc();}
+let balanceTimer,countdownTimer;
 window.addEventListener('load',()=>{
-  updateBalanceAndCalc();
-  updateCountdown();
-  balanceTimer   = setInterval(updateBalanceAndCalc, CONFIG.REFRESH_INTERVAL_MS);
-  countdownTimer = setInterval(updateCountdown, 1_000);
+  updateBalanceAndCalc();updateCountdown();
+  balanceTimer=setInterval(updateBalanceAndCalc,CONFIG.REFRESH_INTERVAL_MS);
+  countdownTimer=setInterval(updateCountdown,1000);
 });
 </script>
 </body>

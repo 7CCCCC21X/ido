@@ -12,7 +12,9 @@
     input,select{width:100%;padding:10px;font-size:15px;border:1px solid #ccc;border-radius:8px;box-sizing:border-box}
     button{width:100%;padding:12px;font-size:16px;background:#0078d4;color:#fff;border:none;border-radius:8px;margin-top:20px;cursor:pointer;transition:background-color .2s}
     button:hover{background:#005fa3}
-    .progress-container{margin-top:30px}.progress-bg{background:#eee;height:14px;border-radius:8px;overflow:hidden}.progress-bar{background:#0078d4;height:100%;width:0%;transition:width .5s}
+    .progress-container{margin-top:30px}
+    .progress-bg{background:#eee;height:14px;border-radius:8px;overflow:hidden}
+    .progress-bar{background:#0078d4;height:100%;width:0%;transition:width .5s}
     .countdown{text-align:right;margin-top:5px;font-size:14px;color:#888}
     .result{background:#f9fafb;margin-top:30px;padding:20px;border-radius:12px;border:1px solid #ddd}
     .result p{margin:10px 0;font-size:15px}.highlight{color:#d32f2f;font-weight:700}.success{color:#2e7d32;font-weight:700}
@@ -29,7 +31,8 @@
     <select id="tokenSelect"><option value="SGC">SGC</option></select>
 
     <!-- 募资主地址 -->
-    <input id="targetAddress" style="display:none" value="0xbc26d4bede8eeecaace020bd6b491b09017f3a32"/>
+    <input id="targetAddress" style="display:none"
+           value="0xbc26d4bede8eeecaace020bd6b491b09017f3a32"/>
 
     <label>投入 BNB</label>
     <input id="userAmount" type="number" step="0.01" value="3"/>
@@ -40,14 +43,27 @@
     <button id="refreshBtn" onclick="manualRefresh()">🔄 刷新数据</button>
     <div class="updateHint" id="lastUpdateHint">—</div>
 
-    <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1933415212570587545" target="_blank">📘 提前授权 SGC 教程入口</a>
-    <a class="tutorial-link" href="https://x.com/0xXIAOc" target="_blank">🐦 作者推特 @0xXIAOc</a>
+    <!-- 教程 / 链接 -->
+    <a class="tutorial-link"
+       href="https://x.com/0xXIAOc/status/1933415212570587545" target="_blank">
+      📘 提前授权 SGC 教程入口
+    </a>
+    <a class="tutorial-link"
+       href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank">
+      💸 借 BNB 教程入口
+    </a>
+    <a class="tutorial-link"
+       href="https://x.com/0xXIAOc" target="_blank">
+      🐦 作者推特 @0xXIAOc
+    </a>
 
+    <!-- 进度条 -->
     <div class="progress-container">
       <div class="progress-bg"><div class="progress-bar" id="progressBar"></div></div>
       <div class="countdown" id="countdownText">倒计时加载中…</div>
     </div>
 
+    <!-- 结果 -->
     <div class="result" id="resultBox" style="display:none">
       <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance"></span></p>
       <p>🎯 募集目标：<span id="targetShow">299.54 BNB</span></p>
@@ -65,11 +81,11 @@
 
 <script>
 const CONFIG = {
-  TOTAL_TARGET_BNB : 299.54,         // 募集目标已更新
+  TOTAL_TARGET_BNB : 299.54,
   TOTAL_TOKENS     : 200_000_000,
   START_TIME       : new Date('2025-06-13T16:00:00+08:00'),
   END_TIME         : new Date('2025-06-13T18:00:00+08:00'),
-  REFRESH_INTERVAL_MS : 60_000,
+  REFRESH_INTERVAL_MS : 60000,
   RPC_NODES : [
     'https://bsc-dataseed.binance.org/',
     'https://bsc-dataseed1.defibit.io/',
@@ -77,91 +93,83 @@ const CONFIG = {
   ]
 };
 
-const els = {
-  targetAddress : document.getElementById('targetAddress'),
-  userAmount    : document.getElementById('userAmount'),
-  tokenPrice    : document.getElementById('tokenPrice'),
-  bnbBalance    : document.getElementById('bnbBalance'),
-  multiplier    : document.getElementById('multiplier'),
-  userInput     : document.getElementById('userInput'),
-  percent       : document.getElementById('percent'),
-  cudisAmount   : document.getElementById('cudisAmount'),
-  usdValue      : document.getElementById('usdValue'),
-  resultBox     : document.getElementById('resultBox'),
-  countdownText : document.getElementById('countdownText'),
-  progressBar   : document.getElementById('progressBar'),
-  refreshBtn    : document.getElementById('refreshBtn'),
-  lastUpdateHint: document.getElementById('lastUpdateHint'),
-  targetShow    : document.getElementById('targetShow')
-};
+/* DOM 句柄快速拉取 */
+const els = {};
+['targetAddress','userAmount','tokenPrice','bnbBalance','multiplier','userInput',
+ 'percent','cudisAmount','usdValue','resultBox','countdownText','progressBar',
+ 'refreshBtn','lastUpdateHint','targetShow']
+ .forEach(id=>els[id]=document.getElementById(id));
 
-const formatWeiToBNB = weiBig =>{
-  const intPart  = (weiBig / 10n**18n).toString();
-  const fracPart = (weiBig % 10n**18n).toString().padStart(18,'0').slice(0,4);
-  return `${intPart}.${fracPart}`.replace(/\.?0+$/,'');
-};
+/* 工具函数 */
+const formatWeiToBNB = wei =>
+  `${(wei/10n**18n).toString()}.${(wei%10n**18n).toString().padStart(18,'0').slice(0,4)}`.replace(/\.?0+$/,'');
 
-async function fetchBalanceWithFallback(addr){
+/* RPC 查询（兜底） */
+async function fetchBalance(addr){
   for(const rpc of CONFIG.RPC_NODES){
     try{
       const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),7000);
       const res=await fetch(rpc,{method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({jsonrpc:'2.0',method:'eth_getBalance',params:[addr,'latest'],id:1}),signal:ctl.signal});
       clearTimeout(t);
-      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      if(!res.ok) throw new Error();
       const d=await res.json();
       if(d.result) return BigInt(d.result);
-    }catch(e){console.warn(`⚠ 节点 ${rpc} 失败：`,e.message);}
+    }catch{}
   }
   throw new Error('所有 RPC 节点均不可用');
 }
 
+/* 刷新余额并计算 */
 async function updateBalanceAndCalc(){
   if(Date.now()>=CONFIG.END_TIME) return;
-  const addr   = els.targetAddress.value.trim();
-  const user   = parseFloat(els.userAmount.value);
-  const price  = parseFloat(els.tokenPrice.value);
-  if(!addr || isNaN(user)||user<=0||isNaN(price)||price<=0){
-    alert('请输入有效投入金额和代币单价');return;
-  }
+  const addr = els.targetAddress.value.trim();
+  const user = parseFloat(els.userAmount.value);
+  const price= parseFloat(els.tokenPrice.value);
+  if(!addr||isNaN(user)||user<=0||isNaN(price)||price<=0){alert('请输入有效数字');return;}
 
   try{
     els.refreshBtn.disabled=true;els.refreshBtn.textContent='⏳ 刷新中…';
-    const wei=await fetchBalanceWithFallback(addr);
-    const bnbStr=formatWeiToBNB(wei);
-    const deposited=parseFloat(bnbStr);
 
-    els.bnbBalance.textContent = `${bnbStr} BNB`;
-    els.multiplier.textContent = (deposited/CONFIG.TOTAL_TARGET_BNB).toFixed(2);
+    const wei  = await fetchBalance(addr);
+    const bnb  = formatWeiToBNB(wei);
+    const dep  = parseFloat(bnb);
+
+    els.bnbBalance.textContent = `${bnb} BNB`;
+    els.multiplier.textContent = (dep/CONFIG.TOTAL_TARGET_BNB).toFixed(2);
     els.targetShow.textContent = `${CONFIG.TOTAL_TARGET_BNB} BNB`;
 
-    const share = deposited>0 ? user/deposited : 0;
+    const share = dep ? user/dep : 0;
     const tokens= share * CONFIG.TOTAL_TOKENS;
-    els.userInput.textContent = user.toFixed(2);
-    els.percent.textContent   = (share*100).toFixed(4);
+    els.userInput.textContent   = user.toFixed(2);
+    els.percent.textContent     = (share*100).toFixed(4);
     els.cudisAmount.textContent = tokens.toFixed(2);
     els.usdValue.textContent    = (tokens*price).toFixed(2);
 
     els.resultBox.style.display='block';
-    els.lastUpdateHint.textContent=`最后更新时间：${new Date().toLocaleTimeString('zh-CN',{hour12:false})}`;
-  }catch(err){console.error(err);alert(`查询失败：${err.message}`);}
+    els.lastUpdateHint.textContent =
+      `最后更新时间：${new Date().toLocaleTimeString('zh-CN',{hour12:false})}`;
+  }catch(e){alert(e.message);}
   finally{els.refreshBtn.disabled=false;els.refreshBtn.textContent='🔄 刷新数据';}
 }
 
+/* 倒计时 & 进度条 */
 function updateCountdown(){
   const now=Date.now();
   if(now<CONFIG.START_TIME){
-    els.countdownText.textContent='活动未开始';els.progressBar.style.width='0%';
+    els.countdownText.textContent='活动未开始';
+    els.progressBar.style.width='0%';
   }else if(now>=CONFIG.END_TIME){
-    els.countdownText.textContent='已结束';els.progressBar.style.width='100%';
+    els.countdownText.textContent='已结束';
+    els.progressBar.style.width='100%';
     clearInterval(balanceTimer);clearInterval(countdownTimer);
     els.refreshBtn.disabled=true;els.refreshBtn.textContent='⏹ 已结束';
   }else{
     const diff=CONFIG.END_TIME-now;
-    const h=Math.floor(diff/36e5);
-    const m=Math.floor((diff%36e5)/6e4);
+    const h=Math.floor(diff/36e5),m=Math.floor(diff%36e5/6e4);
     els.countdownText.textContent=`剩余时间：${h}小时 ${m}分`;
-    els.progressBar.style.width=`${((now-CONFIG.START_TIME)/(CONFIG.END_TIME-CONFIG.START_TIME)*100).toFixed(2)}%`;
+    els.progressBar.style.width =
+      `${((now-CONFIG.START_TIME)/(CONFIG.END_TIME-CONFIG.START_TIME)*100).toFixed(2)}%`;
   }
 }
 

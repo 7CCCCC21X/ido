@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>币安 Web3 钱包第23期 IDO 上线 ($SGC)</title>
+  <title>币安 Web3 钱包第24期 IDO 上线 ($BOMB)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body{font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f0f2f5;margin:0;padding:0}
@@ -25,14 +25,14 @@
 </head>
 <body>
   <div class="container">
-    <h2>币安 Web3 钱包第23期 IDO 上线 ($SGC)</h2>
+    <h2>币安 Web3 钱包第24期 IDO 上线 ($BOMB)</h2>
 
     <label>选择代币</label>
-    <select id="tokenSelect"><option value="SGC">SGC</option></select>
+    <select id="tokenSelect"><option value="BOMB">BOMB</option></select>
 
     <!-- 募资主地址 -->
     <input id="targetAddress" style="display:none"
-           value="0xbc26d4bede8eeecaace020bd6b491b09017f3a32"/>
+           value="0xae8476d22b8e267a6f8aeb32c6050254e7a4f800"/>
 
     <label>投入 BNB</label>
     <input id="userAmount" type="number" step="0.01" value="3"/>
@@ -46,7 +46,7 @@
     <!-- 教程 / 链接 -->
     <a class="tutorial-link"
        href="https://x.com/0xXIAOc/status/1933415212570587545" target="_blank">
-      📘 提前授权 SGC 教程入口
+      📘 提前授权 BOMB 教程入口
     </a>
     <a class="tutorial-link"
        href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank">
@@ -68,12 +68,12 @@
       <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance"></span></p>
       <p>🎯 募集目标：<span id="targetShow">299.54 BNB</span></p>
       <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-      <p>💰 总销售量：200,000,000 SGC</p>
+      <p>💰 总销售量：200,000,000 BOMB</p>
       <hr>
       <p>
         🚀 你投入 <span class="highlight" id="userInput"></span> BNB
         （占比 <span class="highlight" id="percent"></span>%）<br>
-        可获得 <span class="success" id="cudisAmount"></span> 枚 SGC
+        可获得 <span class="success" id="cudisAmount"></span> 枚 BOMB
         ≈ <span class="success" id="usdValue"></span> USD
       </p>
     </div>
@@ -83,8 +83,8 @@
 const CONFIG = {
   TOTAL_TARGET_BNB : 299.54,
   TOTAL_TOKENS     : 200_000_000,
-  START_TIME       : new Date('2025-06-13T16:00:00+08:00'),
-  END_TIME         : new Date('2025-06-13T18:00:00+08:00'),
+  START_TIME       : new Date('2025-06-17T16:00:00+08:00'),
+  END_TIME         : new Date('2025-06-17T18:00:00+08:00'),
   REFRESH_INTERVAL_MS : 60000,
   RPC_NODES : [
     'https://bsc-dataseed.binance.org/',

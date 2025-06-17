@@ -37,8 +37,9 @@
     <label>投入 BNB</label>
     <input id="userAmount" type="number" step="0.01" value="3"/>
 
-    <label>代币单价（USD，可自填；默认 0.009）</label>
-    <input id="tokenPrice" type="number" step="0.00001" value="0.009"/>
+    <!-- 修改：价格显示“待更新” -->
+    <label>代币单价（USD，待更新）</label>
+    <input id="tokenPrice" type="number" step="0.00001" placeholder="待更新" value=""/>
 
     <button id="refreshBtn" onclick="manualRefresh()">🔄 刷新数据</button>
     <div class="updateHint" id="lastUpdateHint">—</div>
@@ -66,9 +67,11 @@
     <!-- 结果 -->
     <div class="result" id="resultBox" style="display:none">
       <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance"></span></p>
-      <p>🎯 募集目标：<span id="targetShow">299.54 BNB</span></p>
+      <!-- 修改：募集目标显示“待更新” -->
+      <p>🎯 募集目标：<span id="targetShow">待更新</span></p>
       <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-      <p>💰 总销售量：200,000,000 BOMB</p>
+      <!-- 修改：总销售量显示“待更新” -->
+      <p>💰 总销售量：待更新</p>
       <hr>
       <p>
         🚀 你投入 <span class="highlight" id="userInput"></span> BNB
@@ -80,9 +83,10 @@
   </div>
 
 <script>
+/* 其余脚本保持不变 —— 如需停用计算，可注释 CONFIG.TOTAL_TARGET_BNB/TOTAL_TOKENS 相关行 */
 const CONFIG = {
-  TOTAL_TARGET_BNB : 299.54,
-  TOTAL_TOKENS     : 200_000_000,
+  TOTAL_TARGET_BNB : 299.54,          // 可后续替换
+  TOTAL_TOKENS     : 200_000_000,     // 可后续替换
   START_TIME       : new Date('2025-06-17T16:00:00+08:00'),
   END_TIME         : new Date('2025-06-17T18:00:00+08:00'),
   REFRESH_INTERVAL_MS : 60000,
@@ -93,18 +97,15 @@ const CONFIG = {
   ]
 };
 
-/* DOM 句柄快速拉取 */
+/* —— 以下脚本无改动 —— */
 const els = {};
 ['targetAddress','userAmount','tokenPrice','bnbBalance','multiplier','userInput',
  'percent','cudisAmount','usdValue','resultBox','countdownText','progressBar',
  'refreshBtn','lastUpdateHint','targetShow']
  .forEach(id=>els[id]=document.getElementById(id));
 
-/* 工具函数 */
 const formatWeiToBNB = wei =>
   `${(wei/10n**18n).toString()}.${(wei%10n**18n).toString().padStart(18,'0').slice(0,4)}`.replace(/\.?0+$/,'');
-
-/* RPC 查询（兜底） */
 async function fetchBalance(addr){
   for(const rpc of CONFIG.RPC_NODES){
     try{
@@ -119,8 +120,6 @@ async function fetchBalance(addr){
   }
   throw new Error('所有 RPC 节点均不可用');
 }
-
-/* 刷新余额并计算 */
 async function updateBalanceAndCalc(){
   if(Date.now()>=CONFIG.END_TIME) return;
   const addr = els.targetAddress.value.trim();
@@ -130,7 +129,6 @@ async function updateBalanceAndCalc(){
 
   try{
     els.refreshBtn.disabled=true;els.refreshBtn.textContent='⏳ 刷新中…';
-
     const wei  = await fetchBalance(addr);
     const bnb  = formatWeiToBNB(wei);
     const dep  = parseFloat(bnb);
@@ -138,22 +136,17 @@ async function updateBalanceAndCalc(){
     els.bnbBalance.textContent = `${bnb} BNB`;
     els.multiplier.textContent = (dep/CONFIG.TOTAL_TARGET_BNB).toFixed(2);
     els.targetShow.textContent = `${CONFIG.TOTAL_TARGET_BNB} BNB`;
-
     const share = dep ? user/dep : 0;
     const tokens= share * CONFIG.TOTAL_TOKENS;
     els.userInput.textContent   = user.toFixed(2);
     els.percent.textContent     = (share*100).toFixed(4);
     els.cudisAmount.textContent = tokens.toFixed(2);
     els.usdValue.textContent    = (tokens*price).toFixed(2);
-
     els.resultBox.style.display='block';
-    els.lastUpdateHint.textContent =
-      `最后更新时间：${new Date().toLocaleTimeString('zh-CN',{hour12:false})}`;
+    els.lastUpdateHint.textContent = `最后更新时间：${new Date().toLocaleTimeString('zh-CN',{hour12:false})}`;
   }catch(e){alert(e.message);}
   finally{els.refreshBtn.disabled=false;els.refreshBtn.textContent='🔄 刷新数据';}
 }
-
-/* 倒计时 & 进度条 */
 function updateCountdown(){
   const now=Date.now();
   if(now<CONFIG.START_TIME){
@@ -172,7 +165,6 @@ function updateCountdown(){
       `${((now-CONFIG.START_TIME)/(CONFIG.END_TIME-CONFIG.START_TIME)*100).toFixed(2)}%`;
   }
 }
-
 function manualRefresh(){updateBalanceAndCalc();}
 let balanceTimer,countdownTimer;
 window.addEventListener('load',()=>{

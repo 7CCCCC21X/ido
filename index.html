@@ -60,10 +60,8 @@ button:hover{background:var(--c-primary-dark)}
     代币单价 (USD)
     <span class="note">可自填；默认 0.075（按平均每期 IDO 空投金额 ≈ 150 万 USD 推算）</span>
   </label>
-  <!-- 恢复缺失的 tokenPrice 输入框 -->
   <input id="tokenPrice" type="number" step="0.00001" value="0.075" min="0">
 
-  <!-- 隐藏的 BNB 价格输入 -->
   <input id="bnbPrice" type="number" value="650" style="display:none">
 
   <button id="refreshBtn">🔄 刷新数据</button>
@@ -93,11 +91,11 @@ button:hover{background:var(--c-primary-dark)}
 <script>
 /* —— 配置 —— */
 const CONFIG={
-  TOTAL_TARGET_BNB:0,                     // ← 填实际目标
+  TOTAL_TARGET_BNB:153.61,               // ★ 募资目标已设为 153.61 BNB
   TOTAL_TOKENS:20_000_000,
   START_TIME:new Date('2025-06-18T16:00:00+08:00'),
   END_TIME:new Date('2025-06-18T18:00:00+08:00'),
-  REFRESH_INTERVAL:60_000,
+  REFRESH_INTERVAL:60_000,               // 60 秒自动刷新
   RPC_NODES:[
     'https://bsc-dataseed.binance.org/',
     'https://bsc-dataseed1.defibit.io/',
@@ -134,8 +132,11 @@ function render(dep){
         target=CONFIG.TOTAL_TARGET_BNB;
   if(!(user&&price&&bnbUSD&&target&&dep)){els.resultBox.style.display='none';return;}
 
-  const share=user/dep, tokens=share*CONFIG.TOTAL_TOKENS,
-        principal=share*target, refund=user-principal, multi=dep/target;
+  const share=user/dep,
+        tokens=share*CONFIG.TOTAL_TOKENS,
+        principal=share*target,
+        refund=user-principal,
+        multi=dep/target;
 
   els.bnbBalance.textContent=fmt(dep);
   els.multiplier.textContent=fmt(multi,2);
@@ -181,14 +182,14 @@ function tick(){
   }
 }
 
-/* 轮询控制 */
+/* 轮询 */
 let poll=null,clock=null;
 function startPoll(){ if(!poll) poll=setInterval(refresh,CONFIG.REFRESH_INTERVAL); if(!clock) clock=setInterval(tick,1e3); }
 function stopPoll(){ clearInterval(poll); poll=null; clearInterval(clock); clock=null; }
 
 document.addEventListener('visibilitychange',()=>document.hidden?stopPoll():startPoll());
 
-/* 事件绑定 */
+/* 事件 */
 els.refreshBtn.addEventListener('click',refresh);
 window.addEventListener('load',()=>{ refresh(); tick(); startPoll(); });
 window.addEventListener('beforeunload',stopPoll);

@@ -2,15 +2,15 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<title>币安 Web3 钱包第25期 IDO 上线 ($BEE)</title>
+<title>币安 Web3 钱包第 25 期 IDO 上线 ($BEE)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 <style>
 :root{
-  --c-bg:#f9f9f9;       --c-card:#fff;
-  --c-text:#222;        --c-sub:#555;
-  --c-primary:#0078d4;  --c-primary-dark:#005fa3;
-  --c-success:#16a34a;  --c-error:#dc2626;  --c-refund:#0284c7;
+  --c-bg:#f9f9f9; --c-card:#fff;
+  --c-text:#222;  --c-sub:#6b7280;
+  --c-primary:#0078d4; --c-primary-dark:#005fa3;
+  --c-success:#16a34a; --c-error:#dc2626; --c-refund:#0284c7;
 }
 @media (prefers-color-scheme:dark){
   :root{
@@ -18,7 +18,7 @@
     --c-text:#f3f4f6;--c-sub:#9ca3af;
   }
 }
-body{margin:0;padding:0;font-family:-apple-system,Segoe UI,PingFang SC,Helvetica,Arial,sans-serif;background:var(--c-bg);color:var(--c-text)}
+body{margin:0;font-family:-apple-system,Segoe UI,PingFang SC,Helvetica,Arial,sans-serif;background:var(--c-bg);color:var(--c-text)}
 .container{max-width:660px;margin:40px auto;background:var(--c-card);padding:34px;border-radius:18px;box-shadow:0 10px 24px rgba(0,0,0,.08)}
 h2{color:var(--c-primary);text-align:center;margin-bottom:28px}
 label{display:block;margin:18px 0 8px;font-weight:700;color:var(--c-text)}
@@ -46,7 +46,7 @@ button:hover{background:var(--c-primary-dark)}
 <div class="container">
   <div id="errBanner" class="error-banner"></div>
 
-  <h2>币安 Web3 钱包第25期 IDO 上线 ($BEE)</h2>
+  <h2>币安 Web3 钱包第 25 期 IDO 上线 ($BEE)</h2>
 
   <label>选择代币</label>
   <select id="tokenSelect"><option value="BEE">BEE</option></select>
@@ -56,6 +56,15 @@ button:hover{background:var(--c-primary-dark)}
   <label>投入 BNB</label>
   <input id="userAmount" type="number" step="0.01" value="3" min="0">
 
+  <!-- 预计空投总额 -->
+  <label>
+    预计空投总额 (USD)
+    <span class="note">可自填；默认 150W </span>
+  </label>
+  <input id="airdropUSD" type="number" step="10000" value="1500000" min="0" oninput="autoPrice()">
+  <div class="note" id="airdropFmt">≈ 150 万 USD</div>
+
+  <!-- 单价 -->
   <label>
     代币单价 (USD)
     <span class="note">可自填；默认 0.075（按平均每期 IDO 空投金额 ≈ 150 万 USD 推算）</span>
@@ -78,7 +87,7 @@ button:hover{background:var(--c-primary-dark)}
 
   <div class="result" id="resultBox" style="display:none">
     <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
-    <p>🎯 募集目标：<span id="targetShow">待更新</span></p>
+    <p>🎯 募集目标：<span id="targetShow">153.61 BNB</span></p>
     <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
     <p>💰 总销售量：20 000 000 枚 BEE</p><hr>
     <p>🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
@@ -91,11 +100,11 @@ button:hover{background:var(--c-primary-dark)}
 <script>
 /* —— 配置 —— */
 const CONFIG={
-  TOTAL_TARGET_BNB:153.61,               // ★ 募资目标已设为 153.61 BNB
+  TOTAL_TARGET_BNB:153.61,
   TOTAL_TOKENS:20_000_000,
   START_TIME:new Date('2025-06-18T16:00:00+08:00'),
   END_TIME:new Date('2025-06-18T18:00:00+08:00'),
-  REFRESH_INTERVAL:60_000,               // 60 秒自动刷新
+  REFRESH_INTERVAL:60_000,
   RPC_NODES:[
     'https://bsc-dataseed.binance.org/',
     'https://bsc-dataseed1.defibit.io/',
@@ -105,9 +114,9 @@ const CONFIG={
 
 /* —— 元素 —— */
 const $=id=>document.getElementById(id);
-const els=['userAmount','tokenPrice','bnbPrice','bnbBalance','multiplier','userInput','percent',
-  'cudisAmount','usdValue','principalBNB','principalUSD','refundBNB','refundUSD','resultBox',
-  'countdownText','progressBar','refreshBtn','lastUpdateHint','targetShow','errBanner','targetAddress']
+const els=['userAmount','tokenPrice','airdropUSD','airdropFmt','bnbPrice','bnbBalance','multiplier','userInput',
+  'percent','cudisAmount','usdValue','principalBNB','principalUSD','refundBNB','refundUSD',
+  'resultBox','countdownText','progressBar','refreshBtn','lastUpdateHint','targetAddress','errBanner']
   .reduce((o,i)=>(o[i]=$(i),o),{});
 
 /* —— 工具 —— */
@@ -115,32 +124,41 @@ const fmt=(n,d=4)=>Number(n).toLocaleString(undefined,{maximumFractionDigits:d})
 const fmtUSD=n=>'$'+fmt(n,2);
 const fetchJSON=(u,o)=>fetch(u,o).then(r=>r.json());
 
+function autoPrice(){
+  const usd=+els.airdropUSD.value||0;
+  if(usd>0){
+    els.tokenPrice.value=(usd/CONFIG.TOTAL_TOKENS).toFixed(6);
+    els.airdropFmt.textContent='≈ '+fmt(usd/1e4,0)+' 万 USD';
+  }else{
+    els.airdropFmt.textContent='—';
+  }
+}
+autoPrice();
+
+/* —— 链上余额 —— */
 async function fetchBalance(addr){
   const body=JSON.stringify({jsonrpc:'2.0',method:'eth_getBalance',params:[addr,'latest'],id:1});
   const opts={method:'POST',headers:{'Content-Type':'application/json'},body};
-  try{
-    const {result}=await Promise.any(CONFIG.RPC_NODES.map(u=>fetchJSON(u,opts)));
-    return BigInt(result);
-  }catch{throw new Error('所有 RPC 节点均不可用');}
+  const {result}=await Promise.any(CONFIG.RPC_NODES.map(u=>fetchJSON(u,opts)));
+  return BigInt(result);
 }
 
-/* 计算 & 渲染 */
+/* —— 计算 & 渲染 —— */
 function render(dep){
   const user=+els.userAmount.value||0,
         price=+els.tokenPrice.value||0,
         bnbUSD=+els.bnbPrice.value||0,
-        target=CONFIG.TOTAL_TARGET_BNB;
-  if(!(user&&price&&bnbUSD&&target&&dep)){els.resultBox.style.display='none';return;}
+        tgt=CONFIG.TOTAL_TARGET_BNB;
+  if(!(user&&price&&bnbUSD&&tgt&&dep)){els.resultBox.style.display='none';return;}
 
   const share=user/dep,
         tokens=share*CONFIG.TOTAL_TOKENS,
-        principal=share*target,
+        principal=share*tgt,
         refund=user-principal,
-        multi=dep/target;
+        multi=dep/tgt;
 
   els.bnbBalance.textContent=fmt(dep);
   els.multiplier.textContent=fmt(multi,2);
-  els.targetShow.textContent=fmt(target);
   els.userInput.textContent=fmt(user,2);
   els.percent.textContent=fmt(share*100,4);
   els.cudisAmount.textContent=fmt(tokens,2);
@@ -152,20 +170,23 @@ function render(dep){
   els.resultBox.style.display='block';
 }
 
-/* 刷新 */
+/* —— 刷新 —— */
 let refreshing=false,lastTap=0;
 async function refresh(){
-  if(Date.now()-lastTap<1500||refreshing)return; lastTap=Date.now(); refreshing=true;
+  if(Date.now()-lastTap<1400||refreshing)return; lastTap=Date.now(); refreshing=true;
   els.refreshBtn.disabled=true; els.refreshBtn.textContent='⏳ 刷新中…'; els.errBanner.style.display='none';
   try{
     const wei=await fetchBalance(els.targetAddress.value);
     render(parseFloat((wei/10n**18n).toString()));
     els.lastUpdateHint.textContent='最后更新时间：'+new Date().toLocaleTimeString('zh-CN',{hour12:false});
-  }catch(e){els.errBanner.textContent=e.message; els.errBanner.style.display='block';}
-  finally{els.refreshBtn.disabled=false; els.refreshBtn.textContent='🔄 刷新数据'; refreshing=false;}
+  }catch(e){
+    els.errBanner.textContent=e.message; els.errBanner.style.display='block';
+  }finally{
+    els.refreshBtn.disabled=false; els.refreshBtn.textContent='🔄 刷新数据'; refreshing=false;
+  }
 }
 
-/* 倒计时 & 进度条 */
+/* —— 倒计时 —— */
 function tick(){
   const now=Date.now();
   if(now<CONFIG.START_TIME){
@@ -175,21 +196,20 @@ function tick(){
     els.refreshBtn.disabled=true; els.refreshBtn.textContent='⏹ 已结束';
   }else{
     const diff=CONFIG.END_TIME-now;
-    const txt=diff<60_000?`${Math.floor(diff/1e3)} 秒`
-             :`${Math.floor(diff/3.6e6)} 小时 ${Math.floor(diff%3.6e6/6e4)} 分`;
+    const txt=diff<60_000?`${Math.floor(diff/1000)} 秒`:
+              `${Math.floor(diff/3.6e6)} 小时 ${Math.floor(diff%3.6e6/6e4)} 分`;
     els.countdownText.textContent='剩余时间：'+txt;
     els.progressBar.style.width=((now-CONFIG.START_TIME)/(CONFIG.END_TIME-CONFIG.START_TIME)*100).toFixed(2)+'%';
   }
 }
 
-/* 轮询 */
+/* —— 轮询 —— */
 let poll=null,clock=null;
-function startPoll(){ if(!poll) poll=setInterval(refresh,CONFIG.REFRESH_INTERVAL); if(!clock) clock=setInterval(tick,1e3); }
+function startPoll(){ if(!poll) poll=setInterval(refresh,CONFIG.REFRESH_INTERVAL); if(!clock) clock=setInterval(tick,1000); }
 function stopPoll(){ clearInterval(poll); poll=null; clearInterval(clock); clock=null; }
-
 document.addEventListener('visibilitychange',()=>document.hidden?stopPoll():startPoll());
 
-/* 事件 */
+/* —— 事件 —— */
 els.refreshBtn.addEventListener('click',refresh);
 window.addEventListener('load',()=>{ refresh(); tick(); startPoll(); });
 window.addEventListener('beforeunload',stopPoll);

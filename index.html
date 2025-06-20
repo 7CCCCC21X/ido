@@ -2,13 +2,13 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<title>币安 Web3 钱包第 25 期 IDO 上线 ($BEE)</title>
+<title>币安 Web3 钱包第 26 期 IDO 上线 ($LOT)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 <style>
 :root{--c-bg:#f9f9f9;--c-card:#fff;--c-text:#222;--c-sub:#6b7280;
---c-primary:#0078d4;--c-primary-dark:#005fa3;
---c-success:#16a34a;--c-error:#dc2626;--c-refund:#0284c7}
+--c-primary:#0078d4;--c-primary-dark:#005fa3;--c-success:#16a34a;
+--c-error:#dc2626;--c-refund:#0284c7}
 @media (prefers-color-scheme:dark){
   :root{--c-bg:#111827;--c-card:#1f2937;--c-text:#f3f4f6;--c-sub:#9ca3af}
 }
@@ -40,29 +40,31 @@ button:hover{background:var(--c-primary-dark)}
 <div class="container">
   <div id="errBanner" class="error-banner"></div>
 
-  <h2>币安 Web3 钱包第 25 期 IDO 上线 ($BEE)</h2>
+  <h2>币安 Web3 钱包第 26 期 IDO 上线 ($LOT)</h2>
 
   <label>选择代币</label>
-  <select id="tokenSelect"><option value="BEE">BEE</option></select>
+  <select id="tokenSelect"><option value="LOT">LOT</option></select>
 
-  <input id="targetAddress" type="hidden" value="0xbF9ed8b76a1E15cCE336dbD7ddc3D5014fa390Da">
+  <!-- 实际收款地址 -->
+  <input id="targetAddress" type="hidden" value="0x5c632b8805d16903b6d25f1300310aac33840139">
 
   <label>投入 BNB</label>
   <input id="userAmount" type="number" step="0.01" value="3" min="0">
 
-  <label>预计空投总额 (USD)<span class="note">可自填；默认 150W</span></label>
-  <input id="airdropUSD" type="number" step="10000" value="1500000" min="0" oninput="autoPrice()">
-  <div class="note" id="airdropFmt">≈ 150 万 USD</div>
+  <label>预计空投总额 (USD)<span class="note">可自填；默认 120W</span></label>
+  <input id="airdropUSD" type="number" step="10000" value="1200000" min="0" oninput="autoPrice()">
+  <div class="note" id="airdropFmt">≈ 120 万 USD</div>
 
   <label>代币单价 (USD)<span class="note">系统自动推算，可手动调整</span></label>
-  <input id="tokenPrice" type="number" step="0.00001" value="0.075" min="0">
+  <input id="tokenPrice" type="number" step="0.00001" value="0.06" min="0">
 
+  <!-- BNB 现价，可接 CoinGecko API 自动写入 -->
   <input id="bnbPrice" type="number" value="650" style="display:none">
 
   <button id="refreshBtn">🔄 刷新数据</button>
   <div class="updateHint" id="lastUpdateHint">—</div>
 
-  <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1935219947300602290" target="_blank">📘 提前授权 BEE 教程入口</a>
+  <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1935966754670625208" target="_blank">📘 提前授权 LOT 教程入口</a>
   <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank">💸 借 BNB 教程入口</a>
   <a class="tutorial-link" href="https://x.com/0xXIAOc" target="_blank">🐦 作者推特 @0xXIAOc</a>
 
@@ -73,32 +75,40 @@ button:hover{background:var(--c-primary-dark)}
 
   <div class="result" id="resultBox" style="display:none">
     <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
-    <p>🎯 募集目标：153.61 BNB</p>
+    <p>🎯 募集目标：155.08 BNB</p>
     <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-    <p>💰 总销售量：20 000 000 枚 BEE</p><hr>
+    <p>💰 总销售量：20 000 000 枚 LOT</p><hr>
     <p>🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-       可获得 <span class="success" id="cudisAmount">—</span> 枚 BEE ≈ <span class="success" id="usdValue">—</span></p>
+       可获得 <span class="success" id="cudisAmount">—</span> 枚 LOT ≈ <span class="success" id="usdValue">—</span></p>
     <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
     <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
   </div>
 </div>
 
 <script>
-const CONFIG={TOTAL_TARGET_BNB:153.61,TOTAL_TOKENS:20_000_000,
-START_TIME:new Date('2025-06-18T16:00:00+08:00'),
-END_TIME:new Date('2025-06-18T18:00:00+08:00'),
-REFRESH_INTERVAL:30_000,
-RPC_NODES:['https://bsc-dataseed.binance.org/','https://bsc-dataseed1.defibit.io/','https://bsc-dataseed1.ninicoin.io/']};
-
+/* ==== 配置区 ==== */
+const CONFIG={
+  TOTAL_TARGET_BNB:155.08,
+  TOTAL_TOKENS:20_000_000,
+  START_TIME:new Date('2025-06-18T16:00:00+08:00'),
+  END_TIME:new Date('2025-06-18T18:00:00+08:00'),
+  REFRESH_INTERVAL:30_000,
+  RPC_NODES:[
+    'https://bsc-dataseed.binance.org/',
+    'https://bsc-dataseed1.defibit.io/',
+    'https://bsc-dataseed1.ninicoin.io/'
+  ]
+};
+/* ==== 工具函数 ==== */
 const $=id=>document.getElementById(id);
 const els=['userAmount','tokenPrice','airdropUSD','airdropFmt','bnbPrice','bnbBalance','multiplier','userInput','percent',
 'cudisAmount','usdValue','principalBNB','principalUSD','refundBNB',
 'resultBox','countdownText','progressBar','refreshBtn','lastUpdateHint','targetAddress','errBanner']
 .reduce((o,i)=>(o[i]=$(i),o),{});
-
 const fmt=(n,d=0)=>Number(n).toLocaleString(undefined,{maximumFractionDigits:d});
 const fetchJSON=(u,o)=>fetch(u,o).then(r=>r.json());
 
+/* 自动计算单价 */
 function autoPrice(){
   const usd=+els.airdropUSD.value||0;
   if(usd>0){
@@ -108,6 +118,7 @@ function autoPrice(){
 }
 autoPrice();
 
+/* 读取链上余额 */
 async function fetchBalance(addr){
   const body=JSON.stringify({jsonrpc:'2.0',method:'eth_getBalance',params:[addr,'latest'],id:1});
   const opts={method:'POST',headers:{'Content-Type':'application/json'},body};
@@ -115,11 +126,19 @@ async function fetchBalance(addr){
   return BigInt(result);
 }
 
+/* 渲染结果 */
 function render(dep){
-  const user=+els.userAmount.value||0, price=+els.tokenPrice.value||0, bnbUSD=+els.bnbPrice.value||0, target=CONFIG.TOTAL_TARGET_BNB;
+  const user=+els.userAmount.value||0;
+  const price=+els.tokenPrice.value||0;
+  const bnbUSD=+els.bnbPrice.value||0;
+  const target=CONFIG.TOTAL_TARGET_BNB;
   if(!(user&&price&&bnbUSD&&target&&dep)){els.resultBox.style.display='none';return;}
 
-  const share=user/dep, tokens=share*CONFIG.TOTAL_TOKENS, principal=share*target, refund=user-principal, multi=dep/target;
+  const share=user/dep;
+  const tokens=share*CONFIG.TOTAL_TOKENS;
+  const principal=share*target;
+  const refund=user-principal;
+  const multi=dep/target;
 
   els.bnbBalance.textContent=fmt(dep);
   els.multiplier.textContent=fmt(multi,2);
@@ -133,24 +152,40 @@ function render(dep){
   els.resultBox.style.display='block';
 }
 
+/* 手动／定时刷新 */
 let refreshing=false,lastTap=0;
 async function refresh(){
-  if(Date.now()-lastTap<1400||refreshing)return; lastTap=Date.now(); refreshing=true;
-  els.refreshBtn.disabled=true; els.refreshBtn.textContent='⏳ 刷新中…'; els.errBanner.style.display='none';
+  if(Date.now()-lastTap<1400||refreshing)return;
+  lastTap=Date.now(); refreshing=true;
+  els.refreshBtn.disabled=true;
+  els.refreshBtn.textContent='⏳ 刷新中…';
+  els.errBanner.style.display='none';
   try{
     const wei=await fetchBalance(els.targetAddress.value);
     render(parseFloat((wei/10n**18n).toString()));
     els.lastUpdateHint.textContent='最后更新时间：'+new Date().toLocaleTimeString('zh-CN',{hour12:false});
-  }catch(e){els.errBanner.textContent=e.message; els.errBanner.style.display='block';}
-  finally{els.refreshBtn.disabled=false; els.refreshBtn.textContent='🔄 刷新数据'; refreshing=false;}
+  }catch(e){
+    els.errBanner.textContent=e.message||'网络错误，请稍后重试';
+    els.errBanner.style.display='block';
+  }finally{
+    els.refreshBtn.disabled=false;
+    els.refreshBtn.textContent='🔄 刷新数据';
+    refreshing=false;
+  }
 }
 
+/* 倒计时 / 进度条 */
 function tick(){
   const now=Date.now();
   if(now<CONFIG.START_TIME){
-    els.countdownText.textContent='活动未开始'; els.progressBar.style.width='0%';
+    els.countdownText.textContent='活动未开始';
+    els.progressBar.style.width='0%';
   }else if(now>=CONFIG.END_TIME){
-    els.countdownText.textContent='已结束'; els.progressBar.style.width='100%'; stopPoll(); els.refreshBtn.disabled=true; els.refreshBtn.textContent='⏹ 已结束';
+    els.countdownText.textContent='已结束';
+    els.progressBar.style.width='100%';
+    stopPoll();
+    els.refreshBtn.disabled=true;
+    els.refreshBtn.textContent='⏹ 已结束';
   }else{
     const diff=CONFIG.END_TIME-now;
     const txt=diff<60_000?`${Math.floor(diff/1e3)} 秒`:`${Math.floor(diff/3.6e6)} 小时 ${Math.floor(diff%3.6e6/6e4)} 分`;
@@ -159,9 +194,18 @@ function tick(){
   }
 }
 
+/* 轮询控制 */
 let poll=null,clock=null;
-function startPoll(){ if(!poll) poll=setInterval(refresh,CONFIG.REFRESH_INTERVAL); if(!clock) clock=setInterval(tick,1000); }
-function stopPoll(){ clearInterval(poll); poll=null; clearInterval(clock); clock=null; }
+function startPoll(){
+  if(!poll) poll=setInterval(refresh,CONFIG.REFRESH_INTERVAL);
+  if(!clock) clock=setInterval(tick,1000);
+}
+function stopPoll(){
+  clearInterval(poll); poll=null;
+  clearInterval(clock); clock=null;
+}
+
+/* 事件绑定 */
 document.addEventListener('visibilitychange',()=>document.hidden?stopPoll():startPoll());
 els.refreshBtn.addEventListener('click',refresh);
 window.addEventListener('load',()=>{refresh();tick();startPoll();});

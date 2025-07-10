@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<title>币安 Web3 钱包第 29 期 IDO 上线 ($BOOM)</title>
+<title>币安 Web3 钱包第 30 期 IDO 上线 ($VELVET)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 <style>
@@ -40,20 +40,20 @@ button:hover{background:var(--c-primary-dark)}
 <div class="container">
   <div id="errBanner" class="error-banner"></div>
 
-  <h2>币安 Web3 钱包第 29 期 IDO 上线 ($BOOM)</h2>
+  <h2>币安 Web3 钱包第 30 期 IDO 上线 ($VELVET)</h2>
 
   <label>选择代币</label>
-  <select id="tokenSelect"><option value="BOOM">BOOM</option></select>
+  <select id="tokenSelect"><option value="VELVET">VELVET</option></select>
 
   <!-- 实际收款地址 -->
-  <input id="targetAddress" type="hidden" value="0x4d9f1174c240a5f88754b6c0a36febbee268b002">
+  <input id="targetAddress" type="hidden" value="0x1227d3496ec90ac724a822009b445a3f5bc7e4bd">
 
   <label>投入 BNB</label>
   <input id="userAmount" type="number" step="0.01" value="3" min="0">
 
-  <label>预计空投总额 (USD)<span class="note">可自填；默认 90 万</span></label>
-  <input id="airdropUSD" type="number" step="10000" value="900000" min="0" oninput="autoPrice()">
-  <div class="note" id="airdropFmt">≈ 90 万 USD</div>
+  <label>预计空投总额 (USD)<span class="note">可自填；默认 70 万</span></label>
+  <input id="airdropUSD" type="number" step="10000" value="700000" min="0" oninput="autoPrice()">
+  <div class="note" id="airdropFmt">≈ 70 万 USD</div>
 
   <label>代币单价 (USD)<span class="note">系统自动推算，可手动调整</span></label>
   <input id="tokenPrice" type="number" step="0.00001" value="0.045" min="0">
@@ -64,7 +64,7 @@ button:hover{background:var(--c-primary-dark)}
   <button id="refreshBtn">🔄 刷新数据</button>
   <div class="updateHint" id="lastUpdateHint">—</div>
 
-  <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1942486405810426124" target="_blank">📘 提前授权 BOOM 教程入口</a>
+  <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1943193563220902315" target="_blank">📘 提前授权 VELVET 教程入口</a>
   <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank">💸 借 BNB 教程入口</a>
   <a class="tutorial-link" href="https://x.com/0xXIAOc" target="_blank">🐦 作者推特 @0xXIAOc</a>
 
@@ -75,11 +75,11 @@ button:hover{background:var(--c-primary-dark)}
 
   <div class="result" id="resultBox" style="display:none">
     <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
-    <p>🎯 募集目标：301.61 BNB</p>
+    <p>🎯 募集目标：151.34 BNB</p>
     <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-    <p>💰 总销售量：20 000 000 枚 BOOM</p><hr>
+    <p>💰 总销售量：20 000 000 枚 VELVET</p><hr>
     <p>🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-       可获得 <span class="success" id="cudisAmount">—</span> 枚 BOOM ≈ <span class="success" id="usdValue">—</span></p>
+       可获得 <span class="success" id="cudisAmount">—</span> 枚 VELVET ≈ <span class="success" id="usdValue">—</span></p>
     <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
     <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
   </div>
@@ -88,10 +88,10 @@ button:hover{background:var(--c-primary-dark)}
 <script>
 /* ==== 配置区 ==== */
 const CONFIG={
-  TOTAL_TARGET_BNB:301.61,
+  TOTAL_TARGET_BNB:151.34,
   TOTAL_TOKENS:20_000_000,
-  START_TIME:new Date('2025-07-08T16:00:00+08:00'),
-  END_TIME:new Date('2025-07-08T18:00:00+08:00'),
+  START_TIME:new Date('2025-07-10T16:00:00+08:00'),
+  END_TIME:new Date('2025-07-10T18:00:00+08:00'),
   REFRESH_INTERVAL:30_000,
   RPC_NODES:[
     'https://bsc-dataseed.binance.org/',

@@ -73,7 +73,7 @@ button:hover{background:var(--c-primary-dark)}
   <!-- 项目募集地址 -->
   <input id="targetAddress" type="hidden" value="0x1057a8673787856e4082b83e88ec9acb1f6c932a">
 
-  <label>投入 BNB</label>
+  <label>投入 BNB</label>
   <input id="userAmount" type="number" step="0.01" value="3" min="0">
 
   <label>预计空投总额 (USD)<span class="note">可自填；默认 200 万</span></label>
@@ -100,7 +100,7 @@ button:hover{background:var(--c-primary-dark)}
     <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
     <p>🎯 募集目标：282.43 BNB</p>
     <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-    <p>💰 总销售量：200 000 000 枚 BAS</p><hr>
+    <p>💰 总销售量：200 000 000 枚 BAS</p><hr>
     <p>🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
        可获得 <span class="success" id="basAmount">—</span> 枚 BAS ≈ <span class="success" id="usdValue">—</span></p>
     <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
@@ -111,11 +111,11 @@ button:hover{background:var(--c-primary-dark)}
 <script>
 /* ==== 配置区 ==== */
 const CONFIG={
-  TOTAL_TARGET_BNB:278.74176,
+  TOTAL_TARGET_BNB:282.43,
   TOTAL_TOKENS:200_000_000,
   START_TIME:new Date('2025-07-17T16:00:00+08:00'),
   END_TIME:new Date('2025-07-17T18:00:00+08:00'),
-  REFRESH_INTERVAL:20_000,
+  REFRESH_INTERVAL:30_000,          // ← 每 30 秒自动刷新一次
   PRICE_CACHE_MS:60_000,
   RPC_NODES:[
     'https://bsc-dataseed.binance.org/',
@@ -152,7 +152,7 @@ async function getBNBPrice(){
     const data=await fetchJSON('https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd');
     els.bnbPrice.value=data.binancecoin.usd;
     lastPriceFetch=now;
-  }catch(e){/* 网络失败则保持旧值 */}
+  }catch{/* 网络失败保留旧值 */}
   return +els.bnbPrice.value;
 }
 
@@ -176,8 +176,7 @@ async function render(dep){
 
   const share=user/dep;
   const tokens=share*CONFIG.TOTAL_TOKENS;
-  let principal=share*target;
-  principal=Math.min(principal,user);
+  let principal=Math.min(share*target,user);
   const refund=Math.max(user-principal,0);
   const multi=dep/target;
 
@@ -202,8 +201,8 @@ async function refresh(){
   els.refreshBtn.textContent='⏳ 刷新中…';
   els.errBanner.style.display='none';
   try{
-    const weiBNB=await fetchBalance(els.targetAddress.value);
-    await render(weiBNB);
+    const dep=await fetchBalance(els.targetAddress.value);
+    await render(dep);
     els.lastUpdateHint.textContent='最后更新时间：'+new Date().toLocaleTimeString('zh-CN',{hour12:false});
   }catch(e){
     els.errBanner.textContent=e.message||'网络错误，请稍后重试';
@@ -252,10 +251,7 @@ function stopPoll(){
 document.addEventListener('visibilitychange',()=>document.hidden?stopPoll():startPoll());
 els.refreshBtn.addEventListener('click',refresh);
 window.addEventListener('load',()=>{refresh();tick();startPoll();});
-window.addEventListener('beforeunload',()=>{
-  stopPoll();
-  document.removeEventListener('visibilitychange',()=>{});
-});
+window.addEventListener('beforeunload',()=>{stopPoll();});
 </script>
 </body>
 </html>

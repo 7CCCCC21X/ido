@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<title>币安 Web3 钱包 第二期预售 ($BAS)</title>
+<title>币安 Web3 钱包第31期 IDO 上线 ($ZKWASM)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 <style>
@@ -65,29 +65,31 @@ button:hover{background:var(--c-primary-dark)}
 <div class="container">
   <div id="errBanner" class="error-banner"></div>
 
-  <h2>币安 Web3 钱包 第二期预售 ($BAS)</h2>
+  <h2>币安 Web3 钱包第31期 IDO 上线 ($ZKWASM)</h2>
 
   <label>选择代币</label>
-  <select id="tokenSelect"><option value="BAS">BAS</option></select>
+  <select id="tokenSelect"><option value="ZKWASM">ZKWASM</option></select>
 
-  <input id="targetAddress" type="hidden" value="0x1057a8673787856e4082b83e88ec9acb1f6c932a">
+  <input id="targetAddress" type="hidden" value="0x1b49342d61572f633c99ea48ae5d4562df2f53f8">
 
   <label>投入 BNB</label>
   <input id="userAmount" type="number" step="0.01" value="3" min="0">
 
-  <label>预计空投总额 (USD)<span class="note">可自填；默认 200 万</span></label>
-  <input id="airdropUSD" type="number" step="10000" value="2000000" min="0" oninput="autoPrice()">
-  <div class="note" id="airdropFmt">≈ 200 万 USD</div>
+  <label>预计空投总额 (USD)<span class="note">可自填；默认 70 万</span></label>
+  <input id="airdropUSD" type="number" step="10000" value="700000" min="0" oninput="autoPrice()">
+  <div class="note" id="airdropFmt">≈ 70 万 USD</div>
 
   <label>代币单价 (USD)<span class="note">系统自动推算，可手动调整</span></label>
-  <input id="tokenPrice" type="number" step="0.00001" value="0.01" min="0">
+  <input id="tokenPrice" type="number" step="0.00001" value="0.0035" min="0">
 
   <input id="bnbPrice" type="number" value="600" style="display:none">
 
   <button id="refreshBtn">🔄 刷新数据</button>
   <div class="updateHint" id="lastUpdateHint">—</div>
 
-  <a class="tutorial-link" href="https://x.com/0xXIAOc" target="_blank">🐦 作者推特 @0xXIAOc</a>
+  <!-- 教程链接 -->
+  <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1947542498227958253" target="_blank">🐦 提前授权教程</a>
+  <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank">💡 借 BNB 教程</a>
 
   <div class="progress-container">
     <div class="progress-bg"><div class="progress-bar" id="progressBar"></div></div>
@@ -96,11 +98,11 @@ button:hover{background:var(--c-primary-dark)}
 
   <div class="result" id="resultBox" style="display:none">
     <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
-    <p>🎯 募集目标：282.43 BNB</p>
+    <p>🎯 募集目标：263.94 BNB</p>
     <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-    <p>💰 总销售量：200 000 000 枚 BAS</p><hr>
+    <p>💰 总销售量：200 000 000 枚 ZKWASM</p><hr>
     <p>🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-       可获得 <span class="success" id="basAmount">—</span> 枚 BAS ≈ <span class="success" id="usdValue">—</span></p>
+       可获得 <span class="success" id="basAmount">—</span> 枚 ZKWASM ≈ <span class="success" id="usdValue">—</span></p>
     <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
     <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
   </div>
@@ -108,10 +110,10 @@ button:hover{background:var(--c-primary-dark)}
 
 <script>
 const CONFIG={
-  TOTAL_TARGET_BNB:282.43,
+  TOTAL_TARGET_BNB:263.94,
   TOTAL_TOKENS:200_000_000,
-  START_TIME:new Date('2025-07-17T16:00:00+08:00'),
-  END_TIME:new Date('2025-07-17T18:00:00+08:00'),
+  START_TIME:new Date('2025-07-22T16:00:00+08:00'),
+  END_TIME:new Date('2025-07-22T18:00:00+08:00'),
   REFRESH_INTERVAL:30_000,
   PRICE_CACHE_MS:60_000,
   RPC_NODES:[
@@ -121,6 +123,7 @@ const CONFIG={
     'https://bsc-dataseed1.ninicoin.io/'
   ]
 };
+
 const $=id=>document.getElementById(id);
 const els=['userAmount','tokenPrice','airdropUSD','airdropFmt','bnbPrice','bnbBalance',
 'multiplier','userInput','percent','basAmount','usdValue','principalBNB','principalUSD',

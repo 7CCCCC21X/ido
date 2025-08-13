@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<title>币安 Web3 钱包第32期 IDO 上线 ($DELABS)</title>
+<title>币安 Web3 钱包第三期Pre-TGE (BTR)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 <style>
@@ -59,20 +59,20 @@ button:hover{background:var(--c-primary-dark)}
 <div class="container">
   <div id="errBanner" class="error-banner"></div>
 
-  <h2>币安 Web3 钱包第32期 IDO 上线 ($DELABS)</h2>
+  <h2>币安 Web3 钱包第三期Pre-TGE (BTR)</h2>
 
-  <!-- 新合约地址 -->
-  <input id="targetAddress" type="hidden" value="0x4f473ab72f717ed7b73a4e4b3167285975f23158">
+  <!-- 打新合约地址 -->
+  <input id="targetAddress" type="hidden" value="0xe06c81c84655bdbf6cd12ffa1badacab6a0c95dd">
 
   <label>投入 BNB</label>
   <input id="userAmount" type="number" step="0.01" value="3" min="0">
 
-  <label>预计空投总额 (USD)<span class="note">默认 90 万，可自改</span></label>
-  <input id="airdropUSD" type="number" step="10000" value="900000" min="0">
-  <div class="note" id="airdropFmt">≈ 90 万 USD</div>
+  <label>预计空投总额 (USDT)<span class="note">默认 200 万，可自改</span></label>
+  <input id="airdropUSD" type="number" step="10000" value="2000000" min="0">
+  <div class="note" id="airdropFmt">≈ 200 万 USDT</div>
 
-  <label>代币单价 (USD)<span class="note">自动推算，可手动调</span></label>
-  <input id="tokenPrice" type="number" step="0.00001" value="0.015" min="0">
+  <label>代币单价 (USDT)<span class="note">自动推算，可手动调</span></label>
+  <input id="tokenPrice" type="number" step="0.00001" value="0.1" min="0">
 
   <label>刷新频率 (秒)<span class="note">最少 5 秒</span></label>
   <input id="refreshSec" type="number" step="1" value="10" min="5">
@@ -80,8 +80,7 @@ button:hover{background:var(--c-primary-dark)}
   <button id="refreshBtn">🔄 手动刷新</button>
   <div class="updateHint" id="lastUpdateHint">—</div>
 
-  <!-- 提前授权教程链接已更新 -->
-  <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1949712751917719838" target="_blank">🐦 提前授权教程</a>
+  <!-- 取消提前授权链接；保留借 BNB 教程 -->
   <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank">💡 借 BNB 教程</a>
 
   <div class="progress-container">
@@ -91,11 +90,11 @@ button:hover{background:var(--c-primary-dark)}
 
   <div class="result" id="resultBox" hidden>
     <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
-    <p>🎯 募集目标：252.11 BNB</p>
+    <p>🎯 募集目标：481.92 BNB</p>
     <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-    <p>💰 总销售量：60 000 000 枚 DELABS</p><hr>
+    <p>💰 总销售量：20 000 000 枚 BTR</p><hr>
     <p>🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-       可获得 <span class="success" id="tokenAmt">—</span> 枚 DELABS ≈ <span class="success" id="usdValue">—</span></p>
+       可获得 <span class="success" id="tokenAmt">—</span> 枚 BTR ≈ <span class="success" id="usdValue">—</span></p>
     <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
     <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
   </div>
@@ -104,8 +103,9 @@ button:hover{background:var(--c-primary-dark)}
 <script>
 /* ----------- 配置 ----------- */
 const CONFIG={
-  TOTAL_TARGET_BNB:252.11,               // 募集目标
-  TOTAL_TOKENS:60_000_000,               // 总销售量
+  TOTAL_TARGET_BNB:481.92,               // 募集目标（已按你给的值调整）
+  TOTAL_TOKENS:20_000_000,               // 总销售量（BTR）
+  // TODO: 请把实际开始/结束时间（北京时间或注明时区）发我，我再替换下面两个时间
   START_TIME:new Date('2025-07-28T16:00:00+08:00'),
   END_TIME:new Date('2025-07-28T18:00:00+08:00'),
   REFRESH_INTERVAL:10_000,               // 默认 10 秒
@@ -140,7 +140,7 @@ function computePrice(){
   const usd=+els.airdropUSD.value||0;
   if(usd){
     els.tokenPrice.value=(usd/CONFIG.TOTAL_TOKENS).toFixed(6);
-    els.airdropFmt.textContent='≈ '+fmt(usd/1e4)+' 万 USD';
+    els.airdropFmt.textContent='≈ '+fmt(usd/1e4)+' 万 USDT';
   }else els.airdropFmt.textContent='—';
 }
 

@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<title>币安 Web3 钱包第33期独家TGE (AIBOT)</title>
+<title>币安 Web3 钱包第4期Pre-TGE （REVA）</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 <style>
@@ -64,19 +64,19 @@ button:hover{background:var(--c-primary-dark)}
 <div class="container">
   <div id="errBanner" class="error-banner"></div>
 
-  <h2>币安 Web3 钱包第33期独家TGE (AIBOT)</h2>
+  <h2>币安 Web3 钱包第4期Pre-TGE （REVA）</h2>
 
-  <input id="targetAddress" type="hidden" value="0x8576239d2a2f716731d067ce868527ef065ad6b0">
+  <input id="targetAddress" type="hidden" value="0x0c5973bcef32e759f4ea04dab363032c69696331">
 
   <label>投入 BNB</label>
   <input id="userAmount" type="number" step="0.01" value="3" min="0">
 
-  <label>预计空投总额 (USDT)<span class="note">默认 80 万，可自改</span></label>
-  <input id="airdropUSD" type="number" step="10000" value="800000" min="0">
-  <div class="note" id="airdropFmt">≈ 80 万 USDT</div>
+  <label>预计空投总额 (USDT)<span class="note">默认 140 万，可自改</span></label>
+  <input id="airdropUSD" type="number" step="10000" value="1400000" min="0">
+  <div class="note" id="airdropFmt">≈ 140 万 USDT</div>
 
   <label>代币单价 (USDT)<span class="note">自动推算，可手动调</span></label>
-  <input id="tokenPrice" type="number" step="0.00001" value="0.1" min="0">
+  <input id="tokenPrice" type="number" step="0.00001" value="0.07" min="0">
 
   <label>刷新频率 (秒)<span class="note">最少 5 秒</span></label>
   <input id="refreshSec" type="number" step="1" value="10" min="5">
@@ -85,7 +85,6 @@ button:hover{background:var(--c-primary-dark)}
   <div class="updateHint" id="lastUpdateHint">—</div>
 
   <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank">💡 借 BNB 教程</a>
-  <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1955867798217089158" target="_blank">🧾 提前授权教程</a>
 
   <div class="progress-container">
     <div class="progress-bg"><div class="progress-bar" id="progressBar"></div></div>
@@ -94,11 +93,11 @@ button:hover{background:var(--c-primary-dark)}
 
   <div class="result" id="resultBox" hidden>
     <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
-    <p>🎯 募集目标：247.91 BNB</p>
+    <p>🎯 募集目标：240.11 BNB</p>
     <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-    <p>💰 总销售量：20 000 000 枚 AIBOT</p><hr>
+    <p>💰 总销售量：20 000 000 枚 REVA</p><hr>
     <p>🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-       可获得 <span class="success" id="tokenAmt">—</span> 枚 AIBOT ≈ <span class="success" id="usdValue">—</span></p>
+       可获得 <span class="success" id="tokenAmt">—</span> 枚 REVA ≈ <span class="success" id="usdValue">—</span></p>
     <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
     <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
   </div>
@@ -108,10 +107,10 @@ button:hover{background:var(--c-primary-dark)}
 
 <script>
 const CONFIG={
-  TOTAL_TARGET_BNB:247.91,
+  TOTAL_TARGET_BNB:240.11,
   TOTAL_TOKENS:20_000_000,
-  START_TIME:new Date('2025-08-14T16:00:00+08:00'),
-  END_TIME:new Date('2025-08-14T18:00:00+08:00'),
+  START_TIME:new Date('2025-08-14T19:00:00+08:00'),
+  END_TIME:new Date('2025-08-14T21:00:00+08:00'),
   REFRESH_INTERVAL:10_000,
   PRICE_CACHE_MS:60_000,
   PRICE_APIS:[

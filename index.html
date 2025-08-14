@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<title>币安 Web3 钱包第三期Pre-TGE  (BTR)</title>
+<title>币安 Web3 钱包第33期独家TGE (AIBOT)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 <style>
@@ -53,23 +53,27 @@ button:hover{background:var(--c-primary-dark)}
 .error-banner{
   display:none;margin-bottom:18px;padding:10px 14px;border-radius:10px;background:var(--c-error);color:#fff;font-size:14px
 }
+.footer{
+  margin-top:40px;text-align:center;font-size:14px;color:var(--c-sub)
+}
+.footer a{color:var(--c-primary);text-decoration:none}
+.footer a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
 <div class="container">
   <div id="errBanner" class="error-banner"></div>
 
-  <h2>币安 Web3 钱包第三期Pre-TGE  (BTR)</h2>
+  <h2>币安 Web3 钱包第33期独家TGE (AIBOT)</h2>
 
-  <!-- 打新合约地址 -->
-  <input id="targetAddress" type="hidden" value="0xe06c81c84655bdbf6cd12ffa1badacab6a0c95dd">
+  <input id="targetAddress" type="hidden" value="0x8576239d2a2f716731d067ce868527ef065ad6b0">
 
   <label>投入 BNB</label>
   <input id="userAmount" type="number" step="0.01" value="3" min="0">
 
-  <label>预计空投总额 (USDT)<span class="note">默认 200 万，可自改</span></label>
-  <input id="airdropUSD" type="number" step="10000" value="2000000" min="0">
-  <div class="note" id="airdropFmt">≈ 200 万 USDT</div>
+  <label>预计空投总额 (USDT)<span class="note">默认 80 万，可自改</span></label>
+  <input id="airdropUSD" type="number" step="10000" value="800000" min="0">
+  <div class="note" id="airdropFmt">≈ 80 万 USDT</div>
 
   <label>代币单价 (USDT)<span class="note">自动推算，可手动调</span></label>
   <input id="tokenPrice" type="number" step="0.00001" value="0.1" min="0">
@@ -80,8 +84,8 @@ button:hover{background:var(--c-primary-dark)}
   <button id="refreshBtn">🔄 手动刷新</button>
   <div class="updateHint" id="lastUpdateHint">—</div>
 
-  <!-- 取消提前授权链接；保留借 BNB 教程 -->
   <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank">💡 借 BNB 教程</a>
+  <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1955867798217089158" target="_blank">🧾 提前授权教程</a>
 
   <div class="progress-container">
     <div class="progress-bg"><div class="progress-bar" id="progressBar"></div></div>
@@ -90,24 +94,25 @@ button:hover{background:var(--c-primary-dark)}
 
   <div class="result" id="resultBox" hidden>
     <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
-    <p>🎯 募集目标：495.82 BNB</p>
+    <p>🎯 募集目标：247.91 BNB</p>
     <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-    <p>💰 总销售量：20 000 000 枚 BTR</p><hr>
+    <p>💰 总销售量：20 000 000 枚 AIBOT</p><hr>
     <p>🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-       可获得 <span class="success" id="tokenAmt">—</span> 枚 BTR ≈ <span class="success" id="usdValue">—</span></p>
+       可获得 <span class="success" id="tokenAmt">—</span> 枚 AIBOT ≈ <span class="success" id="usdValue">—</span></p>
     <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
     <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
   </div>
 </div>
 
+<div class="footer">作者：<a href="https://x.com/0xXIAOc" target="_blank">@0xXIAOc</a></div>
+
 <script>
-/* ----------- 配置 ----------- */
 const CONFIG={
-  TOTAL_TARGET_BNB:481.92,               // 募集目标（BNB）
-  TOTAL_TOKENS:20_000_000,               // 总销售量（BTR）
-  START_TIME:new Date('2025-08-13T16:00:00+08:00'),
-  END_TIME:new Date('2025-08-13T18:00:00+08:00'),
-  REFRESH_INTERVAL:10_000,               // 默认 10 秒
+  TOTAL_TARGET_BNB:247.91,
+  TOTAL_TOKENS:20_000_000,
+  START_TIME:new Date('2025-08-14T16:00:00+08:00'),
+  END_TIME:new Date('2025-08-14T18:00:00+08:00'),
+  REFRESH_INTERVAL:10_000,
   PRICE_CACHE_MS:60_000,
   PRICE_APIS:[
     'https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd',
@@ -121,7 +126,6 @@ const CONFIG={
   ]
 };
 
-/* ----------- 元素 & 工具 ----------- */
 const $=id=>document.getElementById(id);
 const els={userAmount:$('userAmount'),tokenPrice:$('tokenPrice'),
   airdropUSD:$('airdropUSD'),airdropFmt:$('airdropFmt'),refreshSec:$('refreshSec'),
@@ -134,7 +138,6 @@ const els={userAmount:$('userAmount'),tokenPrice:$('tokenPrice'),
 const fmt=(n,d=0)=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:d});
 const fetchJSON=(u,o)=>fetch(u,o).then(r=>r.json());
 
-/* ----------- 价格 & 空投计算 ----------- */
 function computePrice(){
   const usd=+els.airdropUSD.value||0;
   if(usd){
@@ -156,7 +159,6 @@ async function getBNBPrice(){
   return 0;
 }
 
-/* ----------- 链上余额 ----------- */
 async function fetchBalance(addr){
   const body=JSON.stringify({jsonrpc:'2.0',method:'eth_getBalance',params:[addr,'latest'],id:1});
   for(const node of CONFIG.RPC_NODES){
@@ -168,7 +170,6 @@ async function fetchBalance(addr){
   return 0;
 }
 
-/* ----------- 主渲染 ----------- */
 let latestDep=0;
 async function render(dep=latestDep){
   latestDep=dep; computePrice();
@@ -196,7 +197,6 @@ async function render(dep=latestDep){
   els.resultBox.hidden=false;
 }
 
-/* ----------- 刷新逻辑 ----------- */
 let refreshing=false;
 async function refresh(manual=false){
   if(refreshing) return;
@@ -213,7 +213,6 @@ async function refresh(manual=false){
   }
 }
 
-/* ----------- 倒计时 ----------- */
 function tick(){
   const {START_TIME:st,END_TIME:et}=CONFIG,now=Date.now();
   if(now<st){els.countdownText.textContent='活动未开始';els.progressBar.style.width='0%';return;}
@@ -226,7 +225,6 @@ function tick(){
   els.progressBar.style.width(((now-st)/(et-st)*100).toFixed(2)+'%');
 }
 
-/* ----------- 轮询 ----------- */
 let poll=null;
 function applyInterval(){
   CONFIG.REFRESH_INTERVAL=Math.max(+els.refreshSec.value||10,5)*1000;
@@ -234,7 +232,6 @@ function applyInterval(){
   poll=setInterval(refresh,CONFIG.REFRESH_INTERVAL);
 }
 
-/* ----------- 事件绑定 ----------- */
 els.userAmount.addEventListener('input',()=>render());
 els.airdropUSD.addEventListener('input',()=>render());
 els.refreshSec.addEventListener('change',applyInterval);
@@ -243,9 +240,9 @@ document.addEventListener('visibilitychange',()=>document.hidden?clearInterval(p
 
 window.addEventListener('load',async()=>{
   computePrice();
-  applyInterval();          // 启用默认或输入的周期
-  await refresh();          // 首次拉数据
-  setInterval(tick,500);    // 倒计时
+  applyInterval();
+  await refresh();
+  setInterval(tick,500);
 });
 </script>
 </body>

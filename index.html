@@ -1,248 +1,248 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-<meta charset="UTF-8">
-<title>币安 Web3 钱包第4期Pre-TGE （REVA）</title>
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="color-scheme" content="light dark">
-<style>
-:root{
-  --c-bg:#f9f9f9;--c-card:#fff;--c-text:#222;--c-sub:#6b7280;
-  --c-primary:#0078d4;--c-primary-dark:#005fa3;--c-success:#16a34a;
-  --c-error:#dc2626;--c-refund:#0284c7;--c-warn:#f59e0b;
-}
-@media(prefers-color-scheme:dark){
-  :root{--c-bg:#111827;--c-card:#1f2937;--c-text:#f3f4f6;--c-sub:#9ca3af}
-}
-*{box-sizing:border-box;margin:0}
-body{
-  font-family:-apple-system,Segoe UI,PingFang SC,Helvetica,Arial,sans-serif;
-  background:var(--c-bg);color:var(--c-text)
-}
-.container{
-  max-width:660px;margin:40px auto;padding:34px;background:var(--c-card);
-  border-radius:18px;box-shadow:0 10px 24px rgba(0,0,0,.08)
-}
-h2{color:var(--c-primary);text-align:center;margin-bottom:28px}
-label{display:block;margin:18px 0 8px;font-weight:700}
-.note{font-size:13px;color:var(--c-sub);margin-left:4px}
-input,select{
-  width:100%;padding:12px;font-size:15px;border:1px solid #ccc;
-  border-radius:10px;background:var(--c-card);color:var(--c-text)
-}
-button{
-  width:100%;padding:13px;font-size:16px;background:var(--c-primary);color:#fff;
-  border:none;border-radius:10px;margin-top:24px;cursor:pointer;transition:background .2s
-}
-button:hover{background:var(--c-primary-dark)}
-.progress-container{margin-top:34px}
-.progress-bg{background:#e5e7eb;height:14px;border-radius:10px;overflow:hidden}
-.progress-bar{background:var(--c-primary);height:100%;width:0%;transition:width .4s}
-.countdown{margin-top:6px;text-align:right;font-size:14px;color:var(--c-sub)}
-.result{margin-top:34px;padding:22px;border-radius:14px;border:1px solid #d1d5db;background:var(--c-bg)}
-.result p{margin:10px 0;font-size:15px;line-height:1.45}
-.highlight{font-weight:700}
-.success{color:var(--c-success);font-weight:700}
-.deduct{color:var(--c-error);font-weight:700}
-.refund{color:var(--c-refund);font-weight:700}
-.tutorial-link{
-  display:block;margin-top:18px;text-align:center;font-weight:700;text-decoration:none;color:var(--c-primary)
-}
-.tutorial-link:hover{text-decoration:underline}
-.updateHint{text-align:right;font-size:13px;color:var(--c-sub);margin-top:10px}
-.error-banner{
-  display:none;margin-bottom:18px;padding:10px 14px;border-radius:10px;background:var(--c-error);color:#fff;font-size:14px
-}
-.footer{
-  margin-top:40px;text-align:center;font-size:14px;color:var(--c-sub)
-}
-.footer a{color:var(--c-primary);text-decoration:none}
-.footer a:hover{text-decoration:underline}
-</style>
+    <meta charset="UTF-8">
+    <title>币安 Web3 钱包第34期 IDO (RICE)</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <style>
+        :root{
+            --c-bg:#f9f9f9; --c-card:#fff; --c-text:#222; --c-sub:#6b7280;
+            --c-primary:#0078d4; --c-primary-dark:#005fa3; --c-success:#16a34a;
+            --c-error:#dc2626; --c-refund:#0284c7; --c-warn:#f59e0b;
+        }
+        @media(prefers-color-scheme:dark){
+            :root{ --c-bg:#111827; --c-card:#1f2937; --c-text:#f3f4f6; --c-sub:#9ca3af }
+        }
+        *{box-sizing:border-box;margin:0}
+        body{
+            font-family:-apple-system,Segoe UI,PingFang SC,Helvetica,Arial,sans-serif;
+            background:var(--c-bg);color:var(--c-text)
+        }
+        .container{
+            max-width:660px;margin:40px auto;padding:34px;background:var(--c-card);border-radius:18px;
+            box-shadow:0 10px 24px rgba(0,0,0,.08)
+        }
+        h2{color:var(--c-primary);text-align:center;margin-bottom:28px}
+        label{display:block;margin:18px 0 8px;font-weight:700}
+        .note{font-size:13px;color:var(--c-sub);margin-left:4px}
+        input,select{width:100%;padding:12px;font-size:15px;border:1px solid #ccc;border-radius:10px;background:var(--c-card);color:var(--c-text)}
+        button{width:100%;padding:13px;font-size:16px;background:var(--c-primary);color:#fff;border:none;border-radius:10px;margin-top:24px;cursor:pointer;transition:background .2s}
+        button:hover{background:var(--c-primary-dark)}
+        .progress-container{margin-top:34px}
+        .progress-bg{background:#e5e7eb;height:14px;border-radius:10px;overflow:hidden}
+        .progress-bar{background:var(--c-primary);height:100%;width:0%;transition:width .4s}
+        .countdown{margin-top:6px;text-align:right;font-size:14px;color:var(--c-sub)}
+        .result{margin-top:34px;padding:22px;border-radius:14px;border:1px solid #d1d5db;background:var(--c-bg)}
+        .result p{margin:10px 0;font-size:15px;line-height:1.45}
+        .highlight{font-weight:700}
+        .success{color:var(--c-success);font-weight:700}
+        .deduct{color:var(--c-error);font-weight:700}
+        .refund{color:var(--c-refund);font-weight:700}
+        .tutorial-link{display:block;margin-top:18px;text-align:center;font-weight:700;text-decoration:none;color:var(--c-primary)}
+        .tutorial-link:hover{text-decoration:underline}
+        .updateHint{text-align:right;font-size:13px;color:var(--c-sub);margin-top:10px}
+        .error-banner{display:none;margin-bottom:18px;padding:10px 14px;border-radius:10px;background:var(--c-error);color:#fff;font-size:14px}
+        .footer{margin-top:40px;text-align:center;font-size:14px;color:var(--c-sub)}
+        .footer a{color:var(--c-primary);text-decoration:none}
+        .footer a:hover{text-decoration:underline}
+    </style>
 </head>
 <body>
-<div class="container">
-  <div id="errBanner" class="error-banner"></div>
+    <div class="container">
+        <div id="errBanner" class="error-banner"></div>
+        <h2>币安 Web3 钱包第34期 IDO (RICE)</h2>
+        <input id="targetAddress" type="hidden" value="0x559b7b88b46d3121e50dfcbb1e9a17f9decb5ad2">
+        <label>投入 BNB</label>
+        <input id="userAmount" type="number" step="0.01" value="3" min="0">
+        <label>预计空投总额 (USDT)<span class="note">默认 70 万，可自改</span></label>
+        <input id="airdropUSD" type="number" step="10000" value="700000" min="0">
+        <div class="note" id="airdropFmt">≈ 70 万 USDT</div>
+        <label>代币单价 (USDT)<span class="note">自动推算，可手动调</span></label>
+        <input id="tokenPrice" type="number" step="0.00001" value="0.07" min="0">
+        <label>刷新频率 (秒)<span class="note">最少 5 秒</span></label>
+        <input id="refreshSec" type="number" step="1" value="10" min="5">
+        <button id="refreshBtn">🔄 手动刷新</button>
+        <div class="updateHint" id="lastUpdateHint">—</div>
+        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1957339592266481956" target="_blank">💡 借 BNB 教程</a>
+        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1957339592266481956" target="_blank">💡 提前授权教程</a>
+        <div class="progress-container">
+            <div class="progress-bg"><div class="progress-bar" id="progressBar"></div></div>
+            <div class="countdown" id="countdownText">倒计时加载中…</div>
+        </div>
+        <div class="result" id="resultBox" hidden>
+            <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
+            <p>🎯 募集目标：118.91 BNB</p>
+            <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
+            <p>💰 总销售量：20 000 000 枚 RICE</p><hr>
+            <p>🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
+                可获得 <span class="success" id="tokenAmt">—</span> 枚 RICE ≈ <span class="success" id="usdValue">—</span></p>
+            <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
+            <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
+        </div>
+    </div>
+    <div class="footer">作者：<a href="https://x.com/0xXIAOc" target="_blank">@0xXIAOc</a></div>
+    <script>
+        const CONFIG={ 
+            TOTAL_TARGET_BNB:118.91, 
+            TOTAL_TOKENS:20_000_000, 
+            START_TIME:new Date('2025-08-18T16:00:00+08:00'), 
+            END_TIME:new Date('2025-08-18T18:00:00+08:00'), 
+            REFRESH_INTERVAL:10_000, 
+            PRICE_CACHE_MS:60_000, 
+            PRICE_APIS:[ 
+                'https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd', 
+                'https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD' 
+            ], 
+            RPC_NODES:[ 
+                'https://bsc-dataseed.binance.org/', 
+                'https://bsc-dataseed1.defibit.io/', 
+                'https://bsc-dataseed4.defibit.io/', 
+                'https://bsc-dataseed1.ninicoin.io/' 
+            ] 
+        };
 
-  <h2>币安 Web3 钱包第4期Pre-TGE （REVA）</h2>
+        const $=id=>document.getElementById(id);
+        const els={ 
+            userAmount:$('userAmount'),
+            tokenPrice:$('tokenPrice'),
+            airdropUSD:$('airdropUSD'),
+            airdropFmt:$('airdropFmt'),
+            refreshSec:$('refreshSec'),
+            refreshBtn:$('refreshBtn'),
+            lastUpdateHint:$('lastUpdateHint'),
+            bnbBalance:$('bnbBalance'),
+            multiplier:$('multiplier'),
+            userInput:$('userInput'),
+            percent:$('percent'),
+            tokenAmt:$('tokenAmt'),
+            usdValue:$('usdValue'),
+            principalBNB:$('principalBNB'),
+            principalUSD:$('principalUSD'),
+            refundBNB:$('refundBNB'),
+            resultBox:$('resultBox'),
+            countdownText:$('countdownText'),
+            progressBar:$('progressBar'),
+            errBanner:$('errBanner'),
+            targetAddress:$('targetAddress')
+        };
 
-  <input id="targetAddress" type="hidden" value="0x0c5973bcef32e759f4ea04dab363032c69696331">
+        const fmt=(n,d=0)=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:d});
+        const fetchJSON=(u,o)=>fetch(u,o).then(r=>r.json());
 
-  <label>投入 BNB</label>
-  <input id="userAmount" type="number" step="0.01" value="3" min="0">
+        function computePrice(){
+            const usd=+els.airdropUSD.value||0;
+            if(usd){
+                els.tokenPrice.value=(usd/CONFIG.TOTAL_TOKENS).toFixed(6);
+                els.airdropFmt.textContent='≈ '+fmt(usd/1e4)+' 万 USDT';
+            }else els.airdropFmt.textContent='—';
+        }
 
-  <label>预计空投总额 (USDT)<span class="note">默认 140 万，可自改</span></label>
-  <input id="airdropUSD" type="number" step="10000" value="1400000" min="0">
-  <div class="note" id="airdropFmt">≈ 140 万 USDT</div>
+        async function getBNBPrice(){
+            const cache=JSON.parse(localStorage.getItem('bnbP')||'{}');
+            if(cache.v && Date.now()-cache.t<CONFIG.PRICE_CACHE_MS) return cache.v;
+            for(const url of CONFIG.PRICE_APIS){
+                try{
+                    const d=await fetchJSON(url);
+                    const usd=d?.binancecoin?.usd||d?.USD;
+                    if(usd){
+                        localStorage.setItem('bnbP',JSON.stringify({v:usd,t:Date.now()}));
+                        return usd;
+                    }
+                }catch{}
+            }
+            return 0;
+        }
 
-  <label>代币单价 (USDT)<span class="note">自动推算，可手动调</span></label>
-  <input id="tokenPrice" type="number" step="0.00001" value="0.07" min="0">
+        async function fetchBalance(addr){
+            const body=JSON.stringify({jsonrpc:'2.0',method:'eth_getBalance',params:[addr,'latest'],id:1});
+            for(const node of CONFIG.RPC_NODES){
+                try{
+                    const {result}=await fetchJSON(node,{method:'POST',headers:{'Content-Type':'application/json'},body});
+                    return Number(BigInt(result)/10n**18n);
+                }catch{}
+            }
+            return 0;
+        }
 
-  <label>刷新频率 (秒)<span class="note">最少 5 秒</span></label>
-  <input id="refreshSec" type="number" step="1" value="10" min="5">
+        let latestDep=0;
+        async function render(dep=latestDep){
+            latestDep=dep;
+            computePrice();
+            const user=+els.userAmount.value||0;
+            const price=+els.tokenPrice.value||0;
+            const bnbUSD=await getBNBPrice();
+            const target=CONFIG.TOTAL_TARGET_BNB;
+            if(!(user&&price&&bnbUSD&&target&&dep)){
+                els.resultBox.hidden=true;
+                return;
+            }
+            const share=user/dep;
+            const tokens=share*CONFIG.TOTAL_TOKENS;
+            const principal=Math.min(share*target,user);
+            const refund=Math.max(user-principal,0);
+            const multi=dep/target;
+            els.bnbBalance.textContent=fmt(dep,4);
+            els.multiplier.textContent=fmt(multi,2);
+            els.userInput.textContent=fmt(user,2);
+            els.percent.textContent=fmt(share*100,4);
+            els.tokenAmt.textContent=fmt(tokens,2);
+            els.usdValue.textContent=fmt(tokens*price,'2');
+            els.principalBNB.textContent=fmt(principal,4);
+            els.principalUSD.textContent=fmt(principal*bnbUSD,'2');
+            els.refundBNB.textContent=fmt(refund,4);
+            els.resultBox.hidden=false;
+        }
 
-  <button id="refreshBtn">🔄 手动刷新</button>
-  <div class="updateHint" id="lastUpdateHint">—</div>
+        let refreshing=false;
+        async function refresh(manual=false){
+            if(refreshing) return;
+            refreshing=true;
+            els.refreshBtn.disabled=true;
+            if(manual) els.errBanner.style.display='none';
+            try{
+                const dep=await fetchBalance(els.targetAddress.value);
+                await render(dep);
+                els.lastUpdateHint.textContent='最后更新：'+new Date().toLocaleTimeString('zh-CN',{hour12:false});
+            }catch(e){
+                if(manual){
+                    els.errBanner.textContent=e.message||'网络错误';
+                    els.errBanner.style.display='block';
+                }
+            }finally{
+                els.refreshBtn.disabled=false;
+                refreshing=false;
+            }
+        }
 
-  <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank">💡 借 BNB 教程</a>
+        function tick(){
+            const {START_TIME:st,END_TIME:et}=CONFIG,now=Date.now();
+            if(now<st){els.countdownText.textContent='活动未开始';els.progressBar.style.width='0%';return;}
+            if(now>=et){els.countdownText.textContent='已结束';els.progressBar.style.width='100%';return;}
+            const diff=et-now;
+            const txt=diff<10_000?(diff/1e3).toFixed(1)+' 秒': diff<3.6e6?Math.floor(diff/6e4)+' 分 '+Math.floor(diff%6e4/1e3)+' 秒': Math.floor(diff/3.6e6)+' 小时 '+Math.floor(diff%3.6e6/6e4)+' 分';
+            els.countdownText.textContent='剩余时间：'+txt;
+            els.progressBar.style.width(((now-st)/(et-st)*100).toFixed(2)+'%');
+        }
 
-  <div class="progress-container">
-    <div class="progress-bg"><div class="progress-bar" id="progressBar"></div></div>
-    <div class="countdown" id="countdownText">倒计时加载中…</div>
-  </div>
+        let poll=null;
+        function applyInterval(){
+            CONFIG.REFRESH_INTERVAL=Math.max(+els.refreshSec.value||10,5)*1000;
+            clearInterval(poll);
+            poll=setInterval(refresh,CONFIG.REFRESH_INTERVAL);
+        }
 
-  <div class="result" id="resultBox" hidden>
-    <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
-    <p>🎯 募集目标：240.11 BNB</p>
-    <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-    <p>💰 总销售量：20 000 000 枚 REVA</p><hr>
-    <p>🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-       可获得 <span class="success" id="tokenAmt">—</span> 枚 REVA ≈ <span class="success" id="usdValue">—</span></p>
-    <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
-    <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
-  </div>
-</div>
-
-<div class="footer">作者：<a href="https://x.com/0xXIAOc" target="_blank">@0xXIAOc</a></div>
-
-<script>
-const CONFIG={
-  TOTAL_TARGET_BNB:240.11,
-  TOTAL_TOKENS:20_000_000,
-  START_TIME:new Date('2025-08-14T19:00:00+08:00'),
-  END_TIME:new Date('2025-08-14T21:00:00+08:00'),
-  REFRESH_INTERVAL:10_000,
-  PRICE_CACHE_MS:60_000,
-  PRICE_APIS:[
-    'https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd',
-    'https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD'
-  ],
-  RPC_NODES:[
-    'https://bsc-dataseed.binance.org/',
-    'https://bsc-dataseed1.defibit.io/',
-    'https://bsc-dataseed4.defibit.io/',
-    'https://bsc-dataseed1.ninicoin.io/'
-  ]
-};
-
-const $=id=>document.getElementById(id);
-const els={userAmount:$('userAmount'),tokenPrice:$('tokenPrice'),
-  airdropUSD:$('airdropUSD'),airdropFmt:$('airdropFmt'),refreshSec:$('refreshSec'),
-  refreshBtn:$('refreshBtn'),lastUpdateHint:$('lastUpdateHint'),
-  bnbBalance:$('bnbBalance'),multiplier:$('multiplier'),userInput:$('userInput'),
-  percent:$('percent'),tokenAmt:$('tokenAmt'),usdValue:$('usdValue'),
-  principalBNB:$('principalBNB'),principalUSD:$('principalUSD'),refundBNB:$('refundBNB'),
-  resultBox:$('resultBox'),countdownText:$('countdownText'),progressBar:$('progressBar'),
-  errBanner:$('errBanner'),targetAddress:$('targetAddress')};
-const fmt=(n,d=0)=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:d});
-const fetchJSON=(u,o)=>fetch(u,o).then(r=>r.json());
-
-function computePrice(){
-  const usd=+els.airdropUSD.value||0;
-  if(usd){
-    els.tokenPrice.value=(usd/CONFIG.TOTAL_TOKENS).toFixed(6);
-    els.airdropFmt.textContent='≈ '+fmt(usd/1e4)+' 万 USDT';
-  }else els.airdropFmt.textContent='—';
-}
-
-async function getBNBPrice(){
-  const cache=JSON.parse(localStorage.getItem('bnbP')||'{}');
-  if(cache.v && Date.now()-cache.t<CONFIG.PRICE_CACHE_MS) return cache.v;
-  for(const url of CONFIG.PRICE_APIS){
-    try{
-      const d=await fetchJSON(url);
-      const usd=d?.binancecoin?.usd||d?.USD;
-      if(usd){localStorage.setItem('bnbP',JSON.stringify({v:usd,t:Date.now()}));return usd;}
-    }catch{}
-  }
-  return 0;
-}
-
-async function fetchBalance(addr){
-  const body=JSON.stringify({jsonrpc:'2.0',method:'eth_getBalance',params:[addr,'latest'],id:1});
-  for(const node of CONFIG.RPC_NODES){
-    try{
-      const {result}=await fetchJSON(node,{method:'POST',headers:{'Content-Type':'application/json'},body});
-      return Number(BigInt(result)/10n**18n);
-    }catch{}
-  }
-  return 0;
-}
-
-let latestDep=0;
-async function render(dep=latestDep){
-  latestDep=dep; computePrice();
-  const user=+els.userAmount.value||0;
-  const price=+els.tokenPrice.value||0;
-  const bnbUSD=await getBNBPrice();
-  const target=CONFIG.TOTAL_TARGET_BNB;
-  if(!(user&&price&&bnbUSD&&target&&dep)){els.resultBox.hidden=true;return;}
-
-  const share=user/dep;
-  const tokens=share*CONFIG.TOTAL_TOKENS;
-  const principal=Math.min(share*target,user);
-  const refund=Math.max(user-principal,0);
-  const multi=dep/target;
-
-  els.bnbBalance.textContent=fmt(dep,4);
-  els.multiplier.textContent=fmt(multi,2);
-  els.userInput.textContent=fmt(user,2);
-  els.percent.textContent=fmt(share*100,4);
-  els.tokenAmt.textContent=fmt(tokens,2);
-  els.usdValue.textContent=fmt(tokens*price,'2');
-  els.principalBNB.textContent=fmt(principal,4);
-  els.principalUSD.textContent=fmt(principal*bnbUSD,'2');
-  els.refundBNB.textContent=fmt(refund,4);
-  els.resultBox.hidden=false;
-}
-
-let refreshing=false;
-async function refresh(manual=false){
-  if(refreshing) return;
-  refreshing=true; els.refreshBtn.disabled=true;
-  if(manual) els.errBanner.style.display='none';
-  try{
-    const dep=await fetchBalance(els.targetAddress.value);
-    await render(dep);
-    els.lastUpdateHint.textContent='最后更新：'+new Date().toLocaleTimeString('zh-CN',{hour12:false});
-  }catch(e){
-    if(manual){els.errBanner.textContent=e.message||'网络错误';els.errBanner.style.display='block';}
-  }finally{
-    els.refreshBtn.disabled=false; refreshing=false;
-  }
-}
-
-function tick(){
-  const {START_TIME:st,END_TIME:et}=CONFIG,now=Date.now();
-  if(now<st){els.countdownText.textContent='活动未开始';els.progressBar.style.width='0%';return;}
-  if(now>=et){els.countdownText.textContent='已结束';els.progressBar.style.width='100%';return;}
-  const diff=et-now;
-  const txt=diff<10_000?(diff/1e3).toFixed(1)+' 秒':
-           diff<3.6e6?Math.floor(diff/6e4)+' 分 '+Math.floor(diff%6e4/1e3)+' 秒':
-           Math.floor(diff/3.6e6)+' 小时 '+Math.floor(diff%3.6e6/6e4)+' 分';
-  els.countdownText.textContent='剩余时间：'+txt;
-  els.progressBar.style.width(((now-st)/(et-st)*100).toFixed(2)+'%');
-}
-
-let poll=null;
-function applyInterval(){
-  CONFIG.REFRESH_INTERVAL=Math.max(+els.refreshSec.value||10,5)*1000;
-  clearInterval(poll);
-  poll=setInterval(refresh,CONFIG.REFRESH_INTERVAL);
-}
-
-els.userAmount.addEventListener('input',()=>render());
-els.airdropUSD.addEventListener('input',()=>render());
-els.refreshSec.addEventListener('change',applyInterval);
-els.refreshBtn.addEventListener('click',()=>refresh(true));
-document.addEventListener('visibilitychange',()=>document.hidden?clearInterval(poll):applyInterval());
-
-window.addEventListener('load',async()=>{
-  computePrice();
-  applyInterval();
-  await refresh();
-  setInterval(tick,500);
-});
-</script>
+        els.userAmount.addEventListener('input',()=>render());
+        els.airdropUSD.addEventListener('input',()=>render());
+        els.refreshSec.addEventListener('change',applyInterval);
+        els.refreshBtn.addEventListener('click',()=>refresh(true));
+        document.addEventListener('visibilitychange',()=>document.hidden?clearInterval(poll):applyInterval());
+        window.addEventListener('load',async()=>{
+            computePrice();
+            applyInterval();
+            await refresh();
+            setInterval(tick,500);
+        });
+    </script>
 </body>
 </html>

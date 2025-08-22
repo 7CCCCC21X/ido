@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>币安 Web3 钱包第34期 IDO (RICE)</title>
+    <title>币安 Web3 钱包第5期Pre-TGE （HEMI）</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
     <style>
@@ -51,43 +51,55 @@
 <body>
     <div class="container">
         <div id="errBanner" class="error-banner"></div>
-        <h2>币安 Web3 钱包第34期 IDO (RICE)</h2>
-        <input id="targetAddress" type="hidden" value="0x559b7b88b46d3121e50dfcbb1e9a17f9decb5ad2">
+        <h2>币安 Web3 钱包第5期Pre-TGE （HEMI）</h2>
+
+        <!-- 募集/读取地址（按你的要求换成合约地址） -->
+        <input id="targetAddress" type="hidden" value="0x65fcf3eae5940e60f451080a7de2f99715a13dd8">
+
         <label>投入 BNB</label>
         <input id="userAmount" type="number" step="0.01" value="3" min="0">
-        <label>预计空投总额 (USDT)<span class="note">默认 70 万，可自改</span></label>
-        <input id="airdropUSD" type="number" step="10000" value="700000" min="0">
-        <div class="note" id="airdropFmt">≈ 70 万 USDT</div>
+
+        <label>预计空投总额 (USDT)<span class="note">默认 105 万，可自改</span></label>
+        <input id="airdropUSD" type="number" step="10000" value="1050000" min="0">
+        <div class="note" id="airdropFmt">≈ 105 万 USDT</div>
+
         <label>代币单价 (USDT)<span class="note">自动推算，可手动调</span></label>
-        <input id="tokenPrice" type="number" step="0.00001" value="0.07" min="0">
+        <input id="tokenPrice" type="number" step="0.00001" value="0.0105" min="0">
+
         <label>刷新频率 (秒)<span class="note">最少 5 秒</span></label>
         <input id="refreshSec" type="number" step="1" value="10" min="5">
+
         <button id="refreshBtn">🔄 手动刷新</button>
         <div class="updateHint" id="lastUpdateHint">—</div>
+
+        <!-- 按要求删除“提前授权教程”，保留借 BNB 教程 -->
         <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1957339592266481956" target="_blank">💡 借 BNB 教程</a>
-        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1957339592266481956" target="_blank">💡 提前授权教程</a>
+
         <div class="progress-container">
             <div class="progress-bg"><div class="progress-bar" id="progressBar"></div></div>
             <div class="countdown" id="countdownText">倒计时加载中…</div>
         </div>
+
         <div class="result" id="resultBox" hidden>
             <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
-            <p>🎯 募集目标：118.91 BNB</p>
+            <p>🎯 募集目标：172.59 BNB</p>
             <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-            <p>💰 总销售量：20 000 000 枚 RICE</p><hr>
+            <p>💰 总销售量：100 000 000 枚 HEMI（占总供应量 1%）</p><hr>
             <p>🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-                可获得 <span class="success" id="tokenAmt">—</span> 枚 RICE ≈ <span class="success" id="usdValue">—</span></p>
+                可获得 <span class="success" id="tokenAmt">—</span> 枚 HEMI ≈ <span class="success" id="usdValue">—</span></p>
             <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
             <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
         </div>
     </div>
+
     <div class="footer">作者：<a href="https://x.com/0xXIAOc" target="_blank">@0xXIAOc</a></div>
+
     <script>
         const CONFIG={ 
-            TOTAL_TARGET_BNB:118.91, 
-            TOTAL_TOKENS:20_000_000, 
-            START_TIME:new Date('2025-08-18T16:00:00+08:00'), 
-            END_TIME:new Date('2025-08-18T18:00:00+08:00'), 
+            TOTAL_TARGET_BNB:172.59, 
+            TOTAL_TOKENS:100_000_000, 
+            START_TIME:new Date('2025-08-22T20:00:00+08:00'), 
+            END_TIME:new Date('2025-08-22T22:00:00+08:00'), 
             REFRESH_INTERVAL:10_000, 
             PRICE_CACHE_MS:60_000, 
             PRICE_APIS:[ 

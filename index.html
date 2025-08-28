@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>币安 Web3 钱包第5期Pre-TGE （HEMI）</title>
+    <title>币安 Web3 钱包第35期 独家TGE (MITO)</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
     <style>
@@ -51,20 +51,20 @@
 <body>
     <div class="container">
         <div id="errBanner" class="error-banner"></div>
-        <h2>币安 Web3 钱包第5期Pre-TGE （HEMI）</h2>
+        <h2>币安 Web3 钱包第35期 独家TGE (MITO)</h2>
 
-        <!-- 募集/读取地址（按你的要求换成合约地址） -->
-        <input id="targetAddress" type="hidden" value="0x65fcf3eae5940e60f451080a7de2f99715a13dd8">
+        <!-- 募集/读取地址（合约地址） -->
+        <input id="targetAddress" type="hidden" value="0x43144455f208c610c556f05fcb9e36bef1ffc265">
 
         <label>投入 BNB</label>
         <input id="userAmount" type="number" step="0.01" value="3" min="0">
 
-        <label>预计空投总额 (USDT)<span class="note">默认 105 万，可自改</span></label>
-        <input id="airdropUSD" type="number" step="10000" value="1050000" min="0">
-        <div class="note" id="airdropFmt">≈ 105 万 USDT</div>
+        <label>预计空投总额 (USDT)<span class="note">默认 200 万，可自改</span></label>
+        <input id="airdropUSD" type="number" step="10000" value="2000000" min="0">
+        <div class="note" id="airdropFmt">≈ 200 万 USDT</div>
 
-        <label>代币单价 (USDT)<span class="note">自动推算，可手动调</span></label>
-        <input id="tokenPrice" type="number" step="0.00001" value="0.0105" min="0">
+        <label>代币单价 (USDT)<span class="note">自动推算，可手动调（预估 0.2）</span></label>
+        <input id="tokenPrice" type="number" step="0.00001" value="0.2" min="0">
 
         <label>刷新频率 (秒)<span class="note">最少 5 秒</span></label>
         <input id="refreshSec" type="number" step="1" value="10" min="5">
@@ -72,8 +72,9 @@
         <button id="refreshBtn">🔄 手动刷新</button>
         <div class="updateHint" id="lastUpdateHint">—</div>
 
-        <!-- 按要求删除“提前授权教程”，保留借 BNB 教程 -->
-        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1957339592266481956" target="_blank">💡 借 BNB 教程</a>
+        <!-- 教程：先借 BNB，再提前授权（新增） -->
+        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank">💡 借 BNB 教程</a>
+        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1960975360579002692" target="_blank">✅ 提前授权教程</a>
 
         <div class="progress-container">
             <div class="progress-bg"><div class="progress-bar" id="progressBar"></div></div>
@@ -82,11 +83,11 @@
 
         <div class="result" id="resultBox" hidden>
             <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
-            <p>🎯 募集目标：172.59 BNB</p>
+            <p>🎯 募集目标：238.04 BNB</p>
             <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-            <p>💰 总销售量：100 000 000 枚 HEMI（占总供应量 1%）</p><hr>
+            <p>💰 总销售量：10,000,000 枚 MITO（占总供应量的 1%）</p><hr>
             <p>🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-                可获得 <span class="success" id="tokenAmt">—</span> 枚 HEMI ≈ <span class="success" id="usdValue">—</span></p>
+                可获得 <span class="success" id="tokenAmt">—</span> 枚 MITO ≈ <span class="success" id="usdValue">—</span></p>
             <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
             <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
         </div>
@@ -96,10 +97,11 @@
 
     <script>
         const CONFIG={ 
-            TOTAL_TARGET_BNB:172.59, 
-            TOTAL_TOKENS:100_000_000, 
-            START_TIME:new Date('2025-08-22T20:00:00+08:00'), 
-            END_TIME:new Date('2025-08-22T22:00:00+08:00'), 
+            TOTAL_TARGET_BNB:238.04, 
+            TOTAL_TOKENS:10_000_000, 
+            // 时间：8月28日 20:00-22:00（北京时间，UTC+8）
+            START_TIME:new Date('2025-08-28T20:00:00+08:00'), 
+            END_TIME:new Date('2025-08-28T22:00:00+08:00'), 
             REFRESH_INTERVAL:10_000, 
             PRICE_CACHE_MS:60_000, 
             PRICE_APIS:[ 
@@ -199,9 +201,9 @@
             els.userInput.textContent=fmt(user,2);
             els.percent.textContent=fmt(share*100,4);
             els.tokenAmt.textContent=fmt(tokens,2);
-            els.usdValue.textContent=fmt(tokens*price,'2');
+            els.usdValue.textContent=fmt(tokens*price,2);
             els.principalBNB.textContent=fmt(principal,4);
-            els.principalUSD.textContent=fmt(principal*bnbUSD,'2');
+            els.principalUSD.textContent=fmt(principal*bnbUSD,2);
             els.refundBNB.textContent=fmt(refund,4);
             els.resultBox.hidden=false;
         }
@@ -229,7 +231,7 @@
 
         function tick(){
             const {START_TIME:st,END_TIME:et}=CONFIG,now=Date.now();
-            if(now<st){els.countdownText.textContent='活动未开始';els.progressBar.style.width='0%';return;}
+            if(now<st){els.countdownText.textContent='活动未开始（8月28日 20:00-22:00）';els.progressBar.style.width='0%';return;}
             if(now>=et){els.countdownText.textContent='已结束';els.progressBar.style.width='100%';return;}
             const diff=et-now;
             const txt=diff<10_000?(diff/1e3).toFixed(1)+' 秒': diff<3.6e6?Math.floor(diff/6e4)+' 分 '+Math.floor(diff%6e4/1e3)+' 秒': Math.floor(diff/3.6e6)+' 小时 '+Math.floor(diff%3.6e6/6e4)+' 分';

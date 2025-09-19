@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>币安首期 BuildKey TGE (RIVER)</title>
+    <title>币安 Web3 钱包第38期 独家TGE (JOJO)</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
     <style>
@@ -51,20 +51,20 @@
 <body>
     <div class="container">
         <div id="errBanner" class="error-banner"></div>
-        <h2>币安首期 BuildKey TGE (RIVER)</h2>
+        <h2>币安 Web3 钱包第38期 独家TGE (JOJO)</h2>
 
         <!-- 募集/读取地址（合约地址） -->
-        <input id="targetAddress" type="hidden" value="0xea3f20fed5b18c57f9b705b1c15d5005560ce687">
+        <input id="targetAddress" type="hidden" value="0xd09725a33c6c3f733cfe3225be80083961d8dace">
 
         <label>投入 BNB</label>
         <input id="userAmount" type="number" step="0.01" value="3" min="0">
 
-        <label>预计空投总额 (USDT)<span class="note">默认 300 万，可自改</span></label>
-        <input id="airdropUSD" type="number" step="10000" value="5000000" min="0">
-        <div class="note" id="airdropFmt">≈ 500 万 USDT</div>
+        <label>预计空投总额 (USDT)<span class="note">默认 90 万，可自改</span></label>
+        <input id="airdropUSD" type="number" step="10000" value="900000" min="0">
+        <div class="note" id="airdropFmt">≈ 90 万 USDT</div>
 
         <label>代币单价 (USDT)<span class="note">自动推算，可手动调</span></label>
-        <input id="tokenPrice" type="number" step="0.00001" value="1.5" min="0">
+        <input id="tokenPrice" type="number" step="0.00001" value="0.05625" min="0">
 
         <label>刷新频率 (秒)<span class="note">最少 5 秒</span></label>
         <input id="refreshSec" type="number" step="1" value="10" min="5">
@@ -74,7 +74,7 @@
 
         <!-- 教程 -->
         <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank">💡 借 BNB 教程</a>
-        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1964227195842547843" target="_blank">✅ 提前授权教程</a>
+        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1968967463665881349" target="_blank">✅ 提前授权教程</a>
 
         <div class="progress-container">
             <div class="progress-bg"><div class="progress-bar" id="progressBar"></div></div>
@@ -85,9 +85,9 @@
             <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
             <p>🎯 募集目标：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
             <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-            <p>💰 出售代币数量：2,000,000 枚 RIVER（占总供应量的 2%）</p><hr>
+            <p>💰 出售代币数量：16,000,000 枚 JOJO（占总供应量的 2%）</p><hr>
             <p>🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-                可获得 <span class="success" id="tokenAmt">—</span> 枚 RIVER ≈ <span class="success" id="usdValue">—</span></p>
+                可获得 <span class="success" id="tokenAmt">—</span> 枚 JOJO ≈ <span class="success" id="usdValue">—</span></p>
             <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
             <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
         </div>
@@ -97,11 +97,11 @@
 
     <script>
         const CONFIG={ 
-            TOTAL_TARGET_BNB:100.9784815,            // 募集BNB数量
-            TOTAL_TOKENS:2_000_000,                  // 出售代币数量（RIVER）
-            // 时间：9月19日 15:00-17:00（北京时间，UTC+8）
-            START_TIME:new Date('2025-09-19T15:00:00+08:00'), 
-            END_TIME:new Date('2025-09-19T17:00:00+08:00'), 
+            TOTAL_TARGET_BNB:201.95,                 // 募集BNB数量
+            TOTAL_TOKENS:16_000_000,                 // 出售代币数量（JOJO）
+            // 时间：9月19日 17:00-19:00（北京时间，UTC+8）
+            START_TIME:new Date('2025-09-19T17:00:00+08:00'), 
+            END_TIME:new Date('2025-09-19T19:00:00+08:00'), 
             REFRESH_INTERVAL:10_000, 
             PRICE_CACHE_MS:60_000, 
             PRICE_APIS:[ 
@@ -148,9 +148,13 @@
         function computePrice(){
             const usd=+els.airdropUSD.value||0;
             if(usd){
-                els.tokenPrice.value=(usd/CONFIG.TOTAL_TOKENS).toFixed(6);
+                // 根据预计空投总额 / 出售代币数量 推算单价
+                const price = usd / CONFIG.TOTAL_TOKENS;
+                els.tokenPrice.value = price.toFixed(6);
                 els.airdropFmt.textContent='≈ '+fmt(usd/1e4)+' 万 USDT';
-            }else els.airdropFmt.textContent='—';
+            }else{
+                els.airdropFmt.textContent='—';
+            }
         }
 
         async function getBNBPrice(){
@@ -188,7 +192,7 @@
             const price=+els.tokenPrice.value||0;
             const bnbUSD=await getBNBPrice();
             const target=CONFIG.TOTAL_TARGET_BNB;
-            els.targetBNBShow.textContent = fmt(target,2);   // 同步显示募集目标（显示两位小数）
+            els.targetBNBShow.textContent = fmt(target,2);   // 同步显示募集目标
 
             if(!(user&&price&&bnbUSD&&target&&dep)){
                 els.resultBox.hidden=true;
@@ -234,7 +238,7 @@
 
         function tick(){
             const {START_TIME:st,END_TIME:et}=CONFIG,now=Date.now();
-            if(now<st){els.countdownText.textContent='活动未开始（9月19日 15:00-17:00）';els.progressBar.style.width='0%';return;}
+            if(now<st){els.countdownText.textContent='活动未开始（9月19日 17:00-19:00）';els.progressBar.style.width='0%';return;}
             if(now>=et){els.countdownText.textContent='已结束';els.progressBar.style.width='100%';return;}
             const diff=et-now;
             const txt=diff<10_000?(diff/1e3).toFixed(1)+' 秒': diff<3.6e6?Math.floor(diff/6e4)+' 分 '+Math.floor(diff%6e4/1e3)+' 秒': Math.floor(diff/3.6e6)+' 小时 '+Math.floor(diff%3.6e6/6e4)+' 分';

@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>币安 Web3 钱包 第39期独家Tge (KLINK)</title>
+    <title>币安 Web3 钱包 首期Pre-TGE （YB）</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
     <style>
@@ -20,61 +20,88 @@
             background:var(--c-bg);color:var(--c-text)
         }
         .container{
-            max-width:660px;margin:40px auto;padding:34px;background:var(--c-card);border-radius:18px;
+            max-width:760px;margin:40px auto;padding:34px;background:var(--c-card);border-radius:18px;
             box-shadow:0 10px 24px rgba(0,0,0,.08)
         }
-        h2{color:var(--c-primary);text-align:center;margin-bottom:28px}
-        label{display:block;margin:18px 0 8px;font-weight:700}
+        h2{color:var(--c-primary);text-align:center;margin-bottom:18px}
+        label{display:block;margin:14px 0 8px;font-weight:700}
         .note{font-size:13px;color:var(--c-sub);margin-left:4px}
         input,select{width:100%;padding:12px;font-size:15px;border:1px solid #ccc;border-radius:10px;background:var(--c-card);color:var(--c-text)}
-        button{width:100%;padding:13px;font-size:16px;background:var(--c-primary);color:#fff;border:none;border-radius:10px;margin-top:24px;cursor:pointer;transition:background .2s}
+        input[readonly]{background:linear-gradient(90deg,#f3f4f6,#fff);cursor:default}
+        button{width:100%;padding:13px;font-size:16px;background:var(--c-primary);color:#fff;border:none;border-radius:10px;margin-top:18px;cursor:pointer;transition:background .2s}
         button:hover{background:var(--c-primary-dark)}
-        .progress-container{margin-top:34px}
+        .row{display:flex;gap:12px}
+        .col{flex:1}
+        .small{font-size:13px;color:var(--c-sub)}
+        .progress-container{margin-top:22px}
         .progress-bg{background:#e5e7eb;height:14px;border-radius:10px;overflow:hidden}
         .progress-bar{background:var(--c-primary);height:100%;width:0%;transition:width .4s}
         .countdown{margin-top:6px;text-align:right;font-size:14px;color:var(--c-sub)}
-        .result{margin-top:34px;padding:22px;border-radius:14px;border:1px solid #d1d5db;background:var(--c-bg)}
-        .result p{margin:10px 0;font-size:15px;line-height:1.45}
+        .result{margin-top:22px;padding:18px;border-radius:14px;border:1px solid #d1d5db;background:var(--c-bg)}
+        .result p{margin:8px 0;font-size:15px;line-height:1.45}
         .highlight{font-weight:700}
         .success{color:var(--c-success);font-weight:700}
         .deduct{color:var(--c-error);font-weight:700}
         .refund{color:var(--c-refund);font-weight:700}
-        .tutorial-link{display:block;margin-top:18px;text-align:center;font-weight:700;text-decoration:none;color:var(--c-primary)}
+        .tutorial-link{display:block;margin-top:12px;text-align:center;font-weight:700;text-decoration:none;color:var(--c-primary)}
         .tutorial-link:hover{text-decoration:underline}
         .updateHint{text-align:right;font-size:13px;color:var(--c-sub);margin-top:10px}
         .error-banner{display:none;margin-bottom:18px;padding:10px 14px;border-radius:10px;background:var(--c-error);color:#fff;font-size:14px}
-        .footer{margin-top:40px;text-align:center;font-size:14px;color:var(--c-sub)}
+        .footer{margin-top:28px;text-align:center;font-size:14px;color:var(--c-sub)}
         .footer a{color:var(--c-primary);text-decoration:none}
         .footer a:hover{text-decoration:underline}
+        .priceBox{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:12px}
+        .priceItem{flex:1;padding:10px;border-radius:10px;border:1px solid #e6edf3;background:linear-gradient(180deg,rgba(255,255,255,0.6),transparent)}
+        .priceItem .v{font-weight:700;font-size:16px}
+        .priceItem .t{font-size:12px;color:var(--c-sub);margin-top:6px}
+        .countdownAuto{font-size:13px;color:var(--c-sub);margin-top:8px;text-align:center}
     </style>
 </head>
 <body>
     <div class="container">
         <div id="errBanner" class="error-banner"></div>
-        <h2>币安 Web3 钱包 第39期独家Tge (KLINK)</h2>
+        <h2>币安 Web3 钱包 首期Pre-TGE Prime （YB）</h2>
 
-        <!-- 募集/读取地址（合约地址） -->
-        <input id="targetAddress" type="hidden" value="0xfd18fa5b167e4a903ae8d385b53fdc6f0a807c13">
+        <!-- 合约（空，用户稍后补上） -->
+        <input id="targetAddress" type="hidden" value="0x0190e70c8bf2a495e88d3cad06599af3e444ed89">
 
-        <label>投入 BNB</label>
-        <input id="userAmount" type="number" step="0.01" value="3" min="0">
+        <div class="row">
+            <div class="col">
+                <label>投入 BNB</label>
+                <input id="userAmount" type="number" step="0.01" value="3" min="0">
+            </div>
+            <div class="col">
+                <label>刷新频率 (秒)<span class="note">最少 5 秒</span></label>
+                <input id="refreshSec" type="number" step="1" value="10" min="5">
+            </div>
+        </div>
 
-        <label>预计空投总额 (USDT)<span class="note">默认 120 万，可自改</span></label>
-        <input id="airdropUSD" type="number" step="10000" value="1200000" min="0">
-        <div class="note" id="airdropFmt">≈ 120 万 USDT</div>
+        <label>代币单价 (USDT)<span class="note">自动推算</span></label>
+        <input id="tokenPrice" type="number" step="0.00001" value="1.200000" min="0">
 
-        <label>代币单价 (USDT)<span class="note">自动推算，可手动调</span></label>
-        <input id="tokenPrice" type="number" step="0.00001" value="0.060000" min="0">
+        <label>预计空投总额 (USDT)<span class="note">自动更新</span></label>
+        <input id="airdropUSD" type="number" step="1" value="30000000" readonly>
+        <div class="note" id="airdropFmt">≈ 3000 万 USDT</div>
 
-        <label>刷新频率 (秒)<span class="note">最少 5 秒</span></label>
-        <input id="refreshSec" type="number" step="1" value="10" min="5">
+        <div class="priceBox" aria-hidden="false">
+            <div class="priceItem">
+                <div class="v" id="bnbPriceV">—</div>
+                <div class="t">当前 BNB 美元价格（USD）</div>
+            </div>
+            <div class="priceItem">
+                <div class="v" id="ybPriceV">—</div>
+                <div class="t">YB 盘前价（USDT） </div>
+            </div>
+        </div>
+
+        <div class="countdownAuto" id="autoRefreshCountdown">下次自动刷新：— 秒</div>
 
         <button id="refreshBtn">🔄 手动刷新</button>
         <div class="updateHint" id="lastUpdateHint">—</div>
 
-        <!-- 教程：保留“借 BNB 教程”，新增“✅ 提前授权教程” -->
-        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank">💡 借 BNB 教程</a>
-        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1975439176423428364" target="_blank">✅ 提前授权教程</a>
+        <!-- 教程：删除提前授权链接，保留两个借BNB教程 -->
+        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank">💡 链上借BNB教程</a>
+        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1977584958295392288" target="_blank">💡 交易所借BNB教程</a>
 
         <div class="progress-container">
             <div class="progress-bg"><div class="progress-bar" id="progressBar"></div></div>
@@ -85,9 +112,9 @@
             <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
             <p>🎯 募集目标：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
             <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-            <p>💰 出售代币数量：20,000,000 枚 KLINK（占总供应量的 1%）</p><hr>
+            <p>💰 出售代币数量：25,000,000 枚 YB（占总供应量的 2.5%）</p><hr>
             <p>🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-                可获得 <span class="success" id="tokenAmt">—</span> 枚 KLINK ≈ <span class="success" id="usdValue">—</span></p>
+                可获得 <span class="success" id="tokenAmt">—</span> 枚 YB ≈ <span class="success" id="usdValue">—</span></p>
             <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
             <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
         </div>
@@ -96,19 +123,21 @@
     <div class="footer">作者：<a href="https://x.com/0xXIAOc" target="_blank">@0xXIAOc</a></div>
 
     <script>
-        // ==== 配置（KLINK 专场）====
+        // ==== 配置（YB 专场）====
         const CONFIG={ 
-            TOTAL_TARGET_BNB:257.39,                  // 募集BNB数量（目标）
-            TOTAL_TOKENS:20_000_000,                  // 出售代币数量（KLINK）
-            // 时间：10月7日 16:00-18:00（北京时间，UTC+8）
-            START_TIME:new Date('2025-10-07T16:00:00+08:00'), 
-            END_TIME:new Date('2025-10-07T18:00:00+08:00'), 
+            TOTAL_TARGET_BNB: 1918.47,                      // 募集BNB数量
+            TOTAL_TOKENS:25_000_000,                // 出售代币数量（YB） —— 用于计算预计空投总额
+            // 时间：10月13日 16:00-18:00（北京时间，UTC+8）
+            START_TIME:new Date('2025-10-13T16:00:00+08:00'), 
+            END_TIME:new Date('2025-10-13T18:00:00+08:00'), 
             REFRESH_INTERVAL:10_000, 
             PRICE_CACHE_MS:60_000, 
             PRICE_APIS:[ 
                 'https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd', 
                 'https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD' 
             ], 
+            // Binance aggTrades endpoint (你给的)
+            BINANCE_AGG_ENDPOINT: 'https://www.binance.com/fapi/v1/aggTrades?limit=80&symbol=YBUSDT',
             RPC_NODES:[ 
                 'https://bsc-dataseed.binance.org/', 
                 'https://bsc-dataseed1.defibit.io/', 
@@ -141,7 +170,11 @@
             progressBar:$('progressBar'),
             errBanner:$('errBanner'),
             targetAddress:$('targetAddress'),
-            targetBNBShow:$('targetBNBShow')
+            targetBNBShow:$('targetBNBShow'),
+            // price displays
+            bnbPriceV:$('bnbPriceV'),
+            ybPriceV:$('ybPriceV'),
+            autoRefreshCountdown:$('autoRefreshCountdown')
         };
 
         // ==== 工具 ====
@@ -149,18 +182,34 @@
         const fetchJSON=(u,o)=>fetch(u,o).then(r=>r.json());
         const TZ='Asia/Shanghai';
 
-        function computePrice(){
-            const usd=+els.airdropUSD.value||0;
-            if(usd){
-                // 预计空投总额 / 出售代币数量 -> 单价
-                const price = usd / CONFIG.TOTAL_TOKENS;
-                els.tokenPrice.value = price.toFixed(6);
-                els.airdropFmt.textContent='≈ '+fmt(usd/1e4)+' 万 USDT';
-            }else{
-                els.airdropFmt.textContent='—';
-            }
+        // ========== 计算预计空投（现在：TOTAL_TOKENS * tokenPrice） ==========
+        function computeAirdropUSDFromTokenPrice(tokenPrice){
+            const tokens = CONFIG.TOTAL_TOKENS || 0;
+            const price = Number(tokenPrice) || 0;
+            return tokens * price;
         }
 
+        // 计算并更新页面中的价格与空投总额显示
+        function computePrice(){
+            // 当有 tokenPrice 值时，用 tokenPrice * TOTAL_TOKENS 作为预计空投总额
+            const tokenP = +els.tokenPrice.value || 0;
+            const computedAirdrop = computeAirdropUSDFromTokenPrice(tokenP);
+            // 更新只读输入框
+            els.airdropUSD.value = Math.round(computedAirdrop); // 整数 USDT
+            // 文本友好展示（万为单位）
+            els.airdropFmt.textContent = computedAirdrop ? '≈ ' + fmt(computedAirdrop/1e4) + ' 万 USDT' : '—';
+        }
+
+        // 标记 tokenPrice 是否由用户手动修改（以免自动覆盖）
+        els.tokenPrice.addEventListener('input',()=> {
+            els.tokenPrice.dataset.userEdited = '1';
+            // 手动修改 tokenPrice 也应当立即重新计算预计空投总额
+            computePrice();
+            updateYbPriceDisplay(); // 同步显示
+            render();
+        });
+
+        // BNB 价格（带缓存）
         async function getBNBPrice(){
             const cache=JSON.parse(localStorage.getItem('bnbP')||'{}');
             if(cache.v && Date.now()-cache.t<CONFIG.PRICE_CACHE_MS) return cache.v;
@@ -177,7 +226,52 @@
             return 0;
         }
 
+        // 使用 aggTrades 接口拉取最新成交列表，取数组最后一项的 p 作为价格
+        async function fetchBinanceAggPrice(){
+            try{
+                const res = await fetch(CONFIG.BINANCE_AGG_ENDPOINT, {cache:'no-store'});
+                if(!res.ok) throw new Error('Binance aggTrades 返回 ' + res.status);
+                const arr = await res.json();
+                if(!Array.isArray(arr) || arr.length===0) throw new Error('aggTrades 返回空');
+                const last = arr[arr.length - 1];
+                const price = parseFloat(last?.p);
+                if(!isFinite(price)) throw new Error('价格解析失败');
+                return price;
+            }catch(err){
+                console.warn('fetchBinanceAggPrice 错误：', err);
+                return null;
+            }
+        }
+
+        // 更新界面上的 BNB 和 YB 价格显示（并在未手动改价时同步 tokenPrice）
+        async function updateYbPriceDisplay(){
+            try{
+                const bnbUSD = await getBNBPrice();
+                els.bnbPriceV.textContent = bnbUSD ? '$' + fmt(bnbUSD,4) : '—';
+
+                const binanceAggPrice = await fetchBinanceAggPrice();
+                if(binanceAggPrice !== null){
+                    els.ybPriceV.textContent = fmt(binanceAggPrice,6) + ' USDT';
+                    // 若用户未手动编辑 tokenPrice，则同步 tokenPrice 值为币安价
+                    if(!els.tokenPrice.dataset.userEdited){
+                        els.tokenPrice.value = binanceAggPrice.toFixed(6);
+                    }
+                    // 币安价来了，重新计算预计空投总额
+                    computePrice();
+                }else{
+                    // fallback：使用当前 tokenPrice 输入框的值来显示
+                    const fallback = +els.tokenPrice.value || 0;
+                    els.ybPriceV.textContent = fallback ? fmt(fallback,6) + ' USDT' : '—';
+                    computePrice();
+                }
+            }catch(e){
+                console.error('updateYbPriceDisplay error', e);
+            }
+        }
+
+        // fetchBalance (同原逻辑)
         async function fetchBalance(addr){
+            if(!addr) return 0;
             const body=JSON.stringify({jsonrpc:'2.0',method:'eth_getBalance',params:[addr,'latest'],id:1});
             for(const node of CONFIG.RPC_NODES){
                 try{
@@ -188,17 +282,53 @@
             return 0;
         }
 
+        // ========== 自动刷新计时逻辑 ==========
+        let refreshIntervalMs = Math.max(+els.refreshSec.value||10,5) * 1000;
+        let nextRefreshSeconds = Math.floor(refreshIntervalMs / 1000);
+        let refreshTimerId = null;   // interval id for periodic refresh
+        let countdownTimerId = null; // interval id for per-second countdown
+
+        function startAutoRefreshTimers(){
+            if(refreshTimerId) clearInterval(refreshTimerId);
+            if(countdownTimerId) clearInterval(countdownTimerId);
+
+            refreshTimerId = setInterval(()=>{ refresh(false); resetCountdown(); }, refreshIntervalMs);
+
+            nextRefreshSeconds = Math.ceil(refreshIntervalMs / 1000);
+            updateCountdownDisplay();
+            countdownTimerId = setInterval(()=>{
+                nextRefreshSeconds--;
+                if(nextRefreshSeconds <= 0){
+                    nextRefreshSeconds = Math.ceil(refreshIntervalMs / 1000);
+                }
+                updateCountdownDisplay();
+            }, 1000);
+        }
+
+        function resetCountdown(){
+            refreshIntervalMs = Math.max(+els.refreshSec.value||10,5) * 1000;
+            nextRefreshSeconds = Math.ceil(refreshIntervalMs / 1000);
+            updateCountdownDisplay();
+        }
+
+        function updateCountdownDisplay(){
+            els.autoRefreshCountdown.textContent = `下次自动刷新：${nextRefreshSeconds} 秒`;
+        }
+
+        // ========== 主渲染与刷新 ==========
         let latestDep=0;
         async function render(dep=latestDep){
             latestDep=dep;
+            // 先同步 price 显示（确保价格块及时更新）
+            await updateYbPriceDisplay();
             computePrice();
             const user=+els.userAmount.value||0;
             const price=+els.tokenPrice.value||0;
             const bnbUSD=await getBNBPrice();
             const target=CONFIG.TOTAL_TARGET_BNB;
-            els.targetBNBShow.textContent = fmt(target,2);   // 同步显示募集目标
+            els.targetBNBShow.textContent = target ? fmt(target,2) : '—（一会补上）';
 
-            if(!(user&&price&&bnbUSD&&target&&dep)){
+            if(!(user&&price&&bnbUSD&&dep&&target)){
                 els.resultBox.hidden=true;
                 return;
             }
@@ -226,6 +356,9 @@
             els.refreshBtn.disabled=true;
             if(manual) els.errBanner.style.display='none';
             try{
+                await Promise.all([fetchBinanceAggPrice(), getBNBPrice()]);
+                await updateYbPriceDisplay();
+
                 const dep=await fetchBalance(els.targetAddress.value);
                 await render(dep);
                 els.lastUpdateHint.textContent='最后更新：'+new Date().toLocaleTimeString('zh-CN',{hour12:false});
@@ -234,13 +367,14 @@
                     els.errBanner.textContent=e?.message||'网络错误';
                     els.errBanner.style.display='block';
                 }
+                console.error(e);
             }finally{
                 els.refreshBtn.disabled=false;
                 refreshing=false;
             }
         }
 
-        // === 进度条 & 倒计时 ===
+        // === 进度条 & 倒计时（活动进度）===
         function formatRangeForCN(st, et){
             const getNum = (date, opt) =>
                 new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, ...opt })
@@ -256,7 +390,6 @@
             const ts = tFmt.format(st);
             const te = tFmt.format(et);
 
-            // 输出：10月7日 16:00-18:00（北京时间）
             return `${m}月${d}日 ${ts}-${te}（北京时间）`;
         }
 
@@ -286,24 +419,29 @@
             els.progressBar.style.width = (pct>100?100: pct<0?0:pct).toFixed(2) + '%';
         }
 
-        let poll=null;
+        // ========== 启动 / 事件绑定 ==========
         function applyInterval(){
-            CONFIG.REFRESH_INTERVAL=Math.max(+els.refreshSec.value||10,5)*1000;
-            clearInterval(poll);
-            poll=setInterval(refresh,CONFIG.REFRESH_INTERVAL);
+            const sec = Math.max(+els.refreshSec.value||10,5);
+            refreshIntervalMs = sec * 1000;
+            if(refreshTimerId) clearInterval(refreshTimerId);
+            if(countdownTimerId) clearInterval(countdownTimerId);
+            startAutoRefreshTimers();
         }
 
         // 事件绑定
         els.userAmount.addEventListener('input',()=>render());
-        els.airdropUSD.addEventListener('input',()=>render());
+        // tokenPrice 的 input 已绑定上方以支持手动覆盖
         els.refreshSec.addEventListener('change',applyInterval);
-        els.refreshBtn.addEventListener('click',()=>refresh(true));
-        document.addEventListener('visibilitychange',()=>document.hidden?clearInterval(poll):applyInterval());
+        els.refreshBtn.addEventListener('click',async ()=>{ await refresh(true); resetCountdown(); });
+        document.addEventListener('visibilitychange',()=>document.hidden? (clearInterval(refreshTimerId), clearInterval(countdownTimerId)) : startAutoRefreshTimers());
         window.addEventListener('load',async()=>{
-            computePrice();         // 120 万 / 2000 万 => 0.060000 USDT
-            applyInterval();
+            // 初始用币安或 tokenPrice 计算预计空投
+            computePrice();
+            startAutoRefreshTimers();
             await refresh();
-            setInterval(tick,500);  // 进度条与倒计时
+            setInterval(tick,500);  // 活动倒计时与进度
+            // 定期刷新价格显示（以备 fallback）
+            setInterval(updateYbPriceDisplay, CONFIG.PRICE_CACHE_MS);
         });
     </script>
 </body>

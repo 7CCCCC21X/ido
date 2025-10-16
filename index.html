@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>币安 Web3 钱包 第40 期 独家 TGE Lab (LAB)</title>
+    <title>币安 Web3 钱包  Pre-TGE (RVV）</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
     <style>
@@ -71,10 +71,10 @@
 <body>
     <div class="container">
         <div id="errBanner" class="error-banner"></div>
-        <h2>币安 Web3 钱包 第40 期 独家 TGE Lab (LAB)</h2>
+        <h2>币安 Web3 钱包  Pre-TGE (RVV）</h2>
         <!-- 合约地址（隐藏，仅内部使用） -->
         <div class="subline">合约：<a id="contractLink" href="#" target="_blank" rel="noopener">—</a></div>
-        <input id="targetAddress" type="hidden" value="0x5029fA9818000abE8691B44B574079cc621afbA6">
+        <input id="targetAddress" type="hidden" value="0xea6d6f436078b870949235df75a045b6dc35e447">
 
         <div class="row">
             <div class="col">
@@ -87,14 +87,14 @@
             </div>
         </div>
 
-        <!-- 代币单价：给“建议价 0.1”，但允许手动修改 -->
-        <label>代币单价 (USDT)<span class="note">建议 0.1，可手动修改</span></label>
-        <input id="tokenPrice" type="number" step="0.000001" value="0.100000" min="0">
+        <!-- 代币单价：给“建议价 0.01”，但允许手动修改 -->
+        <label>代币单价 (USDT)<span class="note">建议 0.01，可手动修改</span></label>
+        <input id="tokenPrice" type="number" step="0.000001" value="0.010000" min="0">
 
         <!-- 预计空投总额：按单价 × 出售量自动推算（只读） -->
         <label>预计空投总额 (USDT)<span class="note">根据盘前价推算</span></label>
-        <input id="airdropUSD" type="number" step="1" value="2000000" readonly>
-        <div class="note" id="airdropFmt">≈ 200 万 USDT</div>
+        <input id="airdropUSD" type="number" step="1" value="1500000" readonly>
+        <div class="note" id="airdropFmt">≈ 150 万 USDT</div>
 
         <div class="priceBox" id="priceBox" aria-hidden="false">
             <div class="priceItem">
@@ -102,8 +102,8 @@
                 <div class="t">当前 BNB 美元价格（USD）</div>
             </div>
             <div class="priceItem">
-                <div class="v" id="labPriceV">0.100000 USDT（建议）</div>
-                <div class="t">LAB 建议盘前价（可改）</div>
+                <div class="v" id="labPriceV">0.010000 USDT（建议）</div>
+                <div class="t">RVV 建议盘前价（可改）</div>
             </div>
         </div>
 
@@ -112,16 +112,7 @@
         <button id="refreshBtn">🔄 手动刷新</button>
         <div class="updateHint" id="lastUpdateHint">—</div>
 
-        <!-- 教程：提前授权带 LOGO，保留两条借 BNB 教程 -->
-        <a class="tutorial-link tutorial-link--icon" href="https://x.com/0xXIAOc/status/1977978328146731092" target="_blank" rel="noopener">
-            <span class="ico" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false">
-                    <path d="M12 2l7 4v6c0 5.2-3.7 9.7-7 10-3.3-.3-7-4.8-7-10V6l7-4z"/>
-                    <path d="M10.2 13.8l-2.2-2.2 1.4-1.4 0.8 0.8 3.8-3.8 1.4 1.4-4.6 4.6c-.2.2-.6.2-.8 0z" fill="#fff"/>
-                </svg>
-            </span>
-            提前授权教程
-        </a>
+        <!-- 删除了“提前授权教程”链接；保留两条借 BNB 教程 -->
         <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank" rel="noopener">💡 链上借BNB教程</a>
         <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1977584958295392288" target="_blank" rel="noopener">💡 交易所借BNB教程</a>
 
@@ -134,9 +125,9 @@
             <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
             <p>🎯 募集目标：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
             <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-            <p>💰 出售代币数量：20,000,000 枚 LAB（占总供应量的 2%）</p><hr>
+            <p>💰 出售代币数量：150,000,000 RVV 代币（占总供应量的 1.5%）</p><hr>
             <p>🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-                可获得 <span class="success" id="tokenAmt">—</span> 枚 LAB ≈ <span class="success" id="usdValue">—</span></p>
+                可获得 <span class="success" id="tokenAmt">—</span> 枚 RVV ≈ <span class="success" id="usdValue">—</span></p>
             <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
             <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
         </div>
@@ -147,13 +138,13 @@
     <div class="footer">作者：<a href="https://x.com/0xXIAOc" target="_blank">@0xXIAOc</a></div>
 
     <script>
-        // ==== 配置（LAB 专场）====
+        // ==== 配置（RVV 专场）====
         const CONFIG = {
-            TOTAL_TARGET_BNB: 153.47,                 // 募集BNB数量
-            TOTAL_TOKENS: 20_000_000,                 // 出售代币数量（LAB）
-            // 时间：10月14日 17:30-19:30（北京时间，UTC+8）
-            START_TIME: new Date('2025-10-14T17:30:00+08:00'),
-            END_TIME:   new Date('2025-10-14T19:30:00+08:00'),
+            TOTAL_TARGET_BNB: 172.1,                  // 募集BNB数量
+            TOTAL_TOKENS: 150_000_000,                // 出售代币数量（RVV）
+            // 时间：10月16日 16:00-18:00（北京时间，UTC+8）
+            START_TIME: new Date('2025-10-16T16:00:00+08:00'),
+            END_TIME:   new Date('2025-10-16T18:00:00+08:00'),
             REFRESH_INTERVAL: 10_000,
             PRICE_CACHE_MS: 60_000,
             PRICE_APIS: [
@@ -166,7 +157,7 @@
                 'https://bsc-dataseed4.defibit.io/',
                 'https://bsc-dataseed1.ninicoin.io/'
             ],
-            SUGGESTED_LAB_PRICE: 0.1                   // 建议盘前价（可被手动覆盖）
+            SUGGESTED_LAB_PRICE: 0.01                  // 建议盘前价（可被手动覆盖）
         };
 
         // ==== DOM 快捷引用 ====

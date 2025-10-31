@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>币安 Web3 钱包 独家Pre-TGE （PIEVERSE）</title>
+    <title>币安 Web3 钱包 第二期TGE Prime 预售（MMT）</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
     <style>
@@ -24,7 +24,7 @@
             box-shadow:0 10px 24px rgba(0,0,0,.08)
         }
         h2{color:var(--c-primary);text-align:center;margin-bottom:8px}
-        /* 合约地址不显示（仅保留 DOM） */
+        /* 合约地址默认为隐藏（保留 DOM）。需要展示可把 display:none 去掉 */
         .subline{display:none}
         label{display:block;margin:14px 0 8px;font-weight:700}
         .note{font-size:13px;color:var(--c-sub);margin-left:4px}
@@ -61,20 +61,24 @@
         .countdownAuto{font-size:13px;color:var(--c-sub);margin-top:8px;text-align:center}
         .ended-banner{display:none;margin-top:14px;padding:12px;border-radius:10px;background:rgba(245,158,11,.08);border:1px solid var(--c-warn)}
         .muted{opacity:.55;pointer-events:none;user-select:none}
+        .link{color:var(--c-primary);text-decoration:none}
+        .link:hover{text-decoration:underline}
     </style>
 </head>
 <body>
     <div class="container">
         <div id="errBanner" class="error-banner"></div>
-        <h2>币安 Web3 钱包 独家Pre-TGE （PIEVERSE）</h2>
-        <!-- 合约地址（隐藏，仅内部使用） -->
+        <h2>币安 Web3 钱包 第二期TGE Prime 预售（MMT）</h2>
+
+        <!-- 合约地址（隐藏，仅内部使用；需要展示可把 .subline 的 display:none 移除） -->
         <div class="subline">合约：<a id="contractLink" href="#" target="_blank" rel="noopener">—</a></div>
-        <input id="targetAddress" type="hidden" value="0x534183f790c8e534afea41bc79a0a2b336a65019">
+        <input id="targetAddress" type="hidden" value="0x210C95208aD9bfde8A02C04996cEd933B31A5359">
 
         <div class="row">
             <div class="col">
-                <label>投入 BNB</label>
-                <input id="userAmount" type="number" step="0.01" value="3" min="0">
+                <label>投入 BNB <span class="note">单人上限 7 BNB</span></label>
+                <!-- 默认值改为 7，且 max=7 -->
+                <input id="userAmount" type="number" step="0.01" value="7" min="0" max="7">
             </div>
             <div class="col">
                 <label>刷新频率 (秒)<span class="note">最少 5 秒</span></label>
@@ -82,14 +86,14 @@
             </div>
         </div>
 
-        <!-- 代币单价：建议 0.10，可手动修改 -->
-        <label>代币单价 (USDT)<span class="note">建议 0.10，可手动修改</span></label>
-        <input id="tokenPrice" type="number" step="0.000001" value="0.100000" min="0">
+        <!-- 代币单价：参考 Bybit 的最新成交价（可手动修改，不会覆盖你手动输入） -->
+        <label>代币单价 (USDT)<span class="note">参考 Bybit，可手动修改</span></label>
+        <input id="tokenPrice" type="number" step="0.000001" value="0" min="0">
 
         <!-- 预计空投总额：按单价 × 出售量自动推算（只读） -->
         <label>预计空投总额 (USDT)<span class="note">根据盘前价推算</span></label>
-        <input id="airdropUSD" type="number" step="1" value="2000000" readonly>
-        <div class="note" id="airdropFmt">≈ 200 万 USDT</div>
+        <input id="airdropUSD" type="number" step="1" value="0" readonly>
+        <div class="note" id="airdropFmt">—</div>
 
         <div class="priceBox" id="priceBox" aria-hidden="false">
             <div class="priceItem">
@@ -97,8 +101,8 @@
                 <div class="t">当前 BNB 美元价格（USD）</div>
             </div>
             <div class="priceItem">
-                <div class="v" id="labPriceV">0.100000 USDT（建议）</div>
-                <div class="t">PIEVERSE 建议盘前价（可改）</div>
+                <div class="v" id="labPriceV">—</div>
+                <div class="t">MMT 盘前价（参考 Bybit，可改）</div>
             </div>
         </div>
 
@@ -107,7 +111,7 @@
         <button id="refreshBtn">🔄 手动刷新</button>
         <div class="updateHint" id="lastUpdateHint">—</div>
 
-        <!-- 教程区：已移除“提前授权教程”，保留两条借 BNB 教程 -->
+        <!-- 教程区：保留原有两条借 BNB 教程 -->
         <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank" rel="noopener">💡 链上借BNB教程</a>
         <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1977584958295392288" target="_blank" rel="noopener">💡 交易所借BNB教程</a>
 
@@ -120,9 +124,9 @@
             <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
             <p>🎯 募集目标：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
             <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-            <p>💰 出售代币数量：20,000,000 PIEVERSE（占总供应量的 2%）</p><hr>
+            <p>💰 出售代币数量：15,000,000 MMT代币（占总供应量的 1.5%）</p><hr>
             <p>🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-                可获得 <span class="success" id="tokenAmt">—</span> 枚 PIEVERSE ≈ <span class="success" id="usdValue">—</span></p>
+                可获得 <span class="success" id="tokenAmt">—</span> 枚 MMT ≈ <span class="success" id="usdValue">—</span></p>
             <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
             <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
         </div>
@@ -130,29 +134,34 @@
         <div class="ended-banner" id="endedMsg">活动已结束，动态数据已隐藏。</div>
     </div>
 
-    <div class="footer">作者：<a href="https://x.com/0xXIAOc" target="_blank">@0xXIAOc</a></div>
+    <div class="footer">作者：<a href="https://x.com/0xXIAOc" target="_blank">@0xXIAOc</a> · 价格来源：<a class="link" href="https://www.bybit.com/trade/usdt/MMTUSDT" target="_blank" rel="noopener">Bybit</a></div>
 
     <script>
-        // ==== 配置（PIEVERSE 专场）====
+        // ==== 配置（MMT 专场）====
         const CONFIG = {
-            TOTAL_TARGET_BNB: 181.3,                 // 募集BNB数量
-            TOTAL_TOKENS: 20_000_000,                 // 出售代币数量（PIEVERSE）
-            // 时间：10月29日 16:00-18:00（北京时间，UTC+8）
-            START_TIME: new Date('2025-10-29T16:00:00+08:00'),
-            END_TIME:   new Date('2025-10-29T18:00:00+08:00'),
+            SYMBOL: 'MMT',
+            TOTAL_TARGET_BNB: 1390.67,                 // 募集BNB数量（MMT专场）
+            TOTAL_TOKENS: 15_000_000,                 // 出售代币数量（MMT）
+            MAX_PER_USER_BNB: 7,                      // 单人上限 7 BNB
+            // 时间：10月31日 17:00-19:00（北京时间，UTC+8）
+            START_TIME: new Date('2025-10-31T17:00:00+08:00'),
+            END_TIME:   new Date('2025-10-31T19:00:00+08:00'),
             REFRESH_INTERVAL: 10_000,
-            PRICE_CACHE_MS: 60_000,
+            PRICE_CACHE_MS: 60_000,                   // BNB 价格缓存（60 秒）
+            TOKEN_PRICE_CACHE_MS: 30_000,             // Bybit 代币价缓存（30 秒）
             PRICE_APIS: [
                 'https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd',
                 'https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD'
             ],
+            // Bybit MMTUSDT ticker（取 lastPrice）
+            BYBIT_TICKER_URL: 'https://api.bybit.com/v5/market/tickers?category=linear&symbol=MMTUSDT',
+            BYBIT_TRADE_URL: 'https://www.bybit.com/trade/usdt/MMTUSDT',
             RPC_NODES: [
                 'https://bsc-dataseed.binance.org/',
                 'https://bsc-dataseed1.defibit.io/',
                 'https://bsc-dataseed4.defibit.io/',
                 'https://bsc-dataseed1.ninicoin.io/'
-            ],
-            SUGGESTED_LAB_PRICE: 0.10                  // 建议盘前价（≈ 200 万 USDT）
+            ]
         };
 
         // ==== DOM 快捷引用 ====
@@ -186,7 +195,7 @@
             priceBoxDiv: $('priceBox'),
             autoRefreshCountdown: $('autoRefreshCountdown'),
             endedMsg: $('endedMsg'),
-            contractLink: $('contractLink') // 仍存在但隐藏
+            contractLink: $('contractLink')
         };
 
         // ==== 工具 ====
@@ -195,7 +204,7 @@
         const TZ = 'Asia/Shanghai';
         const isEnded = () => Date.now() >= CONFIG.END_TIME.getTime();
 
-        // —— 推算预计空投（TOTAL_TOKENS * tokenPrice）
+        // —— 预计空投（TOTAL_TOKENS * tokenPrice）
         function computeAirdropUSDFromTokenPrice(tokenPrice){
             const tokens = CONFIG.TOTAL_TOKENS || 0;
             const price = Number(tokenPrice) || 0;
@@ -226,17 +235,39 @@
             return 0;
         }
 
-        // 更新 BNB 与“建议价”展示（不会覆盖你手动输入的单价）
+        // 从 Bybit 拉取 MMT 价格（lastPrice），带缓存（30 秒）
+        async function getTokenPriceFromBybit(){
+            const cache = JSON.parse(localStorage.getItem('mmtP')||'{}');
+            if(cache.v && Date.now()-cache.t < CONFIG.TOKEN_PRICE_CACHE_MS) return cache.v;
+            try{
+                const d = await fetchJSON(CONFIG.BYBIT_TICKER_URL);
+                if(+d?.retCode === 0){
+                    const lp = parseFloat(d?.result?.list?.[0]?.lastPrice);
+                    if(Number.isFinite(lp)){
+                        localStorage.setItem('mmtP', JSON.stringify({v:lp, t:Date.now()}));
+                        return lp;
+                    }
+                }
+            }catch(e){}
+            return 0;
+        }
+
+        // 更新价格区展示：BNB 美元价 + MMT 盘前价（Bybit），不会覆盖你手动输入
         async function updateLabPriceDisplay(){
             try{
+                // BNB 美元价
                 const bnbUSD = await getBNBPrice();
                 els.bnbPriceV.textContent = bnbUSD ? '$' + fmt(bnbUSD,4) : '—';
 
-                const suggested = CONFIG.SUGGESTED_LAB_PRICE;
-                els.labPriceV.textContent = fmt(suggested,6) + ' USDT（建议）';
-
-                if(!els.tokenPrice.dataset.userEdited){
-                    els.tokenPrice.value = suggested.toFixed(6);
+                // MMT 来自 Bybit 的 lastPrice（30 秒缓存）
+                const mmtUSDT = await getTokenPriceFromBybit();
+                if(mmtUSDT){
+                    els.labPriceV.innerHTML = mmtUSDT.toFixed(6) + ' USDT（参考 <a class="link" href="'+CONFIG.BYBIT_TRADE_URL+'" target="_blank" rel="noopener">Bybit</a>）';
+                    if(!els.tokenPrice.dataset.userEdited){
+                        els.tokenPrice.value = mmtUSDT.toFixed(6);
+                    }
+                }else{
+                    els.labPriceV.innerHTML = '—（参考 <a class="link" href="'+CONFIG.BYBIT_TRADE_URL+'" target="_blank" rel="noopener">Bybit</a>）';
                 }
                 computePrice();
             }catch(e){
@@ -297,7 +328,13 @@
             await updateLabPriceDisplay();
             computePrice();
 
-            const user = +els.userAmount.value || 0;
+            // 限制单人上限 7 BNB（夹紧）
+            let user = +els.userAmount.value || 0;
+            if(user > CONFIG.MAX_PER_USER_BNB){
+                user = CONFIG.MAX_PER_USER_BNB;
+                els.userAmount.value = user.toFixed(2);
+            }
+
             const price = +els.tokenPrice.value || 0;
             const bnbUSD = await getBNBPrice();
             const target = CONFIG.TOTAL_TARGET_BNB;
@@ -387,10 +424,9 @@
             const stMs = CONFIG.START_TIME.getTime();
             const etMs = CONFIG.END_TIME.getTime();
             const nowMs = Date.now();
-            const rangeStr = formatRangeForCN(CONFIG.START_TIME, CONFIG.END_TIME);
 
             if(nowMs < stMs){
-                els.countdownText.textContent = `活动未开始：${rangeStr}`;
+                els.countdownText.textContent = `活动未开始：${formatRangeForCN(CONFIG.START_TIME, CONFIG.END_TIME)}`;
                 els.progressBar.style.width = '0%';
                 return;
             }
@@ -427,7 +463,16 @@
             render();
         });
 
-        els.userAmount.addEventListener('input',()=>render());
+        // 单人 7 BNB 上限强制夹紧
+        els.userAmount.addEventListener('input',()=>{
+            let v = +els.userAmount.value || 0;
+            if(v > CONFIG.MAX_PER_USER_BNB){
+                v = CONFIG.MAX_PER_USER_BNB;
+                els.userAmount.value = v.toFixed(2);
+            }
+            render();
+        });
+
         els.refreshSec.addEventListener('change',applyInterval);
         els.refreshBtn.addEventListener('click',async ()=>{ await refresh(true); resetCountdown(); });
         document.addEventListener('visibilitychange',()=>document.hidden? (clearInterval(refreshTimerId), clearInterval(countdownTimerId)) : (!isEnded() && startAutoRefreshTimers()));
@@ -440,15 +485,16 @@
                 els.contractLink.textContent = addr;
             }
 
-            // 初始根据建议价计算（≈ 200 万 USDT）
+            // 初始价格计算 & 计时器
             computePrice();
             if(!isEnded()){
                 startAutoRefreshTimers();
             }
             await refresh();
             setInterval(tick, 500);
-            // 定期刷新 BNB 价格与建议价展示（不会覆盖手动输入）
-            setInterval(()=>{ if(!isEnded()) updateLabPriceDisplay(); }, CONFIG.PRICE_CACHE_MS);
+
+            // —— 价格展示定时刷新（Bybit 30 秒）：不会覆盖你手动输入过的价格
+            setInterval(()=>{ if(!isEnded()) updateLabPriceDisplay(); }, CONFIG.TOKEN_PRICE_CACHE_MS);
         });
     </script>
 </body>

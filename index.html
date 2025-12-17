@@ -310,7 +310,6 @@
         <span>交易所借BNB教程</span>
       </a>
 
-      <!-- ✅ 已替换为你提供的链接 -->
       <a class="tutorial-link"
          href="https://x.com/0xXIAOc/status/2001170933500011009?s=20"
          target="_blank"
@@ -578,7 +577,10 @@
       els.userInput.textContent = fmt(user,2);
       els.percent.textContent = fmt(share*100,4);
       els.tokenAmt.textContent = fmt(tokens,2);
-      els.usdValue.textContent = fmt(tokens*price,2);
+
+      // ✅ 这里加上 USD 后缀（红框那行）
+      els.usdValue.textContent = fmt(tokens*price,2) + ' USD';
+
       els.principalBNB.textContent = fmt(principal,4);
       els.principalUSD.textContent = fmt(principal*bnbUSD,2);
       els.refundBNB.textContent = fmt(refund,4);
@@ -648,12 +650,12 @@
       const nowMs = Date.now();
 
       if(nowMs < stMs){
-        els.countdownText.textContent = `活动未开始：${formatRangeForCN(CONFIG.START_TIME, CONFIG.END_TIME)}`;
-        els.progressBar.style.width = '0%';
+        $('countdownText').textContent = `活动未开始：${formatRangeForCN(CONFIG.START_TIME, CONFIG.END_TIME)}`;
+        $('progressBar').style.width = '0%';
         return;
       }
       if(nowMs >= etMs){
-        els.progressBar.style.width = '100%';
+        $('progressBar').style.width = '100%';
         applyEndState();
         return;
       }
@@ -664,9 +666,9 @@
       const secs  = Math.floor((diff%6e4)/1e3);
       const txt = hours>0 ? `${hours} 小时 ${mins} 分` : (mins>0 ? `${mins} 分 ${secs} 秒` : `${(diff/1e3).toFixed(1)} 秒`);
 
-      els.countdownText.textContent = `剩余时间：${txt}`;
+      $('countdownText').textContent = `剩余时间：${txt}`;
       const pct = ((nowMs - stMs) / (etMs - stMs) * 100);
-      els.progressBar.style.width = (pct>100?100: pct<0?0:pct).toFixed(2) + '%';
+      $('progressBar').style.width = (pct>100?100: pct<0?0:pct).toFixed(2) + '%';
     }
 
     function applyInterval(){

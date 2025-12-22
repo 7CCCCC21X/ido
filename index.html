@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>币安 Web3 钱包 第42期独家TGE (IR)</title>
+  <title>币安 Web3 钱包 独家 Pre-TGE 活动 （BTW）</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <meta name="color-scheme" content="light dark" />
   <style>
@@ -236,11 +236,11 @@
   <div class="container">
     <div id="errBanner" class="error-banner"></div>
 
-    <h2>币安 Web3 钱包 第42期独家TGE (IR)</h2>
+    <h2>币安 Web3 钱包 独家 Pre-TGE 活动 （BTW）</h2>
 
     <!-- 合约地址（隐藏，仅内部使用；需要展示可把 .subline 的 display:none 移除） -->
     <div class="subline">合约：<a id="contractLink" href="#" target="_blank" rel="noopener">—</a></div>
-    <input id="targetAddress" type="hidden" value="0xa3ea0e2f9f2c4b702275ad957a799276672f7dd1" />
+    <input id="targetAddress" type="hidden" value="0xa04f0364d5972c6777ac50fcf1c7935eddd4e1ac" />
 
     <div class="row">
       <div class="col">
@@ -253,11 +253,11 @@
       </div>
     </div>
 
-    <label>代币单价 (USDT)<span class="note">默认 0.2，可手动修改</span></label>
-    <input id="tokenPrice" type="number" step="0.000001" value="0.2" min="0" />
+    <label>代币单价 (USDT)<span class="note">默认 0.02，可手动修改</span></label>
+    <input id="tokenPrice" type="number" step="0.000001" value="0.02" min="0" />
 
-    <label>预计空投总额 (USDT)<span class="note">根据单价推算</span></label>
-    <input id="airdropUSD" type="number" step="1" value="0" readonly />
+    <label>预计空投总额 (USDT)<span class="note">默认约 200 万（根据单价推算，可随单价自动变化）</span></label>
+    <input id="airdropUSD" type="number" step="1" value="2000000" readonly />
     <div class="note" id="airdropFmt">—</div>
 
     <div class="priceBox" id="priceBox" aria-hidden="false">
@@ -267,7 +267,7 @@
       </div>
       <div class="priceItem">
         <div class="v" id="labPriceV">—</div>
-        <div class="t">IR 盘前价（按FDV2亿进行估算 可手动修改代币价格）</div>
+        <div class="t">BTW 盘前价（参考以往Pre‑TGE空投总额200万USDT反推  ，估算 FDV 2 亿 可手动修改代币价格）</div>
       </div>
     </div>
 
@@ -310,8 +310,9 @@
         <span>交易所借BNB教程</span>
       </a>
 
+      <!-- ✅ 新增：币安钱包借BNB教程 -->
       <a class="tutorial-link"
-         href="https://x.com/0xXIAOc/status/2001170933500011009?s=20"
+         href="https://x.com/0xXIAOc/status/2001254000516346195?s=20"
          target="_blank"
          rel="noopener"
          title="点击将跳转到网站">
@@ -323,15 +324,20 @@
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </span>
-        <span>提前授权教程</span>
+        <span>币安钱包借BNB教程</span>
       </a>
+
+      <!-- ❌ 已取消：提前授权教程 -->
     </div>
 
     <!-- ===== 黄色提示条 + 邀请码（按钮固定最右；邀请码在按钮下方） ===== -->
     <div class="hintBanner">
       <div class="hintLeft">
         <span class="hintPrefix">提示：</span>
-        <span class="hintMsg">不想买 BNB 承担下跌风险：可以参考上面借 BNB 教程。</span>
+        <span class="hintMsg">
+          18点结束后，未被用于认购的BNB可以退回，就扣除几U的成本。<br>
+          Pre‑TGE 获得的代币会进入项目方设定的锁定期，预估等存款活动结束后开放。
+        </span>
       </div>
 
       <div class="hintRight">
@@ -359,11 +365,11 @@
       <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
       <p>🎯 募集目标：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
       <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-      <p>💰 出售代币数量：7,500,000 IR 代币（占总供应量的 0.75%）</p>
+      <p>💰 出售代币数量：100,000,000 BTW 代币（占总供应量的 1%）</p>
       <hr>
       <p>
         🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-        可获得 <span class="success" id="tokenAmt">—</span> 枚 IR ≈ <span class="success" id="usdValue">—</span>
+        可获得 <span class="success" id="tokenAmt">—</span> 枚 BTW ≈ <span class="success" id="usdValue">—</span>
       </p>
       <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
       <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
@@ -375,15 +381,15 @@
   <div class="footer">作者：<a href="https://x.com/0xXIAOc" target="_blank" rel="noopener" title="点击将跳转到网站">@0xXIAOc</a></div>
 
   <script>
-    // ==== 配置（IR 专场）====
+    // ==== 配置（BTW 专场）====
     const CONFIG = {
-      SYMBOL: 'IR',
-      TOTAL_TARGET_BNB: 174.71,
-      TOTAL_TOKENS: 7_500_000,
+      SYMBOL: 'BTW',
+      TOTAL_TARGET_BNB: 58.28,
+      TOTAL_TOKENS: 100_000_000,
       MAX_PER_USER_BNB: 3,
 
-      START_TIME: new Date('2025-12-17T16:00:00+08:00'),
-      END_TIME:   new Date('2025-12-17T18:00:00+08:00'),
+      START_TIME: new Date('2025-12-22T16:00:00+08:00'),
+      END_TIME:   new Date('2025-12-22T18:00:00+08:00'),
 
       PRICE_CACHE_MS: 60_000,
       PRICE_DISPLAY_REFRESH_MS: 30_000,

@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>币安 Web3 钱包 第43 期 IDO 上线 (COLLECT)</title>
+  <title>币安 Web3 钱包 第44 期 IDO 上线 (ZTC)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <meta name="color-scheme" content="light dark" />
   <style>
@@ -98,7 +98,7 @@
     .priceItem .v{font-weight:700;font-size:16px}
     .priceItem .t{font-size:12px;color:var(--c-sub);margin-top:6px}
 
-    /* ✅ COLLECT 参考价下面的 MEXC 链接（换行 + 可点击） */
+    /* ✅ ZTC 参考价下面的 MEXC 链接（换行 + 可点击） */
     .mexcPremarketLink,
     .mexcPremarketLink:visited{
       display:block;              /* 强制换行到下一行 */
@@ -250,11 +250,11 @@
   <div class="container">
     <div id="errBanner" class="error-banner"></div>
 
-    <h2>币安 Web3 钱包 第43 期 IDO 上线 (COLLECT)</h2>
+    <h2>币安 Web3 钱包 第44 期 IDO 上线 (ZTC)</h2>
 
     <!-- 合约地址（隐藏，仅内部使用；需要展示可把 .subline 的 display:none 移除） -->
     <div class="subline">合约：<a id="contractLink" href="#" target="_blank" rel="noopener">—</a></div>
-    <input id="targetAddress" type="hidden" value="0x9d1dd2d8e2fe143649b5cf0da64f9562ee15ee2b" />
+    <input id="targetAddress" type="hidden" value="0x510cb932a0f875148f14d06b1004f15f1936bc86" />
 
     <div class="row">
       <div class="col">
@@ -267,11 +267,11 @@
       </div>
     </div>
 
-    <label>代币单价 (USDT)<span class="note">默认 0.02，可手动修改</span></label>
-    <input id="tokenPrice" type="number" step="0.000001" value="0.02" min="0" />
+    <label>代币单价 (USDT)<span class="note">默认 0.007，可手动修改</span></label>
+    <input id="tokenPrice" type="number" step="0.000001" value="0.007" min="0" />
 
-    <label>预计空投总额 (USDT)<span class="note">默认约 120 万（根据mexc盘前价0.02推算）</span></label>
-    <input id="airdropUSD" type="number" step="1" value="1200000" readonly />
+    <label>预计空投总额 (USDT)<span class="note">默认约 147 万（根据mexc盘前价0.007推算）</span></label>
+    <input id="airdropUSD" type="number" step="1" value="1470000" readonly />
     <div class="note" id="airdropFmt">—</div>
 
     <div class="priceBox" id="priceBox" aria-hidden="false">
@@ -282,12 +282,12 @@
       <div class="priceItem">
         <div class="v" id="labPriceV">—</div>
         <div class="t">
-          COLLECT 参考价
+          ZTC 参考价
           <a class="mexcPremarketLink"
-             href="https://www.mexc.com/zh-MY/pre-market/COLLECT"
+             href="https://www.mexc.com/zh-MY/pre-market/ZTC"
              target="_blank"
              rel="noopener">
-            根据mexc盘前价0.02推算 FDV6000万，可手动修改代币价格
+            根据mexc盘前价0.007推算 FDV约1.47亿，可手动修改代币价格
           </a>
         </div>
       </div>
@@ -349,9 +349,9 @@
         <span>币安钱包借BNB教程</span>
       </a>
 
-      <!-- ✅ 新增：提前授权教程 -->
+      <!-- ✅ 提前授权教程（ZTC 第44期更新） -->
       <a class="tutorial-link"
-         href="https://x.com/0xXIAOc/status/2004802774266196264?s=20"
+         href="https://x.com/0xXIAOc/status/2008789197411545470?s=20"
          target="_blank"
          rel="noopener"
          title="点击将跳转到网站">
@@ -401,11 +401,11 @@
       <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
       <p>🎯 募集目标：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
       <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-      <p>💰 出售代币数量：60,000,000 COLLECT 代币（占总供应量的 2%）</p>
+      <p>💰 出售代币数量：210,000,000 ZTC 代币（占总供应量的 1%）</p>
       <hr>
       <p>
         🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-        可获得 <span class="success" id="tokenAmt">—</span> 枚 COLLECT ≈ <span class="success" id="usdValue">—</span>
+        可获得 <span class="success" id="tokenAmt">—</span> 枚 ZTC ≈ <span class="success" id="usdValue">—</span>
       </p>
       <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
       <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
@@ -417,15 +417,16 @@
   <div class="footer">作者：<a href="https://x.com/0xXIAOc" target="_blank" rel="noopener" title="点击将跳转到网站">@0xXIAOc</a></div>
 
   <script>
-    // ==== 配置（COLLECT 专场）====
+    // ==== 配置（ZTC 专场）====
     const CONFIG = {
-      SYMBOL: 'COLLECT',
-      TOTAL_TARGET_BNB: 241.13,
-      TOTAL_TOKENS: 60_000_000,
+      SYMBOL: 'ZTC',
+      TOTAL_TARGET_BNB: 54.89,
+      TOTAL_TOKENS: 210_000_000,
       MAX_PER_USER_BNB: 3,
 
-      START_TIME: new Date('2025-12-27T16:00:00+08:00'),
-      END_TIME:   new Date('2025-12-27T18:00:00+08:00'),
+      // ⚠️ 年份默认按「2026-01-07」写死；如需改年份只改这里即可
+      START_TIME: new Date('2026-01-07T16:00:00+08:00'),
+      END_TIME:   new Date('2026-01-07T18:00:00+08:00'),
 
       PRICE_CACHE_MS: 60_000,
       PRICE_DISPLAY_REFRESH_MS: 30_000,

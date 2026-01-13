@@ -7,12 +7,24 @@
   <meta name="color-scheme" content="light dark" />
   <style>
     :root{
-      --c-bg:#f9f9f9; --c-card:#fff; --c-text:#222; --c-sub:#6b7280;
-      --c-primary:#0078d4; --c-primary-dark:#005fa3; --c-success:#16a34a;
-      --c-error:#dc2626; --c-refund:#0284c7; --c-warn:#f59e0b;
+      --c-bg:#f9f9f9;
+      --c-card:#fff;
+      --c-text:#222;
+      --c-sub:#6b7280;
+      --c-primary:#0078d4;
+      --c-primary-dark:#005fa3;
+      --c-success:#16a34a;
+      --c-error:#dc2626;
+      --c-refund:#0284c7;
+      --c-warn:#f59e0b;
     }
     @media(prefers-color-scheme:dark){
-      :root{ --c-bg:#111827; --c-card:#1f2937; --c-text:#f3f4f6; --c-sub:#9ca3af }
+      :root{
+        --c-bg:#111827;
+        --c-card:#1f2937;
+        --c-text:#f3f4f6;
+        --c-sub:#9ca3af
+      }
     }
     *{box-sizing:border-box;margin:0}
     body{
@@ -72,12 +84,14 @@
       background:var(--c-bg)
     }
     .result p{margin:8px 0;font-size:15px;line-height:1.45}
+
     .highlight{font-weight:700}
     .success{color:var(--c-success);font-weight:700}
     .deduct{color:var(--c-error);font-weight:700}
     .refund{color:var(--c-refund);font-weight:700}
 
     .updateHint{text-align:right;font-size:13px;color:var(--c-sub);margin-top:10px}
+
     .error-banner{
       display:none;margin-bottom:18px;padding:10px 14px;border-radius:10px;
       background:var(--c-error);color:#fff;font-size:14px
@@ -91,7 +105,7 @@
     .priceBox{
       display:flex;
       gap:12px;
-      align-items:stretch;   /* 原来是 center，会导致两个框高度不一致 */
+      align-items:stretch; /* 原来是 center，会导致两个框高度不一致 */
       margin-top:12px
     }
     .priceItem{
@@ -105,8 +119,7 @@
     .priceItem .t{font-size:12px;color:var(--c-sub);margin-top:6px}
 
     /* ✅ FOGO 参考价下面的「价格来源」链接（换行 + 可点击） */
-    .premarketLink,
-    .premarketLink:visited{
+    .premarketLink, .premarketLink:visited{
       display:block;
       margin-top:4px;
       color:inherit;
@@ -114,9 +127,7 @@
       text-underline-offset:3px;
       font-weight:700;
     }
-    .premarketLink:hover{
-      color: var(--c-primary);
-    }
+    .premarketLink:hover{ color: var(--c-primary); }
 
     .countdownAuto{font-size:13px;color:var(--c-sub);margin-top:8px;text-align:center}
 
@@ -144,14 +155,11 @@
       color:var(--c-primary);
       padding:6px 10px;
       border-radius:10px;
-
       /* ✅ 永久下划线（下横线） */
       text-decoration: underline;
       text-underline-offset: 3px;
     }
-    .tutorial-link:hover{
-      background:rgba(0,120,212,.06);
-    }
+    .tutorial-link:hover{ background:rgba(0,120,212,.06); }
     .tutorial-link .ico{
       width:18px;height:18px;line-height:0;
       display:inline-flex;
@@ -166,22 +174,18 @@
       border-radius:10px;
       background:rgba(245,158,11,.10);
       border:1px solid rgba(245,158,11,.55);
-
       display:grid;
       grid-template-columns: minmax(0, 1fr) auto;
       align-items:center;
       column-gap:12px;
-
       width:100%;
     }
-
     .hintLeft{
       display:flex;
       align-items:flex-start;
       gap:6px;
       min-width:0;
     }
-
     .hintPrefix{
       color:var(--c-warn);
       font-weight:900;
@@ -189,7 +193,6 @@
       white-space:nowrap;
       margin-top:1px;
     }
-
     .hintMsg{
       color:var(--c-warn);
       font-weight:800;
@@ -198,7 +201,6 @@
       white-space:normal;
       word-break:break-word;
     }
-
     .hintRight{
       justify-self:end;
       display:flex;
@@ -206,7 +208,6 @@
       align-items:flex-end;
       gap:6px;
     }
-
     .hintBtn{
       color:var(--c-warn);
       font-weight:900;
@@ -219,7 +220,6 @@
       background:rgba(255,255,255,.60);
     }
     .hintBtn:hover{ text-decoration:underline; }
-
     .hintSub{
       text-align:right;
       font-size:12.5px;
@@ -232,22 +232,11 @@
       font-weight:900;
       color:var(--c-warn);
     }
-
     @media (max-width:560px){
-      .hintBanner{
-        grid-template-columns: 1fr;
-        row-gap:10px;
-      }
-      .hintRight{
-        align-items:stretch;
-      }
-      .hintBtn{
-        width:100%;
-        text-align:center;
-      }
-      .hintSub{
-        text-align:center;
-      }
+      .hintBanner{ grid-template-columns: 1fr; row-gap:10px; }
+      .hintRight{ align-items:stretch; }
+      .hintBtn{ width:100%; text-align:center; }
+      .hintSub{ text-align:center; }
     }
   </style>
 </head>
@@ -260,6 +249,7 @@
 
     <!-- 合约地址（隐藏，仅内部使用；需要展示可把 .subline 的 display:none 移除） -->
     <div class="subline">合约：<a id="contractLink" href="#" target="_blank" rel="noopener">—</a></div>
+
     <input id="targetAddress" type="hidden" value="0x0f9485e528A11112429e5c99cb48b2735CDF1511" />
 
     <div class="row">
@@ -290,10 +280,7 @@
         <div class="v" id="labPriceV">—</div>
         <div class="t">
           FOGO 盘前参考价
-          <a class="premarketLink"
-             href="https://www.binance.com/zh-CN/futures/FOGOUSDT"
-             target="_blank"
-             rel="noopener">
+          <a class="premarketLink" href="https://www.binance.com/zh-CN/futures/FOGOUSDT" target="_blank" rel="noopener">
             价格来源：币安合约接口 FOGOUSDT（自动更新）
           </a>
         </div>
@@ -301,60 +288,43 @@
     </div>
 
     <div class="countdownAuto" id="autoRefreshCountdown">下次自动刷新：— 秒</div>
-
     <button id="refreshBtn">🔄 手动刷新</button>
     <div class="updateHint" id="lastUpdateHint">—</div>
 
     <!-- ===== 教程链接 ===== -->
     <div class="tutorials">
-      <a class="tutorial-link"
-         href="https://x.com/0xXIAOc/status/1929136552757830056"
-         target="_blank"
-         rel="noopener"
-         title="点击将跳转到网站">
+      <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank" rel="noopener" title="点击将跳转到网站">
         <span class="ico" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
             <path d="M9 21h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             <path d="M10 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9.6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9.6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </span>
         <span>链上借BNB教程</span>
       </a>
 
-      <a class="tutorial-link"
-         href="https://x.com/0xXIAOc/status/1977584958295392288"
-         target="_blank"
-         rel="noopener"
-         title="点击将跳转到网站">
+      <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1977584958295392288" target="_blank" rel="noopener" title="点击将跳转到网站">
         <span class="ico" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
             <path d="M9 21h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             <path d="M10 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9.6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9.6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </span>
         <span>交易所借BNB教程</span>
       </a>
 
-      <a class="tutorial-link"
-         href="https://x.com/0xXIAOc/status/2001254000516346195?s=20"
-         target="_blank"
-         rel="noopener"
-         title="点击将跳转到网站">
+      <a class="tutorial-link" href="https://x.com/0xXIAOc/status/2001254000516346195?s=20" target="_blank" rel="noopener" title="点击将跳转到网站">
         <span class="ico" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
             <path d="M9 21h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             <path d="M10 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9.6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9.6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </span>
         <span>币安钱包借BNB教程</span>
       </a>
-
       <!-- ❌ 已按要求删除：提前授权教程 -->
     </div>
 
@@ -367,16 +337,10 @@
           获得的代币 15号在交易所可以卖出。
         </span>
       </div>
-
       <div class="hintRight">
-        <a class="hintBtn"
-           href="https://web3.binance.com/zh-CN/referral?ref=XIAOCC"
-           target="_blank"
-           rel="noopener"
-           title="点击将跳转到网站">
+        <a class="hintBtn" href="https://web3.binance.com/zh-CN/referral?ref=XIAOCC" target="_blank" rel="noopener" title="点击将跳转到网站">
           币安钱包绑定邀请码 手续费立减30%
         </a>
-
         <div class="hintSub">
           点击上方按钮绑定邀请码<br>
           <span class="hintCode">邀请码：XIAOCC</span>
@@ -400,13 +364,22 @@
         可获得 <span class="success" id="tokenAmt">—</span> 枚 FOGO ≈ <span class="success" id="usdValue">—</span>
       </p>
       <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
+
+      <!-- ✅ 新增：利润 -->
+      <p>📈 利润：<span class="highlight" id="profitUSD">—</span></p>
+
       <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
     </div>
 
     <div class="ended-banner" id="endedMsg">活动已结束，动态数据已隐藏。</div>
   </div>
 
-  <div class="footer">作者：<a href="https://x.com/0xXIAOc" target="_blank" rel="noopener" title="点击将跳转到网站">@0xXIAOc</a></div>
+  <div class="footer">
+  作者：<a href="https://x.com/0xXIAOc" target="_blank" rel="noopener" title="点击将跳转到网站">@0xXIAOc</a>
+  &nbsp;|&nbsp;
+  <a href="https://t.me/xiaoccaac" target="_blank" rel="noopener" title="点击将跳转到网站">✈️加入Alpha交流群</a>
+</div>
+
 
   <script>
     // ==== 配置（FOGO 专场）====
@@ -418,7 +391,7 @@
 
       // ⚠️ 年份默认按「2026-01-13」写死；如需改年份只改这里即可
       START_TIME: new Date('2026-01-13T16:00:00+08:00'),
-      END_TIME:   new Date('2026-01-13T18:00:00+08:00'),
+      END_TIME: new Date('2026-01-13T18:00:00+08:00'),
 
       PRICE_CACHE_MS: 60_000,
       PRICE_DISPLAY_REFRESH_MS: 30_000,
@@ -441,6 +414,7 @@
     };
 
     const $ = id => document.getElementById(id);
+
     const els = {
       userAmount: $('userAmount'),
       tokenPrice: $('tokenPrice'),
@@ -449,6 +423,7 @@
       refreshSec: $('refreshSec'),
       refreshBtn: $('refreshBtn'),
       lastUpdateHint: $('lastUpdateHint'),
+
       bnbBalance: $('bnbBalance'),
       multiplier: $('multiplier'),
       userInput: $('userInput'),
@@ -457,13 +432,19 @@
       usdValue: $('usdValue'),
       principalBNB: $('principalBNB'),
       principalUSD: $('principalUSD'),
+
+      // ✅ 新增：利润显示节点
+      profitUSD: $('profitUSD'),
+
       refundBNB: $('refundBNB'),
+
       resultBox: $('resultBox'),
       countdownText: $('countdownText'),
       progressBar: $('progressBar'),
       errBanner: $('errBanner'),
       targetAddress: $('targetAddress'),
       targetBNBShow: $('targetBNBShow'),
+
       bnbPriceV: $('bnbPriceV'),
       labPriceV: $('labPriceV'),
       priceBoxDiv: $('priceBox'),
@@ -532,7 +513,6 @@
     async function updatePriceDisplay(){
       try{
         const [bnbUSD, tokP] = await Promise.all([getBNBPrice(), getTokenPrice()]);
-
         els.bnbPriceV.textContent = bnbUSD ? ('$' + fmt(bnbUSD,4)) : '—';
 
         // ✅ 用户没手动改过才自动回填
@@ -540,7 +520,6 @@
           els.tokenPrice.value = Number(tokP).toFixed(6);
           computePrice();
         }
-
         syncLabPriceDisplay();
       }catch(e){
         console.error('updatePriceDisplay error', e);
@@ -581,7 +560,11 @@
       if(refreshTimerId) clearInterval(refreshTimerId);
       if(countdownTimerId) clearInterval(countdownTimerId);
 
-      refreshTimerId = setInterval(()=>{ refresh(false); resetCountdown(); }, refreshIntervalMs);
+      refreshTimerId = setInterval(()=>{
+        refresh(false);
+        resetCountdown();
+      }, refreshIntervalMs);
+
       nextRefreshSeconds = Math.ceil(refreshIntervalMs / 1000);
       updateCountdownDisplay();
 
@@ -607,9 +590,13 @@
     let latestDep = 0;
 
     async function render(dep = latestDep){
-      if(isEnded()){ applyEndState(); return; }
+      if(isEnded()){
+        applyEndState();
+        return;
+      }
 
       latestDep = dep;
+
       computePrice();
       syncLabPriceDisplay();
 
@@ -630,22 +617,28 @@
         return;
       }
 
-      const share = user/dep;
-      const tokens = share*CONFIG.TOTAL_TOKENS;
-      const principal = Math.min(share*target, user);
-      const refund = Math.max(user-principal, 0);
-      const multi = dep/target;
+      const share = user / dep;
+      const tokens = share * CONFIG.TOTAL_TOKENS;
+      const principal = Math.min(share * target, user);
+      const refund = Math.max(user - principal, 0);
+      const multi = dep / target;
 
       els.bnbBalance.textContent = fmt(dep,4);
       els.multiplier.textContent = fmt(multi,2);
       els.userInput.textContent = fmt(user,2);
       els.percent.textContent = fmt(share*100,4);
       els.tokenAmt.textContent = fmt(tokens,2);
-
       els.usdValue.textContent = fmt(tokens*price,2) + ' USD';
-
       els.principalBNB.textContent = fmt(principal,4);
       els.principalUSD.textContent = fmt(principal*bnbUSD,2);
+
+      // ✅ 新增：利润 = 可获得价值 - 实际扣款价值
+      const profit = (tokens * price) - (principal * bnbUSD);
+      els.profitUSD.textContent = fmt(profit, 2) + ' USD';
+      // 利润正负自动上色：正=绿色(success)，负=红色(deduct)
+      els.profitUSD.classList.remove('success', 'deduct');
+      els.profitUSD.classList.add(profit >= 0 ? 'success' : 'deduct');
+
       els.refundBNB.textContent = fmt(refund,4);
       els.resultBox.hidden = false;
     }
@@ -653,8 +646,10 @@
     let refreshing=false;
     async function refresh(manual=false){
       if(refreshing) return;
-      if(isEnded()){ applyEndState(); return; }
-
+      if(isEnded()){
+        applyEndState();
+        return;
+      }
       refreshing=true;
       els.refreshBtn.disabled=true;
       if(manual) els.errBanner.style.display='none';
@@ -679,12 +674,16 @@
     function formatRangeForCN(st, et){
       const getNum = (date, opt) =>
         new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, ...opt })
-          .format(date).replace(/\D/g, '');
+          .format(date)
+          .replace(/\D/g, '');
+
       const m = getNum(st, { month: 'numeric' });
       const d = getNum(st, { day: 'numeric' });
+
       const tFmt = new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hour12: false });
       const ts = tFmt.format(st);
       const te = tFmt.format(et);
+
       return `${m}月${d}日 ${ts}-${te}（北京时间）`;
     }
 
@@ -699,10 +698,12 @@
       els.resultBox.hidden = true;
       els.priceBoxDiv.style.display = 'none';
       els.autoRefreshCountdown.style.display = 'none';
+
       els.refreshBtn.classList.add('muted');
       els.refreshBtn.disabled = true;
       els.refreshSec.disabled = true;
       els.userAmount.disabled = true;
+
       els.endedMsg.style.display = 'block';
       els.countdownText.textContent = '已结束';
     }
@@ -717,6 +718,7 @@
         $('progressBar').style.width = '0%';
         return;
       }
+
       if(nowMs >= etMs){
         $('progressBar').style.width = '100%';
         applyEndState();
@@ -725,9 +727,12 @@
 
       const diff = etMs - nowMs;
       const hours = Math.floor(diff/3.6e6);
-      const mins  = Math.floor((diff%3.6e6)/6e4);
-      const secs  = Math.floor((diff%6e4)/1e3);
-      const txt = hours>0 ? `${hours} 小时 ${mins} 分` : (mins>0 ? `${mins} 分 ${secs} 秒` : `${(diff/1e3).toFixed(1)} 秒`);
+      const mins = Math.floor((diff%3.6e6)/6e4);
+      const secs = Math.floor((diff%6e4)/1e3);
+
+      const txt = hours>0
+        ? `${hours} 小时 ${mins} 分`
+        : (mins>0 ? `${mins} 分 ${secs} 秒` : `${(diff/1e3).toFixed(1)} 秒`);
 
       $('countdownText').textContent = `剩余时间：${txt}`;
       const pct = ((nowMs - stMs) / (etMs - stMs) * 100);
@@ -737,10 +742,8 @@
     function applyInterval(){
       const sec = Math.max(+els.refreshSec.value||10,5);
       refreshIntervalMs = sec * 1000;
-
       if(refreshTimerId) clearInterval(refreshTimerId);
       if(countdownTimerId) clearInterval(countdownTimerId);
-
       if(!isEnded()){
         startAutoRefreshTimers();
       }
@@ -762,10 +765,14 @@
       render();
     });
 
-    els.refreshSec.addEventListener('change',applyInterval);
-    els.refreshBtn.addEventListener('click',async ()=>{ await refresh(true); resetCountdown(); });
+    els.refreshSec.addEventListener('change', applyInterval);
 
-    document.addEventListener('visibilitychange',()=>{
+    els.refreshBtn.addEventListener('click', async ()=>{
+      await refresh(true);
+      resetCountdown();
+    });
+
+    document.addEventListener('visibilitychange', ()=>{
       if(document.hidden){
         clearInterval(refreshTimerId);
         clearInterval(countdownTimerId);
@@ -783,15 +790,20 @@
 
       computePrice();
       syncLabPriceDisplay();
+
       await updatePriceDisplay();
 
       if(!isEnded()){
         startAutoRefreshTimers();
       }
+
       await refresh();
+
       setInterval(tick, 500);
 
-      setInterval(()=>{ if(!isEnded()) updatePriceDisplay(); }, CONFIG.PRICE_DISPLAY_REFRESH_MS);
+      setInterval(()=>{
+        if(!isEnded()) updatePriceDisplay();
+      }, CONFIG.PRICE_DISPLAY_REFRESH_MS);
     });
   </script>
 </body>

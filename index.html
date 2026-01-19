@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>币安 Web3 钱包 第3 期 Prime Sale Pre-TGE (FOGO)</title>
+  <title>币安 Web3 钱包 第4 期 Prime Sale Pre-TGE (SENT)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <meta name="color-scheme" content="light dark" />
   <style>
@@ -105,7 +105,7 @@
     .priceBox{
       display:flex;
       gap:12px;
-      align-items:stretch; /* 原来是 center，会导致两个框高度不一致 */
+      align-items:stretch;
       margin-top:12px
     }
     .priceItem{
@@ -118,7 +118,7 @@
     .priceItem .v{font-weight:700;font-size:16px}
     .priceItem .t{font-size:12px;color:var(--c-sub);margin-top:6px}
 
-    /* ✅ FOGO 参考价下面的「价格来源」链接（换行 + 可点击） */
+    /* ✅ 参考价下面的「价格来源」链接（换行 + 可点击） */
     .premarketLink, .premarketLink:visited{
       display:block;
       margin-top:4px;
@@ -155,7 +155,6 @@
       color:var(--c-primary);
       padding:6px 10px;
       border-radius:10px;
-      /* ✅ 永久下划线（下横线） */
       text-decoration: underline;
       text-underline-offset: 3px;
     }
@@ -245,17 +244,17 @@
   <div class="container">
     <div id="errBanner" class="error-banner"></div>
 
-    <h2>币安 Web3 钱包 第3 期 Prime Sale Pre-TGE (FOGO)</h2>
+    <h2>币安 Web3 钱包 第4 期 Prime Sale Pre-TGE (SENT)</h2>
 
     <!-- 合约地址（隐藏，仅内部使用；需要展示可把 .subline 的 display:none 移除） -->
     <div class="subline">合约：<a id="contractLink" href="#" target="_blank" rel="noopener">—</a></div>
 
-    <input id="targetAddress" type="hidden" value="0x0f9485e528A11112429e5c99cb48b2735CDF1511" />
+    <input id="targetAddress" type="hidden" value="0x5fef53eff668946262be0878f28d2336a4ce9e75" />
 
     <div class="row">
       <div class="col">
-        <label>投入 BNB <span class="note">单人上限 6 BNB</span></label>
-        <input id="userAmount" type="number" step="0.01" value="6" min="0" max="6" />
+        <label>投入 BNB <span class="note">单人上限 3 BNB</span></label>
+        <input id="userAmount" type="number" step="0.01" value="3" min="0" max="3" />
       </div>
       <div class="col">
         <label>刷新频率 (秒)<span class="note">最少 5 秒</span></label>
@@ -264,11 +263,10 @@
     </div>
 
     <label>盘前价 (USDT)<span class="note">默认自动读取（可手动修改）</span></label>
-    <input id="tokenPrice" type="number" step="0.000001" value="0.056940" min="0" />
+    <input id="tokenPrice" type="number" step="0.000001" value="0.021880" min="0" />
 
-    <!-- ✅ 按你要求修改这里的文案 -->
     <label>预计空投总额 (USDT)<span class="note">（根据币安盘前价推算）</span></label>
-    <input id="airdropUSD" type="number" step="1" value="11388000" readonly />
+    <input id="airdropUSD" type="number" step="1" value="15035822" readonly />
     <div class="note" id="airdropFmt">—</div>
 
     <div class="priceBox" id="priceBox" aria-hidden="false">
@@ -279,9 +277,9 @@
       <div class="priceItem">
         <div class="v" id="labPriceV">—</div>
         <div class="t">
-          FOGO 盘前参考价
-          <a class="premarketLink" href="https://www.binance.com/zh-CN/futures/FOGOUSDT" target="_blank" rel="noopener">
-            价格来源：币安合约接口 FOGOUSDT（自动更新）
+          SENT 盘前参考价
+          <a class="premarketLink" href="https://www.binance.com/zh-CN/futures/SENTUSDT" target="_blank" rel="noopener">
+            价格来源：币安合约接口 SENTUSDT（自动更新）
           </a>
         </div>
       </div>
@@ -325,7 +323,6 @@
         </span>
         <span>币安钱包借BNB教程</span>
       </a>
-      <!-- ❌ 已按要求删除：提前授权教程 -->
     </div>
 
     <!-- ===== 黄色提示条 + 邀请码 ===== -->
@@ -333,8 +330,8 @@
       <div class="hintLeft">
         <span class="hintPrefix">提示：</span>
         <span class="hintMsg">
-          18点结束后，未被用于认购的BNB可以退回。<br>
-          获得的代币 15号在交易所可以卖出。
+          22点结束后，未被用于认购的BNB可以退回。<br>
+          获得的代币 22号在交易所可以卖出。
         </span>
       </div>
       <div class="hintRight">
@@ -342,7 +339,7 @@
           币安钱包绑定邀请码 手续费立减30%
         </a>
         <div class="hintSub">
-          点击上方按钮绑定邀请码<br>
+          点击上方一键绑定邀请码<br>
           <span class="hintCode">邀请码：XIAOCC</span>
         </div>
       </div>
@@ -357,15 +354,14 @@
       <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
       <p>🎯 募集资金：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
       <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-      <p>💰 出售代币数量：200,000,000 FOGO 代币（占总供应量的 2%）</p>
+      <p>💰 出售代币数量：687,194,767 个 SENT 代币（占总供应量的 2%）</p>
       <hr>
       <p>
         🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-        可获得 <span class="success" id="tokenAmt">—</span> 枚 FOGO ≈ <span class="success" id="usdValue">—</span>
+        可获得 <span class="success" id="tokenAmt">—</span> 枚 SENT ≈ <span class="success" id="usdValue">—</span>
       </p>
       <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
 
-      <!-- ✅ 新增：利润 -->
       <p>📈 利润：<span class="highlight" id="profitUSD">—</span></p>
 
       <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
@@ -375,23 +371,22 @@
   </div>
 
   <div class="footer">
-  作者：<a href="https://x.com/0xXIAOc" target="_blank" rel="noopener" title="点击将跳转到网站">@0xXIAOc</a>
-  &nbsp;|&nbsp;
-  <a href="https://t.me/xiaoccaac" target="_blank" rel="noopener" title="点击将跳转到网站">✈️加入Alpha交流群</a>
-</div>
-
+    作者：<a href="https://x.com/0xXIAOc" target="_blank" rel="noopener" title="点击将跳转到网站">@0xXIAOc</a>
+    &nbsp;|&nbsp;
+    <a href="https://t.me/xiaoccaac" target="_blank" rel="noopener" title="点击将跳转到网站">✈️加入Alpha交流群</a>
+  </div>
 
   <script>
-    // ==== 配置（FOGO 专场）====
+    // ==== 配置（SENT 专场）====
     const CONFIG = {
-      SYMBOL: 'FOGO',
-      TOTAL_TARGET_BNB: 7754.08,
-      TOTAL_TOKENS: 200_000_000,
-      MAX_PER_USER_BNB: 6,
+      SYMBOL: 'SENT',
+      TOTAL_TARGET_BNB: 8025,
+      TOTAL_TOKENS: 687_194_767,
+      MAX_PER_USER_BNB: 3,
 
-      // ⚠️ 年份默认按「2026-01-13」写死；如需改年份只改这里即可
-      START_TIME: new Date('2026-01-13T16:00:00+08:00'),
-      END_TIME: new Date('2026-01-13T18:00:00+08:00'),
+      // ⚠️ 年份默认按「2026-01-19」写死；如需改年份只改这里即可
+      START_TIME: new Date('2026-01-19T20:00:00+08:00'),
+      END_TIME: new Date('2026-01-19T22:00:00+08:00'),
 
       PRICE_CACHE_MS: 60_000,
       PRICE_DISPLAY_REFRESH_MS: 30_000,
@@ -402,8 +397,8 @@
         'https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD'
       ],
 
-      // ✅ FOGO 盘前价接口
-      TOKEN_PRICE_API: 'https://fapi.binance.com/fapi/v2/ticker/price?symbol=FOGOUSDT',
+      // ✅ SENT 盘前价接口
+      TOKEN_PRICE_API: 'https://fapi.binance.com/fapi/v2/ticker/price?symbol=SENTUSDT',
 
       RPC_NODES: [
         'https://bsc-dataseed.binance.org/',
@@ -433,7 +428,6 @@
       principalBNB: $('principalBNB'),
       principalUSD: $('principalUSD'),
 
-      // ✅ 新增：利润显示节点
       profitUSD: $('profitUSD'),
 
       refundBNB: $('refundBNB'),
@@ -493,7 +487,7 @@
       return 0;
     }
 
-    // ✅ 读取 FOGO 盘前价
+    // ✅ 读取 SENT 盘前价
     async function getTokenPrice(){
       const key = `tokP_${CONFIG.SYMBOL}`;
       const cache = JSON.parse(localStorage.getItem(key)||'{}');
@@ -632,10 +626,8 @@
       els.principalBNB.textContent = fmt(principal,4);
       els.principalUSD.textContent = fmt(principal*bnbUSD,2);
 
-      // ✅ 新增：利润 = 可获得价值 - 实际扣款价值
       const profit = (tokens * price) - (principal * bnbUSD);
       els.profitUSD.textContent = fmt(profit, 2) + ' USD';
-      // 利润正负自动上色：正=绿色(success)，负=红色(deduct)
       els.profitUSD.classList.remove('success', 'deduct');
       els.profitUSD.classList.add(profit >= 0 ? 'success' : 'deduct');
 

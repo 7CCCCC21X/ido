@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>币安 Web3 钱包 第4 期 Prime Sale Pre-TGE (SENT)</title>
+  <title>币安 Web3 钱包 第5 期 Prime Sale Pre-TGE (ZAMA)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <meta name="color-scheme" content="light dark" />
   <style>
@@ -288,12 +288,12 @@
   <div class="container">
     <div id="errBanner" class="error-banner"></div>
 
-    <h2>币安 Web3 钱包 第4 期 Prime Sale Pre-TGE (SENT)</h2>
+    <h2>币安 Web3 钱包 第5 期 Prime Sale Pre-TGE (ZAMA)</h2>
 
     <!-- 合约地址（隐藏，仅内部使用；需要展示可把 .subline 的 display:none 移除） -->
     <div class="subline">合约：<a id="contractLink" href="#" target="_blank" rel="noopener noreferrer">—</a></div>
 
-    <input id="targetAddress" type="hidden" value="0x5fef53eff668946262be0878f28d2336a4ce9e75" />
+    <input id="targetAddress" type="hidden" value="0xa071c811dfa06a96fd617eb4468eef8768b1bd4e" />
 
     <div class="row">
       <div class="col">
@@ -311,7 +311,8 @@
 
     <div id="airdropSection">
       <label>预计空投总额 (USDT)<span class="note">（根据盘前价推算）</span></label>
-      <input id="airdropUSD" type="number" step="1" value="15035822" readonly />
+      <!-- ✅ ZAMA：220,000,000 * 2(认购1送1) * 0.02188 = 9,627,200 -->
+      <input id="airdropUSD" type="number" step="1" value="9627200" readonly />
       <div class="note" id="airdropFmt">—</div>
     </div>
 
@@ -323,9 +324,9 @@
       <div class="priceItem">
         <div class="v" id="labPriceV">—</div>
         <div class="t">
-          SENT 盘前参考价
-          <a class="premarketLink" href="https://www.binance.com/zh-CN/futures/SENTUSDT" target="_blank" rel="noopener noreferrer">
-            价格来源：币安合约接口 SENTUSDT（自动更新）
+          ZAMA 盘前参考价
+          <a class="premarketLink" href="https://www.binance.com/zh-CN/futures/ZAMAUSDT" target="_blank" rel="noopener noreferrer">
+            价格来源：币安合约接口 ZAMAUSDT（自动更新）
           </a>
         </div>
       </div>
@@ -383,8 +384,8 @@
       <div class="hintLeft">
         <span class="hintPrefix">提示：</span>
         <span class="hintMsg">
-          22点结束后，未被用于认购的BNB可以退回。<br>
-          获得的代币 22号在交易所可以卖出。
+          18点结束后，未被用于认购的BNB可以退回。<br>
+          获得的代币 2月2号在交易所可以卖出。
         </span>
       </div>
       <div class="hintRight">
@@ -407,11 +408,14 @@
       <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
       <p>🎯 募集资金：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
       <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-      <p>💰 出售代币数量：687,194,767 个 SENT 代币（占总供应量的 2%）</p>
+      <p>
+        💰 出售代币数量：220,000,000 个 ZAMA（占总供应量的 2%）<br>
+        🎁 赠送规则：每认购 1 枚额外赠送 1 枚（最终到帐=出售分配×2，合计 440,000,000 枚）
+      </p>
       <hr>
       <p>
         🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-        可获得 <span class="success" id="tokenAmt">—</span> 枚 SENT ≈ <span class="success" id="usdValue">—</span>
+        可获得 <span class="success" id="tokenAmt">—</span> 枚 ZAMA（含赠送）≈ <span class="success" id="usdValue">—</span>
       </p>
       <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
 
@@ -431,16 +435,19 @@
   </div>
 
   <script>
-    // ==== 配置（SENT 专场）====
+    // ==== 配置（ZAMA 专场）====
     const CONFIG = {
-      SYMBOL: 'SENT',
-      TOTAL_TARGET_BNB: 8025,
-      TOTAL_TOKENS: 687_194_767,
+      SYMBOL: 'ZAMA',
+      TOTAL_TARGET_BNB: 12254.08,
+      TOTAL_TOKENS: 220_000_000,
       MAX_PER_USER_BNB: 3,
 
-      // ⚠️ 年份默认按「2026-01-19」写死；如需改年份只改这里即可
-      START_TIME: new Date('2026-01-19T20:00:00+08:00'),
-      END_TIME: new Date('2026-01-19T22:00:00+08:00'),
+      // ✅ 认购 1 赠送 1：最终分配翻倍
+      BONUS_MULTIPLIER: 2,
+
+      // ⚠️ 年份默认按「2026-01-29」写死；如需改年份只改这里即可
+      START_TIME: new Date('2026-01-29T16:00:00+08:00'),
+      END_TIME: new Date('2026-01-29T18:00:00+08:00'),
 
       PRICE_CACHE_MS: 60_000,
       PRICE_DISPLAY_REFRESH_MS: 30_000,
@@ -454,8 +461,8 @@
         'https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD'
       ],
 
-      // ✅ SENT 盘前价接口（USDT）
-      TOKEN_PRICE_API: 'https://fapi.binance.com/fapi/v2/ticker/price?symbol=SENTUSDT',
+      // ✅ ZAMA 盘前价接口（USDT）
+      TOKEN_PRICE_API: 'https://fapi.binance.com/fapi/v2/ticker/price?symbol=ZAMAUSDT',
 
       RPC_NODES: [
         'https://bsc-dataseed.binance.org/',
@@ -542,7 +549,8 @@
     function computeAirdropUSDFromTokenPrice(tokenPrice){
       const tokens = CONFIG.TOTAL_TOKENS || 0;
       const price = Number(tokenPrice) || 0;
-      return tokens * price;
+      // ✅ 总空投价值也按“翻倍分配”估算
+      return tokens * (CONFIG.BONUS_MULTIPLIER || 1) * price;
     }
 
     function computePrice(){
@@ -714,7 +722,11 @@
       }
 
       const share = user / dep;
-      const tokens = share * CONFIG.TOTAL_TOKENS;
+
+      // ✅ ZAMA：基础分配 + 赠送翻倍
+      const baseTokens = share * CONFIG.TOTAL_TOKENS;
+      const tokens = baseTokens * (CONFIG.BONUS_MULTIPLIER || 1);
+
       const principal = Math.min(share * target, user);
       const refund = Math.max(user - principal, 0);
       const multi = dep / target;
@@ -729,6 +741,7 @@
       els.principalBNB.textContent = fmt(principal,4);
       els.principalUSD.textContent = fmt(principal*bnbUSDT,2) + ' USDT';
 
+      // ✅ 利润公式不需要额外改：tokens 已经包含翻倍
       const profit = (tokens * price) - (principal * bnbUSDT);
       els.profitUSD.textContent = fmt(profit, 2) + ' USDT';
       els.profitUSD.classList.remove('success', 'deduct');

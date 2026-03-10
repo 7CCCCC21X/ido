@@ -285,6 +285,15 @@
 </head>
 
 <body>
+  <!-- 复用 SVG 符号 -->
+  <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="ico-bulb" viewBox="0 0 24 24" fill="none">
+      <path d="M9 21h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M10 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9.6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </svg>
+
   <div class="container">
     <div id="errBanner" class="error-banner"></div>
 
@@ -345,35 +354,17 @@
     <!-- ===== 教程链接 ===== -->
     <div class="tutorials">
       <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
-        <span class="ico" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
-            <path d="M9 21h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M10 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9.6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
+        <span class="ico" aria-hidden="true"><svg width="18" height="18"><use href="#ico-bulb"/></svg></span>
         <span>链上借BNB教程</span>
       </a>
 
       <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1977584958295392288" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
-        <span class="ico" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
-            <path d="M9 21h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M10 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9 .6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
+        <span class="ico" aria-hidden="true"><svg width="18" height="18"><use href="#ico-bulb"/></svg></span>
         <span>交易所借BNB教程</span>
       </a>
 
       <a class="tutorial-link" href="https://x.com/0xXIAOc/status/2001254000516346195?s=20" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
-        <span class="ico" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
-            <path d="M9 21h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M10 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9 .6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
+        <span class="ico" aria-hidden="true"><svg width="18" height="18"><use href="#ico-bulb"/></svg></span>
         <span>币安钱包借BNB教程</span>
       </a>
     </div>
@@ -524,9 +515,10 @@
     const fmt = (n, d = 0) => Number(n).toLocaleString('zh-CN', { maximumFractionDigits: d });
     const TZ = 'Asia/Shanghai';
 
-    const lockAtMs = () => CONFIG.END_TIME.getTime() - (CONFIG.FINAL_REFRESH_BEFORE_END_MS || 60_000);
-    const isLocked = () => Date.now() >= lockAtMs();
-    const isEnded = () => Date.now() >= CONFIG.END_TIME.getTime();
+    const LOCK_AT_MS = CONFIG.END_TIME.getTime() - (CONFIG.FINAL_REFRESH_BEFORE_END_MS || 60_000);
+    const END_AT_MS = CONFIG.END_TIME.getTime();
+    const isLocked = () => Date.now() >= LOCK_AT_MS;
+    const isEnded = () => Date.now() >= END_AT_MS;
 
     async function fetchJSON(url, options = {}, timeoutMs = 8000){
       const controller = new AbortController();
@@ -565,6 +557,12 @@
     function syncLabPriceDisplay(){
       const p = +els.tokenPrice.value || 0;
       els.labPriceV.textContent = p ? (p.toFixed(6) + ' USDT') : '—';
+    }
+
+    // 合并调用：计算价格 + 同步显示
+    function syncPriceUI(){
+      computePrice();
+      syncLabPriceDisplay();
     }
 
     async function getBNBPrice(){
@@ -610,9 +608,8 @@
 
         if(tokP && !els.tokenPrice.dataset.userEdited){
           els.tokenPrice.value = Number(tokP).toFixed(6);
-          computePrice();
         }
-        syncLabPriceDisplay();
+        syncPriceUI();
       }catch(e){
         console.error('updatePriceDisplay error', e);
       }
@@ -631,15 +628,20 @@
       }
     }
 
+    // RPC body 只依赖固定地址，预先构建避免每次刷新重复序列化
+    const RPC_BALANCE_BODY = JSON.stringify({
+      jsonrpc:'2.0',method:'eth_getBalance',
+      params:[$('targetAddress').value,'latest'],id:1
+    });
+
     async function fetchBalance(addr){
       if(!addr) return 0;
-      const body = JSON.stringify({jsonrpc:'2.0',method:'eth_getBalance',params:[addr,'latest'],id:1});
       for(const node of CONFIG.RPC_NODES){
         try{
           const {result} = await fetchJSON(node,{
             method:'POST',
             headers:{'Content-Type':'application/json'},
-            body
+            body: RPC_BALANCE_BODY
           }, 7000);
           return weiHexToBNB(result);
         }catch{}
@@ -677,11 +679,7 @@
     }
 
     function updateCountdownDisplay(){
-      if(isLocked()){
-        els.autoRefreshCountdown.textContent = '数据已锁定：保持 21:59 更新结果';
-        return;
-      }
-      if(isEnded()){
+      if(isLocked() || isEnded()){
         els.autoRefreshCountdown.textContent = '数据已锁定：保持 21:59 更新结果';
         return;
       }
@@ -714,7 +712,7 @@
       if(finalRefreshTimerId) clearTimeout(finalRefreshTimerId);
       finalRefreshTimerId = null;
 
-      const lockAt = lockAtMs();
+      const lockAt = LOCK_AT_MS;
       const now = Date.now();
       if(now >= lockAt || now >= CONFIG.END_TIME.getTime()){
         applyLockState();
@@ -788,8 +786,7 @@
       if(isLocked()) applyLockState();
       if(isEnded()) applyEndState();
 
-      computePrice();
-      syncLabPriceDisplay();
+      syncPriceUI();
 
       let user = +els.userAmount.value || 0;
       if(user > CONFIG.MAX_PER_USER_BNB){
@@ -948,9 +945,8 @@
 
     els.tokenPrice.addEventListener('input', ()=>{
       els.tokenPrice.dataset.userEdited = '1';
-      computePrice();
-      syncLabPriceDisplay();
-      render();
+      syncPriceUI();
+      render().catch(console.error);
     });
 
     els.userAmount.addEventListener('input', ()=>{
@@ -959,7 +955,7 @@
         v = CONFIG.MAX_PER_USER_BNB;
         els.userAmount.value = v.toFixed(2);
       }
-      render();
+      render().catch(console.error);
     });
 
     els.refreshSec.addEventListener('change', applyInterval);
@@ -1011,8 +1007,7 @@
         els.bonusInfo.style.display = 'none';
       }
 
-      computePrice();
-      syncLabPriceDisplay();
+      syncPriceUI();
 
       // 若已经锁定/结束：只从缓存恢复（不再拉链上）
       if(isLocked() || isEnded()){
@@ -1026,11 +1021,11 @@
         await refresh(false);
       }
 
-      setInterval(tick, 500);
+      setInterval(tick, 1000);
 
-      // 价格显示：锁定后也停止更新（保证 21:59 数据不变）
+      // 价格显示：锁定后或标签页隐藏时停止更新（保证 21:59 数据不变 + 节省请求）
       setInterval(()=>{
-        if(!isEnded() && !isLocked()) updatePriceDisplay();
+        if(!document.hidden && !isEnded() && !isLocked()) updatePriceDisplay();
       }, CONFIG.PRICE_DISPLAY_REFRESH_MS);
     });
   </script>

@@ -765,6 +765,10 @@
         const cache = JSON.parse(localStorage.getItem(key) || '{}');
         if(cache?.v){
           latestDep = Number(cache.v) || latestDep;
+          if(cache?.bnb){
+            STATE.bnbUSDT = Number(cache.bnb) || STATE.bnbUSDT;
+            els.bnbPriceV.textContent = STATE.bnbUSDT ? (fmt(STATE.bnbUSDT,4) + ' USDT') : '—';
+          }
           if(cache?.t){
             const dt = new Date(cache.t);
             if(!isNaN(dt.getTime())){
@@ -778,7 +782,7 @@
     function saveDepCache(dep){
       const key = `dep_${CONFIG.SYMBOL}`;
       try{
-        localStorage.setItem(key, JSON.stringify({ v: dep, t: Date.now() }));
+        localStorage.setItem(key, JSON.stringify({ v: dep, bnb: STATE.bnbUSDT, t: Date.now() }));
       }catch{}
     }
 

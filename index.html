@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>币安 Web3 钱包 第6 期 Prime Sale Pre-TGE (ESP)</title>
+  <title>币安 Web3 钱包 第44期 独家TGE (UP)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <meta name="color-scheme" content="light dark" />
   <style>
@@ -118,7 +118,7 @@
     .priceItem .v{font-weight:700;font-size:16px}
     .priceItem .t{font-size:12px;color:var(--c-sub);margin-top:6px}
 
-    /* ✅ 参考价下面的「价格来源」链接（换行 + 可点击） */
+    /* ✅ 参考价说明（换行展示） */
     .premarketLink, .premarketLink:visited{
       display:block;
       margin-top:4px;
@@ -288,12 +288,12 @@
   <div class="container">
     <div id="errBanner" class="error-banner"></div>
 
-    <h2>币安 Web3 钱包 第6 期 Prime Sale Pre-TGE (ESP)</h2>
+    <h2>币安 Web3 钱包 第44期 独家TGE (UP)</h2>
 
     <!-- 合约地址（隐藏，仅内部使用；需要展示可把 .subline 的 display:none 移除） -->
     <div class="subline">合约：<a id="contractLink" href="#" target="_blank" rel="noopener noreferrer">—</a></div>
 
-    <input id="targetAddress" type="hidden" value="0x68297d833d16e2e4e9807512164334ba6c4699da" />
+    <input id="targetAddress" type="hidden" value="0xb03a10926da0f7e4d879581e36e120ee20df33b5" />
 
     <div class="row">
       <div class="col">
@@ -306,12 +306,12 @@
       </div>
     </div>
 
-    <label>盘前价 (USDT)<span class="note">默认自动读取（可手动修改）</span></label>
-    <input id="tokenPrice" type="number" step="0.000001" value="0.097580" min="0" inputmode="decimal" />
+    <label>参考价格 (USDT)<span class="note">默认参考价（可手动修改）</span></label>
+    <input id="tokenPrice" type="number" step="0.000001" value="0.084000" min="0" inputmode="decimal" />
 
     <div id="airdropSection">
-      <label>预计空投总额 (USDT)<span class="note">（根据盘前价推算）</span></label>
-      <input id="airdropUSD" type="number" step="1" value="5254683" readonly />
+      <label>预计空投总额 (USDT)<span class="note">（根据参考价推算）</span></label>
+      <input id="airdropUSD" type="number" step="1" value="840000" readonly />
       <div class="note" id="airdropFmt">—</div>
     </div>
 
@@ -323,10 +323,8 @@
       <div class="priceItem">
         <div class="v" id="labPriceV">—</div>
         <div class="t">
-          ESP 盘前参考价
-          <a class="premarketLink" href="https://www.binance.com/zh-CN/futures/ESPUSDT" target="_blank" rel="noopener noreferrer">
-            价格来源：币安合约接口 ESPUSDT（自动更新）
-          </a>
+          UP 参考价格
+          <span class="premarketLink">默认参考价：0.084（可手动修改）</span>
         </div>
       </div>
     </div>
@@ -376,6 +374,17 @@
         </span>
         <span>币安钱包借BNB教程</span>
       </a>
+
+      <a class="tutorial-link" href="https://x.com/0xXIAOc/status/2032344697625276825?s=20" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
+        <span class="ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+            <path d="M9 21h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M10 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9 .6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span>提取授权教程</span>
+      </a>
     </div>
 
     <!-- ===== 黄色提示条 + 邀请码 ===== -->
@@ -383,8 +392,8 @@
       <div class="hintLeft">
         <span class="hintPrefix">提示：</span>
         <span class="hintMsg">
-          22点结束后，未被用于认购的BNB可以退回。<br>
-          获得的代币上线后可在交易所卖出。
+          18点结束后，未被用于认购的BNB可以退回，<br>
+          获得的代币可以直接交易。
         </span>
       </div>
       <div class="hintRight">
@@ -408,13 +417,13 @@
       <p>🎯 募集资金：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
       <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
       <p>
-        💰 出售代币数量：53,850,000 个 ESP（占总供应量的 1.5%）
+        💰 出售代币数量：10,000,000 个 UP
         <span id="bonusInfo" style="display:none"></span>
       </p>
       <hr>
       <p>
         🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-        可获得 <span class="success" id="tokenAmt">—</span> 枚 ESP<span id="bonusLabel">（含赠送）</span> ≈ <span class="success" id="usdValue">—</span>
+        可获得 <span class="success" id="tokenAmt">—</span> 枚 UP<span id="bonusLabel">（含赠送）</span> ≈ <span class="success" id="usdValue">—</span>
       </p>
       <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
 
@@ -434,19 +443,19 @@
   </div>
 
   <script>
-    // ==== 配置（ESP 专场）====
+    // ==== 配置（UP 专场）====
     const CONFIG = {
-      SYMBOL: 'ESP',
-      TOTAL_TARGET_BNB: 5857.45,
-      TOTAL_TOKENS: 53_850_000,
+      SYMBOL: 'UP',
+      TOTAL_TARGET_BNB: 78.8,
+      TOTAL_TOKENS: 10_000_000,
       MAX_PER_USER_BNB: 3,
 
       // ✅ 赠送关闭：不翻倍
       BONUS_MULTIPLIER: 1,
 
-      // ✅ 时间：2月10日 20:00-22:00（北京时间）
-      START_TIME: new Date('2026-02-10T20:00:00+08:00'),
-      END_TIME: new Date('2026-02-10T22:00:00+08:00'),
+      // ✅ 时间：3月13日 16:00-18:00（北京时间）
+      START_TIME: new Date('2026-03-13T16:00:00+08:00'),
+      END_TIME: new Date('2026-03-13T18:00:00+08:00'),
 
       PRICE_CACHE_MS: 60_000,
       PRICE_DISPLAY_REFRESH_MS: 30_000,
@@ -458,8 +467,8 @@
         'https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD'
       ],
 
-      // ✅ ESP 盘前价接口（USDT）
-      TOKEN_PRICE_API: 'https://fapi.binance.com/fapi/v2/ticker/price?symbol=ESPUSDT',
+      // ✅ UP 使用固定参考价格，不自动拉取代币价格
+      TOKEN_PRICE_API: '',
 
       RPC_NODES: [
         'https://bsc-dataseed.binance.org/',
@@ -468,7 +477,7 @@
         'https://bsc-dataseed1.ninicoin.io/'
       ],
 
-      // ✅ 21:59 锁定（结束前 1 分钟）
+      // ✅ 17:59 锁定（结束前 1 分钟）
       FINAL_REFRESH_BEFORE_END_MS: 60_000
     };
 
@@ -585,6 +594,8 @@
     }
 
     async function getTokenPrice(){
+      if(!CONFIG.TOKEN_PRICE_API) return 0;
+
       const key = `tokP_${CONFIG.SYMBOL}`;
       const cache = JSON.parse(localStorage.getItem(key)||'{}');
       if(cache.v && Date.now()-cache.t < CONFIG.PRICE_CACHE_MS) return cache.v;
@@ -678,11 +689,11 @@
 
     function updateCountdownDisplay(){
       if(isLocked()){
-        els.autoRefreshCountdown.textContent = '数据已锁定：保持 21:59 更新结果';
+        els.autoRefreshCountdown.textContent = '数据已锁定：保持 17:59 更新结果';
         return;
       }
       if(isEnded()){
-        els.autoRefreshCountdown.textContent = '数据已锁定：保持 21:59 更新结果';
+        els.autoRefreshCountdown.textContent = '数据已锁定：保持 17:59 更新结果';
         return;
       }
       const s = Math.max(0, Math.ceil((nextRefreshAt - Date.now()) / 1000));
@@ -722,7 +733,7 @@
       }
 
       finalRefreshTimerId = setTimeout(async ()=>{
-        // 21:59 强制刷新一次（允许强制，不受 locked 限制），然后锁定
+        // 17:59 强制刷新一次（允许强制，不受 locked 限制），然后锁定
         await refresh(false, true);
         applyLockState();
       }, lockAt - now);
@@ -736,9 +747,9 @@
 
       stopAutoRefreshTimers();
 
-      els.autoRefreshCountdown.textContent = '数据已锁定：保持 21:59 更新结果';
+      els.autoRefreshCountdown.textContent = '数据已锁定：保持 17:59 更新结果';
 
-      // 禁止任何刷新相关操作（确保 21:59 后不会再变）
+      // 禁止任何刷新相关操作（确保 17:59 后不会再变）
       els.refreshBtn.classList.add('muted');
       els.refreshBtn.disabled = true;
       els.refreshSec.disabled = true;
@@ -835,7 +846,7 @@
       els.resultBox.hidden = false;
     }
 
-    // ===== 刷新（force=true 用于 21:59 强制刷新）=====
+    // ===== 刷新（force=true 用于 17:59 强制刷新）=====
     let refreshing = false;
     let pendingForcedRefresh = false;
 
@@ -845,7 +856,7 @@
         return;
       }
 
-      // 21:59 后不再拉数据（除非 force）
+      // 17:59 后不再拉数据（除非 force）
       if(!force && (isLocked() || isEnded())){
         loadCachedDepIfAny();
         await render(latestDep);
@@ -859,7 +870,7 @@
       if(manual) els.errBanner.style.display = 'none';
 
       try{
-        // 21:59 强制那次也会更新价格+余额
+        // 17:59 强制那次也会更新价格+余额
         await updatePriceDisplay();
         const dep = await fetchBalance(els.targetAddress.value);
         saveDepCache(dep);
@@ -1028,7 +1039,7 @@
 
       setInterval(tick, 500);
 
-      // 价格显示：锁定后也停止更新（保证 21:59 数据不变）
+      // 价格显示：锁定后也停止更新（保证 17:59 数据不变）
       setInterval(()=>{
         if(!isEnded() && !isLocked()) updatePriceDisplay();
       }, CONFIG.PRICE_DISPLAY_REFRESH_MS);

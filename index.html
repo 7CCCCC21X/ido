@@ -7,279 +7,262 @@
   <meta name="color-scheme" content="light dark" />
   <style>
     :root{
-      --c-bg:#f9f9f9;
+      --c-bg:#f0f2f5;
       --c-card:#fff;
-      --c-text:#222;
+      --c-card2:#f8fafc;
+      --c-text:#1a1a2e;
       --c-sub:#6b7280;
-      --c-primary:#0078d4;
-      --c-primary-dark:#005fa3;
-      --c-success:#16a34a;
+      --c-border:#e5e7eb;
+      --c-primary:#0066ff;
+      --c-primary-light:rgba(0,102,255,.08);
+      --c-primary-dark:#0050cc;
+      --c-success:#059669;
+      --c-success-bg:rgba(5,150,105,.08);
       --c-error:#dc2626;
+      --c-error-bg:rgba(220,38,38,.06);
       --c-refund:#0284c7;
       --c-warn:#f59e0b;
+      --radius:14px;
+      --shadow:0 4px 24px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
     }
     @media(prefers-color-scheme:dark){
       :root{
-        --c-bg:#111827;
-        --c-card:#1f2937;
-        --c-text:#f3f4f6;
-        --c-sub:#9ca3af
+        --c-bg:#0f1117;
+        --c-card:#1a1d2e;
+        --c-card2:#222640;
+        --c-text:#e8eaed;
+        --c-sub:#8b92a5;
+        --c-border:#2d3148;
+        --c-primary:#4d8eff;
+        --c-primary-light:rgba(77,142,255,.12);
+        --c-primary-dark:#6ea0ff;
+        --c-success:#34d399;
+        --c-success-bg:rgba(52,211,153,.1);
+        --c-error:#f87171;
+        --c-error-bg:rgba(248,113,113,.08);
+        --c-refund:#38bdf8;
+        --shadow:0 4px 24px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.2);
       }
     }
-    *{box-sizing:border-box;margin:0}
+    *{box-sizing:border-box;margin:0;padding:0}
     body{
-      font-family:-apple-system,Segoe UI,PingFang SC,Helvetica,Arial,sans-serif;
-      background:var(--c-bg);color:var(--c-text)
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Noto Sans SC',Helvetica,Arial,sans-serif;
+      background:var(--c-bg);color:var(--c-text);
+      -webkit-font-smoothing:antialiased;
+      line-height:1.5
     }
     .container{
-      max-width:760px;margin:40px auto;padding:34px;background:var(--c-card);border-radius:18px;
-      box-shadow:0 10px 24px rgba(0,0,0,.08)
+      max-width:720px;margin:24px auto;padding:28px 24px;background:var(--c-card);
+      border-radius:20px;box-shadow:var(--shadow)
     }
-    h2{color:var(--c-primary);text-align:center;margin-bottom:8px}
+    h2{
+      color:var(--c-primary);text-align:center;margin-bottom:6px;
+      font-size:20px;letter-spacing:.5px
+    }
 
-    /* 合约地址默认为隐藏（保留 DOM）。需要展示可把 display:none 去掉 */
     .subline{display:none}
 
-    label{display:block;margin:14px 0 8px;font-weight:700}
-    .note{font-size:13px;color:var(--c-sub);margin-left:4px}
+    label{display:block;margin:16px 0 6px;font-weight:600;font-size:14px}
+    .note{font-size:12px;color:var(--c-sub);margin-left:4px;font-weight:400}
 
     input,select{
-      width:100%;
-      padding:12px;
-      font-size:15px;
-      border:1px solid #ccc;
-      border-radius:10px;
-      background:var(--c-card);
-      color:var(--c-text)
+      width:100%;padding:11px 14px;font-size:15px;
+      border:1.5px solid var(--c-border);border-radius:var(--radius);
+      background:var(--c-card);color:var(--c-text);
+      transition:border-color .2s,box-shadow .2s;
+      outline:none
     }
-    input[readonly]{background:linear-gradient(90deg,#f3f4f6,#fff);cursor:default}
+    input:focus{border-color:var(--c-primary);box-shadow:0 0 0 3px var(--c-primary-light)}
+    input[readonly]{background:var(--c-card2);cursor:default;opacity:.8}
 
     button{
-      width:100%;
-      padding:13px;
-      font-size:16px;
-      background:var(--c-primary);
-      color:#fff;
-      border:none;
-      border-radius:10px;
-      margin-top:18px;
-      cursor:pointer;
-      transition:background .2s
+      width:100%;padding:12px;font-size:15px;font-weight:600;
+      background:var(--c-primary);color:#fff;border:none;
+      border-radius:var(--radius);margin-top:16px;cursor:pointer;
+      transition:background .2s,transform .1s,box-shadow .2s;
+      box-shadow:0 2px 8px rgba(0,102,255,.2)
     }
-    button:hover{background:var(--c-primary-dark)}
+    button:hover{background:var(--c-primary-dark);box-shadow:0 4px 12px rgba(0,102,255,.3)}
+    button:active{transform:scale(.98)}
 
     .row{display:flex;gap:12px}
-    .col{flex:1}
+    .col{flex:1;min-width:0}
 
-    .progress-container{margin-top:22px}
-    .progress-bg{background:#e5e7eb;height:14px;border-radius:10px;overflow:hidden}
-    .progress-bar{background:var(--c-primary);height:100%;width:0%;transition:width .4s}
-    .countdown{margin-top:6px;text-align:right;font-size:14px;color:var(--c-sub)}
-
-    .result{
-      margin-top:22px;
-      padding:18px;
-      border-radius:14px;
-      border:1px solid #d1d5db;
-      background:var(--c-bg)
+    /* ===== 进度条：渐变 + 动画光效 ===== */
+    .progress-container{margin-top:20px}
+    .progress-bg{
+      background:var(--c-border);height:10px;border-radius:10px;overflow:hidden;
+      position:relative
     }
-    .result p{margin:8px 0;font-size:15px;line-height:1.45}
+    .progress-bar{
+      background:linear-gradient(90deg,var(--c-primary),#38bdf8);
+      height:100%;width:0%;transition:width .6s ease;
+      border-radius:10px;position:relative
+    }
+    .progress-bar::after{
+      content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
+      animation:shimmer 2s infinite
+    }
+    @keyframes shimmer{
+      0%{transform:translateX(-100%)}
+      100%{transform:translateX(100%)}
+    }
+    .countdown{
+      margin-top:8px;text-align:center;font-size:13px;
+      color:var(--c-sub);font-weight:500;
+      letter-spacing:.3px
+    }
+
+    /* ===== 结果区：卡片式布局 ===== */
+    .result{
+      margin-top:20px;padding:0;border-radius:16px;
+      border:1.5px solid var(--c-border);background:var(--c-card);
+      overflow:hidden
+    }
+    .result-header{
+      padding:14px 18px;background:var(--c-card2);
+      border-bottom:1px solid var(--c-border);
+      display:grid;grid-template-columns:1fr 1fr;gap:8px
+    }
+    .result-header p{margin:0;font-size:13px;line-height:1.5}
+    .result-body{padding:16px 18px}
+    .result-body p{margin:6px 0;font-size:14px;line-height:1.6}
+
+    /* 利润高亮卡 */
+    .profit-card{
+      margin:12px 0 6px;padding:16px;border-radius:var(--radius);
+      text-align:center;transition:background .2s
+    }
+    .profit-card.positive{background:var(--c-success-bg);border:1px solid rgba(5,150,105,.2)}
+    .profit-card.negative{background:var(--c-error-bg);border:1px solid rgba(220,38,38,.15)}
+    .profit-card .profit-label{font-size:13px;color:var(--c-sub);margin-bottom:4px}
+    .profit-card .profit-value{font-size:26px;font-weight:800;letter-spacing:-.5px}
 
     .highlight{font-weight:700}
     .success{color:var(--c-success);font-weight:700}
     .deduct{color:var(--c-error);font-weight:700}
     .refund{color:var(--c-refund);font-weight:700}
 
-    .updateHint{text-align:right;font-size:13px;color:var(--c-sub);margin-top:10px}
+    .result hr{border:none;border-top:1px solid var(--c-border);margin:10px 0}
+
+    .updateHint{text-align:right;font-size:12px;color:var(--c-sub);margin-top:8px}
 
     .error-banner{
-      display:none;margin-bottom:18px;padding:10px 14px;border-radius:10px;
-      background:var(--c-error);color:#fff;font-size:14px
+      display:none;margin-bottom:16px;padding:10px 14px;border-radius:var(--radius);
+      background:var(--c-error);color:#fff;font-size:13px
     }
 
-    .footer{margin-top:28px;text-align:center;font-size:14px;color:var(--c-sub)}
-    .footer a{color:var(--c-primary);text-decoration:none}
+    .footer{margin-top:24px;text-align:center;font-size:13px;color:var(--c-sub);padding-bottom:20px}
+    .footer a{color:var(--c-primary);text-decoration:none;font-weight:500}
     .footer a:hover{text-decoration:underline}
 
-    /* ✅ 两个价格框同宽同高：关键是 align-items:stretch */
-    .priceBox{
-      display:flex;
-      gap:12px;
-      align-items:stretch;
-      margin-top:12px
-    }
+    /* ===== 价格卡片 ===== */
+    .priceBox{display:flex;gap:10px;align-items:stretch;margin-top:14px}
     .priceItem{
-      flex:1;
-      padding:10px;
-      border-radius:10px;
-      border:1px solid #e6edf3;
-      background:linear-gradient(180deg,rgba(255,255,255,0.6),transparent)
+      flex:1;padding:12px 14px;border-radius:var(--radius);
+      border:1.5px solid var(--c-border);background:var(--c-card2);
+      transition:border-color .2s
     }
-    .priceItem .v{font-weight:700;font-size:16px}
-    .priceItem .t{font-size:12px;color:var(--c-sub);margin-top:6px}
+    .priceItem:hover{border-color:var(--c-primary)}
+    .priceItem .v{font-weight:800;font-size:17px;letter-spacing:-.3px}
+    .priceItem .t{font-size:11px;color:var(--c-sub);margin-top:6px;line-height:1.4}
 
-    /* ✅ 参考价说明（换行展示） */
-    .premarketLink, .premarketLink:visited{
-      display:block;
-      margin-top:4px;
-      color:inherit;
-      text-decoration:underline;
-      text-underline-offset:3px;
-      font-weight:700;
+    .premarketLink,.premarketLink:visited{
+      display:block;margin-top:4px;color:inherit;
+      text-decoration:underline;text-underline-offset:3px;font-weight:700
     }
-    .premarketLink:hover{ color: var(--c-primary); }
+    .premarketLink:hover{color:var(--c-primary)}
 
-    .countdownAuto{font-size:13px;color:var(--c-sub);margin-top:8px;text-align:center}
+    .countdownAuto{font-size:12px;color:var(--c-sub);margin-top:10px;text-align:center;font-weight:500}
 
     .ended-banner{
-      display:none;margin-top:14px;padding:12px;border-radius:10px;
+      display:none;margin-top:14px;padding:12px;border-radius:var(--radius);
       background:rgba(245,158,11,.08);border:1px solid var(--c-warn)
     }
-    .muted{opacity:.55;pointer-events:none;user-select:none}
+    .muted{opacity:.45;pointer-events:none;user-select:none}
 
-    /* ===== 教程链接：居中 + 黄色灯泡图标 + 更紧凑 ===== */
+    /* ===== 教程链接 ===== */
     .tutorials{
-      margin-top:12px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:8px;
+      margin-top:14px;display:flex;flex-direction:column;align-items:center;gap:4px
     }
     .tutorial-link{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      font-weight:800;
-      font-size:15px;
-      color:var(--c-primary);
-      padding:6px 10px;
-      border-radius:10px;
-      text-decoration: underline;
-      text-underline-offset: 3px;
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      font-weight:700;font-size:14px;color:var(--c-primary);
+      padding:8px 14px;border-radius:var(--radius);
+      text-decoration:none;transition:background .15s
     }
-    .tutorial-link:hover{ background:rgba(0,120,212,.06); }
+    .tutorial-link:hover{background:var(--c-primary-light);text-decoration:underline}
     .tutorial-link .ico{
-      width:18px;height:18px;line-height:0;
-      display:inline-flex;
-      color:var(--c-warn);
-      transform:translateY(1px);
+      width:18px;height:18px;line-height:0;display:inline-flex;
+      color:var(--c-warn);transform:translateY(1px)
+    }
+    .tutorial-link .ico-bulb{
+      width:18px;height:18px;background:currentColor;
+      -webkit-mask-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M9 21h6' stroke='%23000' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3Cpath d='M10 17h4' stroke='%23000' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3Cpath d='M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9.6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+      mask-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M9 21h6' stroke='%23000' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3Cpath d='M10 17h4' stroke='%23000' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3Cpath d='M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9.6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+      -webkit-mask-size:contain;mask-size:contain;
+      -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat
     }
 
-    /* ===== 黄色提示条：按钮永远固定在右侧 ===== */
+    /* ===== 黄色提示条 ===== */
     .hintBanner{
-      margin-top:14px;
-      padding:10px 12px;
-      border-radius:10px;
-      background:rgba(245,158,11,.10);
-      border:1px solid rgba(245,158,11,.55);
-      display:grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items:center;
-      column-gap:12px;
-      width:100%;
+      margin-top:14px;padding:12px 14px;border-radius:var(--radius);
+      background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);
+      display:grid;grid-template-columns:minmax(0,1fr) auto;
+      align-items:center;column-gap:12px;width:100%
     }
-    .hintLeft{
-      display:flex;
-      align-items:flex-start;
-      gap:6px;
-      min-width:0;
-    }
-    .hintPrefix{
-      color:var(--c-warn);
-      font-weight:900;
-      font-size:12px;
-      white-space:nowrap;
-      margin-top:1px;
-    }
-    .hintMsg{
-      color:var(--c-warn);
-      font-weight:800;
-      font-size:12px;
-      line-height:1.35;
-      white-space:normal;
-      word-break:break-word;
-    }
-    .hintRight{
-      justify-self:end;
-      display:flex;
-      flex-direction:column;
-      align-items:flex-end;
-      gap:6px;
-    }
+    .hintLeft{display:flex;align-items:flex-start;gap:6px;min-width:0}
+    .hintPrefix{color:var(--c-warn);font-weight:800;font-size:12px;white-space:nowrap;margin-top:1px}
+    .hintMsg{color:var(--c-warn);font-weight:700;font-size:12px;line-height:1.4;word-break:break-word}
+    .hintRight{justify-self:end;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
     .hintBtn{
-      color:var(--c-warn);
-      font-weight:900;
-      font-size:12px;
-      text-decoration:none;
-      white-space:nowrap;
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid rgba(245,158,11,.55);
-      background:rgba(255,255,255,.60);
+      color:var(--c-warn);font-weight:800;font-size:12px;text-decoration:none;
+      white-space:nowrap;padding:8px 14px;border-radius:999px;
+      border:1px solid rgba(245,158,11,.45);background:rgba(245,158,11,.08);
+      transition:background .15s
     }
-    .hintBtn:hover{ text-decoration:underline; }
-    .hintSub{
-      text-align:right;
-      font-size:12.5px;
-      color:var(--c-sub);
-      font-weight:700;
-      line-height:1.35;
-    }
-    .hintCode{
-      font-size:13.5px;
-      font-weight:900;
-      color:var(--c-warn);
-    }
-    @media (max-width:560px){
-      .hintBanner{ grid-template-columns: 1fr; row-gap:10px; }
-      .hintRight{ align-items:stretch; }
-      .hintBtn{ width:100%; text-align:center; }
-      .hintSub{ text-align:center; }
-    }
+    .hintBtn:hover{background:rgba(245,158,11,.16)}
+    .hintSub{text-align:right;font-size:12px;color:var(--c-sub);font-weight:600;line-height:1.35}
+    .hintCode{font-size:13px;font-weight:800;color:var(--c-warn)}
 
-    /* ===== 只看利润：小按钮 ===== */
-    .viewRow{
-      margin-top:10px;
-      display:flex;
-      justify-content:flex-end;
-      align-items:center;
-      gap:10px;
-    }
+    /* ===== 只看利润按钮 ===== */
+    .viewRow{margin-top:10px;display:flex;justify-content:flex-end;align-items:center;gap:10px}
     .miniBtn{
-      width:auto;
-      padding:8px 12px;
-      font-size:13px;
-      border-radius:999px;
-      background:rgba(0,120,212,.10);
-      color:var(--c-primary);
-      border:1px solid rgba(0,120,212,.35);
-      margin-top:0;
+      width:auto;padding:7px 14px;font-size:13px;font-weight:600;
+      border-radius:999px;background:var(--c-primary-light);
+      color:var(--c-primary);border:1px solid rgba(0,102,255,.2);
+      margin-top:0;transition:background .15s,border-color .15s
     }
-    .miniBtn:hover{ background:rgba(0,120,212,.18); }
-    .miniHint{font-size:12px;color:var(--c-sub);font-weight:700}
+    .miniBtn:hover{background:rgba(0,102,255,.14);border-color:rgba(0,102,255,.35)}
+    .miniHint{font-size:11px;color:var(--c-sub);font-weight:500}
 
-    /* ===== 只看利润模式：隐藏非关键区域 ===== */
-    body.profitOnlyMode #airdropSection{ display:none !important; }
-    body.profitOnlyMode #priceBox{ display:none !important; }
-    body.profitOnlyMode .tutorials{ display:none !important; }
-    body.profitOnlyMode .hintBanner{ display:none !important; }
-    /* 保留倒计时 + 刷新 + 输入，隐藏结果里除利润外内容 */
-    body.profitOnlyMode #resultBox p:not(.profitLine),
-    body.profitOnlyMode #resultBox hr{ display:none !important; }
-    body.profitOnlyMode #resultBox{
-      padding:26px;
-    }
-    body.profitOnlyMode #resultBox .profitLine{
-      margin:0;
-      text-align:center;
-      font-size:18px;
-      line-height:1.6;
-    }
-    body.profitOnlyMode #profitUSD{
-      font-size:32px;
-      display:inline-block;
-      margin-left:6px;
+    /* ===== 只看利润模式 ===== */
+    body.profitOnlyMode #airdropSection{display:none!important}
+    body.profitOnlyMode #priceBox{display:none!important}
+    body.profitOnlyMode .tutorials{display:none!important}
+    body.profitOnlyMode .hintBanner{display:none!important}
+    body.profitOnlyMode #resultBox .result-header,
+    body.profitOnlyMode #resultBox .result-body>p:not(.profitLine),
+    body.profitOnlyMode #resultBox .result-body>hr{display:none!important}
+    body.profitOnlyMode #resultBox .result-body{padding:0}
+    body.profitOnlyMode #resultBox .profit-card{margin:0;border-radius:16px;border:none}
+    body.profitOnlyMode #resultBox .profit-card .profit-value{font-size:36px}
+
+    /* ===== 移动端适配 ===== */
+    @media(max-width:560px){
+      .container{margin:12px 8px;padding:20px 16px;border-radius:16px}
+      h2{font-size:17px}
+      .row{flex-direction:column;gap:0}
+      .priceBox{flex-direction:column;gap:8px}
+      .priceItem{padding:10px 12px}
+      .hintBanner{grid-template-columns:1fr;row-gap:10px}
+      .hintRight{align-items:stretch}
+      .hintBtn{width:100%;text-align:center}
+      .hintSub{text-align:center}
+      .result-header{grid-template-columns:1fr;gap:4px}
+      .profit-card .profit-value{font-size:22px}
+      .viewRow{justify-content:center}
     }
   </style>
 </head>
@@ -340,49 +323,22 @@
 
     <div class="updateHint" id="lastUpdateHint">—</div>
 
-    <!-- ===== 教程链接 ===== -->
+    <!-- ===== 教程链接（灯泡图标已用 CSS mask 复用，无需重复 SVG） ===== -->
     <div class="tutorials">
       <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
-        <span class="ico" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
-            <path d="M9 21h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M10 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9.6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
+        <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
         <span>链上借BNB教程</span>
       </a>
-
       <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1977584958295392288" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
-        <span class="ico" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
-            <path d="M9 21h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M10 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9 .6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
+        <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
         <span>交易所借BNB教程</span>
       </a>
-
       <a class="tutorial-link" href="https://x.com/0xXIAOc/status/2001254000516346195?s=20" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
-        <span class="ico" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
-            <path d="M9 21h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M10 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9 .6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
+        <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
         <span>币安钱包借BNB教程</span>
       </a>
-
       <a class="tutorial-link" href="https://x.com/0xXIAOc/status/2032344697625276825?s=20" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
-        <span class="ico" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
-            <path d="M9 21h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M10 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9 .6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
+        <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
         <span>提取授权教程</span>
       </a>
     </div>
@@ -413,23 +369,25 @@
     </div>
 
     <div class="result" id="resultBox" hidden>
-      <p>📦 当前地址 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
-      <p>🎯 募集资金：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
-      <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-      <p>
-        💰 出售代币数量：10,000,000 个 UP
-        <span id="bonusInfo" style="display:none"></span>
-      </p>
-      <hr>
-      <p>
-        🚀 你投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-        可获得 <span class="success" id="tokenAmt">—</span> 枚 UP<span id="bonusLabel">（含赠送）</span> ≈ <span class="success" id="usdValue">—</span>
-      </p>
-      <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
+      <div class="result-header">
+        <p>📦 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
+        <p>🎯 募集：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
+        <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
+        <p>💰 出售：10,000,000 UP<span id="bonusInfo" style="display:none"></span></p>
+      </div>
+      <div class="result-body">
+        <p>
+          🚀 投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
+          可获得 <span class="success" id="tokenAmt">—</span> 枚 UP<span id="bonusLabel">（含赠送）</span> ≈ <span class="success" id="usdValue">—</span>
+        </p>
+        <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
+        <p>🔄 退回：<span class="refund" id="refundBNB">—</span> BNB</p>
 
-      <p class="profitLine">📈 利润：<span class="highlight" id="profitUSD">—</span></p>
-
-      <p>🔄 退回 BNB：<span class="refund" id="refundBNB">—</span> BNB</p>
+        <div class="profit-card" id="profitCard">
+          <div class="profit-label">预估利润</div>
+          <p class="profitLine"><span class="profit-value" id="profitUSD">—</span></p>
+        </div>
+      </div>
     </div>
 
     <!-- 保留 DOM，但不显示（按你要求） -->
@@ -513,7 +471,6 @@
 
       bnbPriceV: $('bnbPriceV'),
       labPriceV: $('labPriceV'),
-      priceBoxDiv: $('priceBox'),
       autoRefreshCountdown: $('autoRefreshCountdown'),
       endedMsg: $('endedMsg'),
       contractLink: $('contractLink'),
@@ -533,9 +490,40 @@
     const fmt = (n, d = 0) => Number(n).toLocaleString('zh-CN', { maximumFractionDigits: d });
     const TZ = 'Asia/Shanghai';
 
-    const lockAtMs = () => CONFIG.END_TIME.getTime() - (CONFIG.FINAL_REFRESH_BEFORE_END_MS || 60_000);
-    const isLocked = () => Date.now() >= lockAtMs();
-    const isEnded = () => Date.now() >= CONFIG.END_TIME.getTime();
+    function formatRangeForCN(st, et){
+      const getNum = (date, opt) =>
+        new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, ...opt })
+          .format(date)
+          .replace(/\D/g, '');
+
+      const m = getNum(st, { month: 'numeric' });
+      const d = getNum(st, { day: 'numeric' });
+
+      const tFmt = new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hour12: false });
+      const ts = tFmt.format(st);
+      const te = tFmt.format(et);
+
+      return `${m}月${d}日 ${ts}-${te}（北京时间）`;
+    }
+
+    // 预计算常量（START_TIME / END_TIME / lockAt 都不变）
+    const START_MS = CONFIG.START_TIME.getTime();
+    const END_MS   = CONFIG.END_TIME.getTime();
+    const LOCK_MS  = END_MS - (CONFIG.FINAL_REFRESH_BEFORE_END_MS || 60_000);
+    const RANGE_LABEL = formatRangeForCN(CONFIG.START_TIME, CONFIG.END_TIME);
+
+    const isLocked = () => Date.now() >= LOCK_MS;
+    const isEnded  = () => Date.now() >= END_MS;
+
+    // ===== localStorage 缓存工具 =====
+    function cacheGet(key, maxAge){
+      try{
+        const c = JSON.parse(localStorage.getItem(key) || 'null');
+        if(c && c.v != null && (!maxAge || Date.now() - c.t < maxAge)) return c;
+      }catch{}
+      return null;
+    }
+    function cacheSet(key, v){ try{ localStorage.setItem(key, JSON.stringify({v, t:Date.now()})); }catch{} }
 
     async function fetchJSON(url, options = {}, timeoutMs = 8000){
       const controller = new AbortController();
@@ -558,17 +546,11 @@
       }
     }
 
-    function computeAirdropUSDFromTokenPrice(tokenPrice){
-      const tokens = CONFIG.TOTAL_TOKENS || 0;
-      const price = Number(tokenPrice) || 0;
-      return tokens * (CONFIG.BONUS_MULTIPLIER || 1) * price;
-    }
-
     function computePrice(){
       const tokenP = +els.tokenPrice.value || 0;
-      const computedAirdrop = computeAirdropUSDFromTokenPrice(tokenP);
-      els.airdropUSD.value = Math.round(computedAirdrop);
-      els.airdropFmt.textContent = computedAirdrop ? ('≈ ' + fmt(computedAirdrop/1e4) + ' 万 USDT') : '—';
+      const airdrop = (CONFIG.TOTAL_TOKENS || 0) * (CONFIG.BONUS_MULTIPLIER || 1) * tokenP;
+      els.airdropUSD.value = Math.round(airdrop);
+      els.airdropFmt.textContent = airdrop ? ('≈ ' + fmt(airdrop/1e4) + ' 万 USDT') : '—';
     }
 
     function syncLabPriceDisplay(){
@@ -577,17 +559,14 @@
     }
 
     async function getBNBPrice(){
-      const cache = JSON.parse(localStorage.getItem('bnbP')||'{}');
-      if(cache.v && Date.now()-cache.t < CONFIG.PRICE_CACHE_MS) return cache.v;
+      const cached = cacheGet('bnbP', CONFIG.PRICE_CACHE_MS);
+      if(cached) return cached.v;
 
       for(const url of CONFIG.PRICE_APIS){
         try{
           const d = await fetchJSON(url, {}, 7000);
           const v = Number(d?.price ?? d?.binancecoin?.usd ?? d?.USD ?? 0);
-          if(v){
-            localStorage.setItem('bnbP', JSON.stringify({v, t:Date.now()}));
-            return v;
-          }
+          if(v){ cacheSet('bnbP', v); return v; }
         }catch{}
       }
       return 0;
@@ -597,16 +576,13 @@
       if(!CONFIG.TOKEN_PRICE_API) return 0;
 
       const key = `tokP_${CONFIG.SYMBOL}`;
-      const cache = JSON.parse(localStorage.getItem(key)||'{}');
-      if(cache.v && Date.now()-cache.t < CONFIG.PRICE_CACHE_MS) return cache.v;
+      const cached = cacheGet(key, CONFIG.PRICE_CACHE_MS);
+      if(cached) return cached.v;
 
       try{
         const d = await fetchJSON(CONFIG.TOKEN_PRICE_API, {}, 7000);
         const p = Number(d?.price);
-        if(p){
-          localStorage.setItem(key, JSON.stringify({v:p, t:Date.now()}));
-          return p;
-        }
+        if(p){ cacheSet(key, p); return p; }
       }catch{}
       return 0;
     }
@@ -621,9 +597,8 @@
 
         if(tokP && !els.tokenPrice.dataset.userEdited){
           els.tokenPrice.value = Number(tokP).toFixed(6);
-          computePrice();
         }
-        syncLabPriceDisplay();
+        // syncLabPriceDisplay 由后续 render() 统一调用，此处不再重复
       }catch(e){
         console.error('updatePriceDisplay error', e);
       }
@@ -666,13 +641,10 @@
     let finalRefreshTimerId = null;
 
     function stopAutoRefreshTimers(){
-      if(refreshTimeoutId) clearTimeout(refreshTimeoutId);
-      if(countdownTimerId) clearInterval(countdownTimerId);
-      refreshTimeoutId = null;
-      countdownTimerId = null;
-
-      if(finalRefreshTimerId) clearTimeout(finalRefreshTimerId);
-      finalRefreshTimerId = null;
+      clearTimeout(refreshTimeoutId);
+      clearInterval(countdownTimerId);
+      clearTimeout(finalRefreshTimerId);
+      refreshTimeoutId = countdownTimerId = finalRefreshTimerId = null;
     }
 
     function scheduleNextRefresh(){
@@ -688,11 +660,7 @@
     }
 
     function updateCountdownDisplay(){
-      if(isLocked()){
-        els.autoRefreshCountdown.textContent = '数据已锁定：保持 17:59 更新结果';
-        return;
-      }
-      if(isEnded()){
+      if(isLocked() || isEnded()){
         els.autoRefreshCountdown.textContent = '数据已锁定：保持 17:59 更新结果';
         return;
       }
@@ -716,27 +684,20 @@
       scheduleFinalRefreshBeforeEnd();
     }
 
-    function resetAutoRefresh(){
-      if(isEnded() || isLocked() || document.hidden) return;
-      startAutoRefreshTimers();
-    }
-
     function scheduleFinalRefreshBeforeEnd(){
-      if(finalRefreshTimerId) clearTimeout(finalRefreshTimerId);
+      clearTimeout(finalRefreshTimerId);
       finalRefreshTimerId = null;
 
-      const lockAt = lockAtMs();
       const now = Date.now();
-      if(now >= lockAt || now >= CONFIG.END_TIME.getTime()){
+      if(now >= LOCK_MS || now >= END_MS){
         applyLockState();
         return;
       }
 
       finalRefreshTimerId = setTimeout(async ()=>{
-        // 17:59 强制刷新一次（允许强制，不受 locked 限制），然后锁定
         await refresh(false, true);
         applyLockState();
-      }, lockAt - now);
+      }, LOCK_MS - now);
     }
 
     // ===== 结束/锁定状态 =====
@@ -773,29 +734,21 @@
     let latestDep = 0;
 
     function loadCachedDepIfAny(){
-      const key = `dep_${CONFIG.SYMBOL}`;
-      try{
-        const cache = JSON.parse(localStorage.getItem(key) || '{}');
-        if(cache?.v){
-          latestDep = Number(cache.v) || latestDep;
-          if(cache?.t){
-            const dt = new Date(cache.t);
-            if(!isNaN(dt.getTime())){
-              els.lastUpdateHint.textContent = '最后更新：' + dt.toLocaleTimeString('zh-CN',{hour12:false});
-            }
-          }
+      const cached = cacheGet(`dep_${CONFIG.SYMBOL}`);
+      if(cached){
+        latestDep = Number(cached.v) || latestDep;
+        if(cached.t){
+          const dt = new Date(cached.t);
+          if(!isNaN(dt.getTime()))
+            els.lastUpdateHint.textContent = '最后更新：' + dt.toLocaleTimeString('zh-CN',{hour12:false});
         }
-      }catch{}
+      }
     }
 
-    function saveDepCache(dep){
-      const key = `dep_${CONFIG.SYMBOL}`;
-      try{
-        localStorage.setItem(key, JSON.stringify({ v: dep, t: Date.now() }));
-      }catch{}
-    }
+    function saveDepCache(dep){ cacheSet(`dep_${CONFIG.SYMBOL}`, dep); }
 
-    async function render(dep = latestDep){
+    function render(dep = latestDep){
+      if(dep) latestDep = dep;  // 缓存最新余额，供事件回调无参调用时复用
       if(isLocked()) applyLockState();
       if(isEnded()) applyEndState();
 
@@ -838,9 +791,15 @@
       els.principalUSD.textContent = fmt(principal*bnbUSDT,2) + ' USDT';
 
       const profit = (tokens * price) - (principal * bnbUSDT);
-      els.profitUSD.textContent = fmt(profit, 2) + ' USDT';
+      els.profitUSD.textContent = (profit >= 0 ? '+' : '') + fmt(profit, 2) + ' USDT';
       els.profitUSD.classList.remove('success', 'deduct');
       els.profitUSD.classList.add(profit >= 0 ? 'success' : 'deduct');
+
+      const pc = $('profitCard');
+      if(pc){
+        pc.classList.remove('positive','negative');
+        pc.classList.add(profit >= 0 ? 'positive' : 'negative');
+      }
 
       els.refundBNB.textContent = fmt(refund,4);
       els.resultBox.hidden = false;
@@ -859,9 +818,7 @@
       // 17:59 后不再拉数据（除非 force）
       if(!force && (isLocked() || isEnded())){
         loadCachedDepIfAny();
-        await render(latestDep);
-        if(isLocked()) applyLockState();
-        if(isEnded()) applyEndState();
+        render(latestDep);  // render 内部已处理 lock/end 状态
         return;
       }
 
@@ -874,7 +831,7 @@
         await updatePriceDisplay();
         const dep = await fetchBalance(els.targetAddress.value);
         saveDepCache(dep);
-        await render(dep);
+        render(dep);
         els.lastUpdateHint.textContent = '最后更新：' + new Date().toLocaleTimeString('zh-CN',{hour12:false});
       }catch(e){
         if(manual){
@@ -893,40 +850,22 @@
       }
     }
 
-    function formatRangeForCN(st, et){
-      const getNum = (date, opt) =>
-        new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, ...opt })
-          .format(date)
-          .replace(/\D/g, '');
-
-      const m = getNum(st, { month: 'numeric' });
-      const d = getNum(st, { day: 'numeric' });
-
-      const tFmt = new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hour12: false });
-      const ts = tFmt.format(st);
-      const te = tFmt.format(et);
-
-      return `${m}月${d}日 ${ts}-${te}（北京时间）`;
-    }
-
     function tick(){
-      const stMs = CONFIG.START_TIME.getTime();
-      const etMs = CONFIG.END_TIME.getTime();
       const nowMs = Date.now();
 
-      if(nowMs < stMs){
-        els.countdownText.textContent = `活动未开始：${formatRangeForCN(CONFIG.START_TIME, CONFIG.END_TIME)}`;
+      if(nowMs < START_MS){
+        els.countdownText.textContent = `活动未开始：${RANGE_LABEL}`;
         els.progressBar.style.width = '0%';
         return;
       }
 
-      if(nowMs >= etMs){
+      if(nowMs >= END_MS){
         els.progressBar.style.width = '100%';
         applyEndState();
         return;
       }
 
-      const diff = etMs - nowMs;
+      const diff = END_MS - nowMs;
       const hours = Math.floor(diff/3.6e6);
       const mins = Math.floor((diff%3.6e6)/6e4);
       const secs = Math.floor((diff%6e4)/1e3);
@@ -936,15 +875,14 @@
         : (mins>0 ? `${mins} 分 ${secs} 秒` : `${(diff/1e3).toFixed(1)} 秒`);
 
       els.countdownText.textContent = `剩余时间：${txt}`;
-      const pct = ((nowMs - stMs) / (etMs - stMs) * 100);
-      els.progressBar.style.width = (pct>100?100: pct<0?0:pct).toFixed(2) + '%';
+      els.progressBar.style.width = ((nowMs - START_MS) / (END_MS - START_MS) * 100).toFixed(2) + '%';
     }
 
     function applyInterval(){
       const sec = Math.max(+els.refreshSec.value||10,5);
       refreshIntervalMs = sec * 1000;
       if(!isEnded() && !isLocked()){
-        resetAutoRefresh();
+        startAutoRefreshTimers();
       }
     }
 
@@ -959,9 +897,7 @@
 
     els.tokenPrice.addEventListener('input', ()=>{
       els.tokenPrice.dataset.userEdited = '1';
-      computePrice();
-      syncLabPriceDisplay();
-      render();
+      render();  // render() 内部已调用 computePrice + syncLabPriceDisplay
     });
 
     els.userAmount.addEventListener('input', ()=>{
@@ -977,7 +913,7 @@
 
     els.refreshBtn.addEventListener('click', async ()=>{
       await refresh(true);
-      resetAutoRefresh();
+      startAutoRefreshTimers();
     });
 
     els.profitOnlyBtn.addEventListener('click', ()=>{
@@ -991,12 +927,8 @@
       if(document.hidden){
         stopAutoRefreshTimers();
       }else{
-        if(!isEnded() && !isLocked()){
-          startAutoRefreshTimers();
-        }else{
-          applyLockState();
-          if(isEnded()) applyEndState();
-        }
+        // startAutoRefreshTimers 内部已处理 lock/end 状态
+        startAutoRefreshTimers();
       }
     });
 
@@ -1022,15 +954,12 @@
         els.bonusInfo.style.display = 'none';
       }
 
-      computePrice();
-      syncLabPriceDisplay();
+      // render() 内部会调用 computePrice + syncLabPriceDisplay，此处无需重复
 
       // 若已经锁定/结束：只从缓存恢复（不再拉链上）
       if(isLocked() || isEnded()){
         loadCachedDepIfAny();
-        await render(latestDep);
-        applyLockState();
-        if(isEnded()) applyEndState();
+        render(latestDep);  // render 内部已处理 lock/end 状态
       }else{
         await updatePriceDisplay();
         startAutoRefreshTimers();

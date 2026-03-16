@@ -22,7 +22,7 @@
       --c-error-bg:rgba(220,38,38,.06);
       --c-refund:#0284c7;
       --c-warn:#f59e0b;
-      --radius:12px;
+      --radius:14px;
       --shadow:0 4px 24px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
     }
     @media(prefers-color-scheme:dark){
@@ -49,33 +49,50 @@
       font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Noto Sans SC',Helvetica,Arial,sans-serif;
       background:var(--c-bg);color:var(--c-text);
       -webkit-font-smoothing:antialiased;
-      line-height:1.5;
-      font-variant-numeric:tabular-nums
+      line-height:1.5
     }
-    .wrapper{max-width:960px;margin:0 auto;padding:20px 16px}
+    .container{
+      max-width:720px;margin:24px auto;padding:28px 24px;background:var(--c-card);
+      border-radius:20px;box-shadow:var(--shadow)
+    }
+    h2{
+      color:var(--c-primary);text-align:center;margin-bottom:6px;
+      font-size:20px;letter-spacing:.5px
+    }
 
-    /* --- Header --- */
-    .page-header{
-      background:var(--c-card);border-radius:16px;box-shadow:var(--shadow);
-      padding:20px 24px;margin-bottom:16px
-    }
-    .page-title{
-      color:var(--c-primary);text-align:center;margin-bottom:4px;
-      font-size:19px;font-weight:700;letter-spacing:.3px
-    }
-    .page-meta{
-      text-align:center;font-size:12px;color:var(--c-sub);
-      display:flex;flex-wrap:wrap;justify-content:center;gap:6px 16px;margin-top:4px
-    }
-    .page-meta a{color:var(--c-primary);text-decoration:none;font-weight:500}
-    .page-meta a:hover{text-decoration:underline}
+    .subline{display:none}
 
-    /* --- Status bar --- */
-    .status-bar{
-      background:var(--c-card);border-radius:var(--radius);box-shadow:var(--shadow);
-      padding:14px 20px;margin-bottom:16px
+    label{display:block;margin:16px 0 6px;font-weight:600;font-size:14px}
+    .note{font-size:12px;color:var(--c-sub);margin-left:4px;font-weight:400}
+
+    input,select{
+      width:100%;padding:11px 14px;font-size:15px;
+      border:1.5px solid var(--c-border);border-radius:var(--radius);
+      background:var(--c-card);color:var(--c-text);
+      transition:border-color .2s,box-shadow .2s;
+      outline:none
     }
-    .status-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    input:focus{border-color:var(--c-primary);box-shadow:0 0 0 3px var(--c-primary-light)}
+    input[readonly]{background:var(--c-card2);cursor:default;opacity:.8}
+
+    button{
+      width:100%;padding:12px;font-size:15px;font-weight:600;
+      background:var(--c-primary);color:#fff;border:none;
+      border-radius:var(--radius);margin-top:16px;cursor:pointer;
+      transition:background .2s,transform .1s,box-shadow .2s;
+      box-shadow:0 2px 8px rgba(0,102,255,.2)
+    }
+    button:hover{background:var(--c-primary-dark);box-shadow:0 4px 12px rgba(0,102,255,.3)}
+    button:active{transform:scale(.98)}
+    button:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px}
+
+    input:focus-visible{border-color:var(--c-primary);box-shadow:0 0 0 3px var(--c-primary-light)}
+
+    .row{display:flex;gap:12px}
+    .col{flex:1;min-width:0}
+
+    .status-section{margin-top:20px}
+    .status-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
     .status-badge{
       display:inline-flex;align-items:center;gap:5px;
       padding:4px 12px;border-radius:999px;font-size:12px;font-weight:700;
@@ -89,383 +106,346 @@
     .status-badge.live .dot{animation:pulse 1.5s infinite}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
     .status-countdown{font-size:13px;color:var(--c-text);font-weight:600;flex:1}
-    .progress-slim{
-      width:100%;height:4px;border-radius:4px;background:var(--c-border);
-      margin-top:10px;overflow:hidden
+
+    .progress-container{}
+    .progress-bg{
+      background:var(--c-border);height:6px;border-radius:6px;overflow:hidden;
+      position:relative
     }
-    .progress-slim .bar{
-      height:100%;border-radius:4px;
+    .progress-bar{
       background:linear-gradient(90deg,var(--c-primary),#38bdf8);
-      transition:width .6s ease;position:relative
+      height:100%;width:0%;transition:width .6s ease;
+      border-radius:6px;position:relative
     }
-    .progress-slim .bar::after{
-      content:'';position:absolute;inset:0;
+    .progress-bar::after{
+      content:'';position:absolute;top:0;left:0;right:0;bottom:0;
       background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
       animation:shimmer 2s infinite
     }
-    @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+    @keyframes shimmer{
+      0%{transform:translateX(-100%)}
+      100%{transform:translateX(100%)}
+    }
 
-    /* --- Price bar --- */
-    .price-bar{
-      background:var(--c-card);border-radius:var(--radius);box-shadow:var(--shadow);
-      padding:12px 20px;margin-bottom:16px;
-      display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:13px
+    .result{
+      margin-top:20px;padding:0;border-radius:16px;
+      border:1.5px solid var(--c-border);background:var(--c-card);
+      overflow:hidden
     }
-    .price-tag{display:flex;align-items:baseline;gap:4px}
-    .price-tag .label{color:var(--c-sub);font-size:11px;font-weight:500}
-    .price-tag .val{font-weight:700;font-size:14px}
-    .meta-sep{color:var(--c-border);font-size:11px}
-    .meta-update{font-size:11px;color:var(--c-sub);margin-left:auto;display:flex;align-items:center;gap:8px}
-    .refresh-link{
-      background:none;border:none;color:var(--c-primary);cursor:pointer;
-      font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;
-      width:auto;margin:0;box-shadow:none;transition:background .15s
+    .result-header{
+      padding:14px 18px;background:var(--c-card2);
+      border-bottom:1px solid var(--c-border);
+      display:grid;grid-template-columns:1fr 1fr;gap:8px
     }
-    .refresh-link:hover{background:var(--c-primary-light);box-shadow:none}
-    .refresh-link:focus-visible{outline:2px solid var(--c-primary);outline-offset:1px;box-shadow:none}
+    .result-header p{margin:0;font-size:13px;line-height:1.5}
+    .result-body{padding:16px 18px}
+    .result-body p{margin:6px 0;font-size:14px;line-height:1.6}
 
-    /* --- Main two-column --- */
-    .main-grid{display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:start}
-
-    /* --- Left: Input panel --- */
-    .input-panel{
-      background:var(--c-card);border-radius:16px;box-shadow:var(--shadow);
-      padding:20px 22px
+    .profit-card{
+      margin:12px 0 6px;padding:16px;border-radius:var(--radius);
+      text-align:center;transition:background .2s
     }
-    .input-panel label{display:block;margin:0 0 5px;font-weight:600;font-size:13px}
-    .input-panel label:not(:first-child){margin-top:14px}
-    .note{font-size:11px;color:var(--c-sub);margin-left:4px;font-weight:400}
-
-    input{
-      width:100%;padding:10px 12px;font-size:14px;
-      border:1.5px solid var(--c-border);border-radius:var(--radius);
-      background:var(--c-card);color:var(--c-text);
-      transition:border-color .2s,box-shadow .2s;
-      outline:none;font-variant-numeric:tabular-nums
-    }
-    input:focus{border-color:var(--c-primary);box-shadow:0 0 0 3px var(--c-primary-light)}
-
-    .price-input-row{display:flex;gap:8px;align-items:center}
-    .price-input-row input{flex:1}
-    .link-btn{
-      background:none;border:none;color:var(--c-primary);cursor:pointer;
-      font-size:11px;font-weight:600;padding:0;margin:0;
-      width:auto;box-shadow:none;text-decoration:underline;text-underline-offset:2px;
-      white-space:nowrap
-    }
-    .link-btn:hover{color:var(--c-primary-dark);background:none;box-shadow:none}
-    .link-btn:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;background:none;box-shadow:none}
-
-    .stat-block{margin-top:14px}
-    .stat-block .stat-label{font-size:11px;color:var(--c-sub);font-weight:500;margin-bottom:2px}
-    .stat-block .stat-value{font-size:15px;font-weight:700}
-    .stat-block .stat-sub{font-size:11px;color:var(--c-sub);margin-top:1px}
-
-    /* --- Right: Result panel --- */
-    .result-panel{
-      background:var(--c-card);border-radius:16px;box-shadow:var(--shadow);
-      padding:20px 22px;position:sticky;top:20px
-    }
-    .result-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-    .result-title{font-size:14px;font-weight:700}
-    .mode-switch{
-      display:flex;align-items:center;gap:6px;cursor:pointer;
-      background:none;border:none;padding:4px 10px;border-radius:6px;
-      font-size:11px;font-weight:600;color:var(--c-sub);
-      width:auto;margin:0;box-shadow:none;transition:background .15s
-    }
-    .mode-switch:hover{background:var(--c-primary-light);color:var(--c-primary);box-shadow:none}
-    .mode-switch:focus-visible{outline:2px solid var(--c-primary);outline-offset:1px;box-shadow:none}
-    .mode-switch .toggle-track{
-      width:28px;height:16px;border-radius:99px;background:var(--c-border);
-      position:relative;transition:background .2s
-    }
-    .mode-switch .toggle-knob{
-      width:12px;height:12px;border-radius:50%;background:#fff;
-      position:absolute;top:2px;left:2px;transition:transform .2s;
-      box-shadow:0 1px 3px rgba(0,0,0,.15)
-    }
-    .mode-switch[aria-pressed="true"] .toggle-track{background:var(--c-primary)}
-    .mode-switch[aria-pressed="true"] .toggle-knob{transform:translateX(12px)}
-
-    /* Metric cards */
-    .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .metric-card{padding:14px;border-radius:var(--radius);background:var(--c-card2)}
-    .metric-card .mc-label{font-size:11px;color:var(--c-sub);font-weight:500;margin-bottom:3px}
-    .metric-card .mc-value{font-size:18px;font-weight:800;letter-spacing:-.3px;line-height:1.2}
-    .metric-card .mc-sub{font-size:11px;color:var(--c-sub);margin-top:2px}
-    .metric-card.profit-positive{background:var(--c-success-bg);border:1px solid rgba(5,150,105,.15)}
-    .metric-card.profit-negative{background:var(--c-error-bg);border:1px solid rgba(220,38,38,.12)}
-    .metric-card.profit-positive .mc-value{color:var(--c-success)}
-    .metric-card.profit-negative .mc-value{color:var(--c-error)}
-    .metric-card.span-2{grid-column:1/-1}
-    .metric-card.profit-positive .mc-value,
-    .metric-card.profit-negative .mc-value{font-size:24px}
-
-    .detail-row{
-      display:flex;justify-content:space-between;align-items:baseline;
-      font-size:12px;color:var(--c-sub);padding:4px 0
-    }
-    .detail-row .dr-val{font-weight:600;color:var(--c-text)}
-    .details-section{margin-top:12px;border-top:1px solid var(--c-border);padding-top:10px}
-
-    .result-empty{
-      text-align:center;padding:40px 0;font-size:13px;color:var(--c-sub)
-    }
+    .profit-card.positive{background:var(--c-success-bg);border:1px solid rgba(5,150,105,.2)}
+    .profit-card.negative{background:var(--c-error-bg);border:1px solid rgba(220,38,38,.15)}
+    .profit-card .profit-label{font-size:13px;color:var(--c-sub);margin-bottom:4px}
+    .profit-card .profit-value{font-size:26px;font-weight:800;letter-spacing:-.5px}
 
     .highlight{font-weight:700}
-    .success{color:var(--c-success)}
-    .deduct{color:var(--c-error)}
-    .refund{color:var(--c-refund)}
+    .success{color:var(--c-success);font-weight:700}
+    .deduct{color:var(--c-error);font-weight:700}
+    .refund{color:var(--c-refund);font-weight:700}
 
-    /* --- Ended banner --- */
-    .ended-banner{
-      display:none;margin-top:12px;padding:12px 16px;border-radius:var(--radius);
-      background:rgba(245,158,11,.08);border:1px solid var(--c-warn);
-      text-align:center;font-size:13px;font-weight:600;color:#d97706
-    }
+    .result hr{border:none;border-top:1px solid var(--c-border);margin:10px 0}
 
-    /* --- Error banner --- */
+    .updateHint{text-align:right;font-size:12px;color:var(--c-sub);margin-top:8px}
+
     .error-banner{
-      display:none;margin-bottom:12px;padding:10px 14px;border-radius:var(--radius);
+      display:none;margin-bottom:16px;padding:10px 14px;border-radius:var(--radius);
       background:var(--c-error);color:#fff;font-size:13px
     }
-    .stale-banner{
-      display:none;margin-bottom:12px;padding:8px 14px;border-radius:var(--radius);
-      background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);
-      font-size:12px;color:#d97706;text-align:center
-    }
 
+    .footer{margin-top:24px;text-align:center;font-size:13px;color:var(--c-sub);padding-bottom:20px}
+    .footer a{color:var(--c-primary);text-decoration:none;font-weight:500}
+    .footer a:hover{text-decoration:underline}
+
+    .priceBox{display:flex;gap:10px;align-items:stretch;margin-top:14px}
+    .priceItem{
+      flex:1;padding:12px 14px;border-radius:var(--radius);
+      border:1.5px solid var(--c-border);background:var(--c-card2);
+      transition:border-color .2s
+    }
+    .priceItem:hover{border-color:var(--c-primary)}
+    .priceItem .v{font-weight:800;font-size:17px;letter-spacing:-.3px}
+    .priceItem .t{font-size:11px;color:var(--c-sub);margin-top:6px;line-height:1.4}
+
+    .linkBtn{
+      display:inline;background:none;border:none;color:var(--c-primary);
+      cursor:pointer;font-size:11px;font-weight:600;padding:0;margin:0;
+      width:auto;box-shadow:none;text-decoration:underline;text-underline-offset:2px
+    }
+    .linkBtn:hover{color:var(--c-primary-dark);background:none;box-shadow:none}
+    .linkBtn:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;background:none;box-shadow:none}
+
+    .countdownAuto{font-size:12px;color:var(--c-sub);margin-top:10px;text-align:center;font-weight:500}
+
+    .ended-banner{
+      display:none;margin-top:14px;padding:12px;border-radius:var(--radius);
+      background:rgba(245,158,11,.08);border:1px solid var(--c-warn)
+    }
     .muted{opacity:.45;pointer-events:none;user-select:none}
 
-    /* --- Second screen --- */
-    .second-screen{
-      margin-top:16px;background:var(--c-card);border-radius:16px;
-      box-shadow:var(--shadow);padding:20px 22px
+    /* --- Second screen: tutorials, invite code --- */
+    .second-screen{margin-top:28px;border-top:1px solid var(--c-border);padding-top:20px}
+    .second-screen-title{
+      font-size:13px;color:var(--c-sub);font-weight:600;text-align:center;margin-bottom:12px
     }
-    .second-screen-title{font-size:12px;color:var(--c-sub);font-weight:600;margin-bottom:10px}
 
-    details.tutorial-details{margin-bottom:12px}
-    details.tutorial-details summary{
-      cursor:pointer;font-size:13px;font-weight:600;color:var(--c-text);
-      padding:8px 0;list-style:none;display:flex;align-items:center;gap:6px
+    .tutorials-toggle{
+      width:100%;padding:10px 14px;font-size:14px;font-weight:600;
+      background:var(--c-card2);color:var(--c-text);border:1.5px solid var(--c-border);
+      border-radius:var(--radius);cursor:pointer;text-align:left;
+      display:flex;justify-content:space-between;align-items:center;
+      box-shadow:none;margin-top:0
     }
-    details.tutorial-details summary::before{
-      content:'';border:5px solid transparent;border-left:6px solid var(--c-sub);
-      transition:transform .2s;display:inline-block
-    }
-    details.tutorial-details[open] summary::before{transform:rotate(90deg)}
-    details.tutorial-details summary::-webkit-details-marker{display:none}
-    .tutorial-list{padding:6px 0 0 12px;display:flex;flex-direction:column;gap:2px}
-    .tutorial-list a{
-      font-size:13px;color:var(--c-primary);text-decoration:none;
-      padding:5px 8px;border-radius:6px;transition:background .15s;font-weight:500
-    }
-    .tutorial-list a:hover{background:var(--c-primary-light);text-decoration:underline}
+    .tutorials-toggle:hover{border-color:var(--c-primary);background:var(--c-primary-light);box-shadow:none}
+    .tutorials-toggle:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;box-shadow:none}
+    .tutorials-toggle .arrow{transition:transform .2s;font-size:12px}
+    .tutorials-toggle[aria-expanded="true"] .arrow{transform:rotate(180deg)}
 
-    .hint-line{font-size:12px;color:var(--c-sub);margin-bottom:14px;line-height:1.5}
+    .tutorials-panel{
+      display:none;flex-direction:column;align-items:center;gap:4px;
+      margin-top:8px;padding:8px 0
+    }
+    .tutorials-panel.open{display:flex}
 
-    /* Referral (toned down) */
-    .referral-mini{
-      padding:14px 16px;border-radius:var(--radius);
-      background:var(--c-card2);
+    .tutorial-link{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      font-weight:700;font-size:14px;color:var(--c-primary);
+      padding:8px 14px;border-radius:var(--radius);
+      text-decoration:none;transition:background .15s
+    }
+    .tutorial-link:hover{background:var(--c-primary-light);text-decoration:underline}
+    .tutorial-link .ico{
+      width:18px;height:18px;line-height:0;display:inline-flex;
+      color:var(--c-warn);transform:translateY(1px)
+    }
+    .tutorial-link .ico-bulb{
+      width:18px;height:18px;background:currentColor;
+      -webkit-mask-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M9 21h6' stroke='%23000' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3Cpath d='M10 17h4' stroke='%23000' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3Cpath d='M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9.6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+      mask-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M9 21h6' stroke='%23000' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3Cpath d='M10 17h4' stroke='%23000' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3Cpath d='M8.5 14.5c-1.8-1.2-3-3.2-3-5.5A6.5 6.5 0 0 1 12 2.5 6.5 6.5 0 0 1 18.5 9c0 2.3-1.2 4.3-3 5.5-.9.6-1.5 1.5-1.5 2.5H10c0-1-.6-1.9-1.5-2.5Z' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+      -webkit-mask-size:contain;mask-size:contain;
+      -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat
+    }
+
+    .referral-card{
+      margin-top:14px;padding:14px 16px;border-radius:var(--radius);
+      background:var(--c-card2);border:1px solid var(--c-border);
       display:flex;align-items:center;gap:14px;flex-wrap:wrap
     }
-    .referral-mini .rm-text{flex:1;min-width:180px}
-    .referral-mini .rm-title{font-size:13px;font-weight:700;color:var(--c-text)}
-    .referral-mini .rm-sub{font-size:11px;color:var(--c-sub);margin-top:2px}
-    .referral-mini .rm-code{
+    .referral-text{flex:1;min-width:160px}
+    .referral-headline{font-size:13px;font-weight:700;color:var(--c-text)}
+    .referral-sub{font-size:11px;color:var(--c-sub);margin-top:2px}
+    .referral-code-box{
       display:inline-flex;align-items:center;gap:8px;
       padding:6px 14px;border-radius:8px;
       background:rgba(245,158,11,.08);border:1.5px dashed rgba(217,119,6,.3)
     }
-    .referral-mini .rm-code-val{font-size:14px;font-weight:800;color:#d97706;letter-spacing:1px}
-    .referral-mini .rm-copy{
+    .referral-code-value{font-size:14px;font-weight:800;color:#d97706;letter-spacing:1px}
+    .referral-copy-btn{
       width:auto;padding:3px 8px;font-size:10px;font-weight:600;
       border-radius:4px;background:rgba(217,119,6,.12);color:#d97706;
       border:1px solid rgba(217,119,6,.2);cursor:pointer;
-      margin:0;box-shadow:none;transition:background .15s
+      margin-top:0;box-shadow:none;transition:background .15s
     }
-    .referral-mini .rm-copy:hover{background:rgba(217,119,6,.2);box-shadow:none}
-    .referral-mini .rm-action{
+    .referral-copy-btn:hover{background:rgba(217,119,6,.2);box-shadow:none}
+    .referral-cta{
       display:inline-flex;align-items:center;gap:4px;
       padding:8px 16px;font-size:12px;font-weight:600;
       color:#d97706;background:rgba(245,158,11,.1);
       border:1px solid rgba(217,119,6,.25);border-radius:999px;
       text-decoration:none;transition:background .15s;white-space:nowrap
     }
-    .referral-mini .rm-action:hover{background:rgba(245,158,11,.18)}
-    .referral-safety{font-size:10px;color:var(--c-sub);margin-top:8px}
+    .referral-cta:hover{background:rgba(245,158,11,.18)}
+    .referral-safety{font-size:10px;color:var(--c-sub);margin-top:6px;width:100%}
 
-    /* --- Footer --- */
-    .footer{margin-top:20px;text-align:center;font-size:12px;color:var(--c-sub);padding-bottom:16px}
-    .footer a{color:var(--c-primary);text-decoration:none;font-weight:500}
-    .footer a:hover{text-decoration:underline}
+    .hintBanner{
+      margin-top:14px;padding:12px 14px;border-radius:var(--radius);
+      background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);
+      text-align:center
+    }
+    .hintMsg{color:var(--c-warn);font-weight:700;font-size:12px;line-height:1.4;word-break:break-word}
 
-    /* --- Profit-only mode --- */
-    body.profitOnlyMode .input-panel{display:none!important}
-    body.profitOnlyMode .result-panel .metric-grid .metric-card:not(.profit-card-main){display:none!important}
-    body.profitOnlyMode .result-panel .details-section{display:none!important}
-    body.profitOnlyMode .result-panel .metric-card.profit-card-main{grid-column:1/-1}
-    body.profitOnlyMode .result-panel .metric-card.profit-card-main .mc-value{font-size:36px}
+    .viewRow{margin-top:10px;display:flex;justify-content:flex-end;align-items:center;gap:10px}
+    .miniBtn{
+      width:auto;padding:7px 14px;font-size:13px;font-weight:600;
+      border-radius:999px;background:var(--c-primary-light);
+      color:var(--c-primary);border:1px solid rgba(0,102,255,.2);
+      margin-top:0;transition:background .15s,border-color .15s
+    }
+    .miniBtn:hover{background:rgba(0,102,255,.14);border-color:rgba(0,102,255,.35)}
+    .miniBtn:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px}
+    .miniHint{font-size:11px;color:var(--c-sub);font-weight:500}
+
+    body.profitOnlyMode #saleSection{display:none!important}
+    body.profitOnlyMode #priceBox{display:none!important}
     body.profitOnlyMode .second-screen{display:none!important}
+    body.profitOnlyMode #resultBox .result-header,
+    body.profitOnlyMode #resultBox .result-body>p:not(.profitLine),
+    body.profitOnlyMode #resultBox .result-body>hr{display:none!important}
+    body.profitOnlyMode #resultBox .result-body{padding:0}
+    body.profitOnlyMode #resultBox .profit-card{margin:0;border-radius:16px;border:none}
+    body.profitOnlyMode #resultBox .profit-card .profit-value{font-size:36px}
 
-    /* --- Responsive --- */
     @media(prefers-reduced-motion:reduce){
-      *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+      *{
+        animation:none!important;
+        transition:none!important;
+        scroll-behavior:auto!important
+      }
     }
 
-    @media(max-width:720px){
-      .main-grid{grid-template-columns:1fr}
-      .result-panel{position:static}
-      .wrapper{padding:12px 8px}
-      .page-header,.status-bar,.price-bar,.input-panel,.result-panel,.second-screen{
-        border-radius:14px;padding:16px
-      }
-      .page-title{font-size:17px}
-      .metric-card .mc-value{font-size:16px}
-      .metric-card.profit-positive .mc-value,
-      .metric-card.profit-negative .mc-value{font-size:20px}
-      .price-bar{flex-direction:column;gap:8px;align-items:flex-start}
-      .meta-update{margin-left:0}
-      .referral-mini{flex-direction:column;align-items:flex-start;gap:10px}
+    @media(max-width:560px){
+      .container{margin:12px 8px;padding:20px 16px;border-radius:16px}
+      h2{font-size:17px}
+      .row{flex-direction:column;gap:0}
+      .priceBox{flex-direction:column;gap:8px}
+      .priceItem{padding:10px 12px}
+      .referral-card{flex-direction:column;align-items:flex-start;gap:10px}
+      .result-header{grid-template-columns:1fr;gap:4px}
+      .profit-card .profit-value{font-size:22px}
+      .viewRow{justify-content:center}
     }
   </style>
 </head>
 
 <body>
-  <div class="wrapper">
+  <div class="container">
     <div id="errBanner" class="error-banner" role="alert"></div>
-    <div id="staleBanner" class="stale-banner" role="status"></div>
 
-    <!-- === Header === -->
-    <div class="page-header">
-      <div class="page-title">币安 Web3 钱包 第七期 Prime Sale Pre-TGE （KAT）</div>
-      <div class="page-meta">
-        <span>目标地址：<a id="contractLink" href="#" target="_blank" rel="noopener noreferrer" title="查看 BscScan"><span id="addrShort">—</span></a></span>
-        <span>数据来源：Binance API / BSC RPC</span>
-      </div>
-    </div>
+    <h2>币安 Web3 钱包 第七期 Prime Sale Pre-TGE （KAT）</h2>
+
+    <div class="subline">合约：<a id="contractLink" href="#" target="_blank" rel="noopener noreferrer">—</a></div>
+
     <input id="targetAddress" type="hidden" value="0x832061a427c1441d48a069212c6104e3d52a8f79" />
 
-    <!-- === Status bar === -->
-    <div class="status-bar" id="statusBar">
+    <!-- ===== First Screen: Input + Core Result + Status ===== -->
+
+    <label for="userAmount">投入 BNB <span class="note">单人上限 3 BNB</span></label>
+    <input id="userAmount" type="number" step="0.01" value="3" min="0" max="3" inputmode="decimal" />
+
+    <label for="tokenPrice">参考价格 (USDT)<span class="note">默认拉取接口价格（可手动修改）</span></label>
+    <div class="row" style="align-items:center;gap:8px">
+      <div class="col">
+        <input id="tokenPrice" type="number" step="0.000001" value="0.016950" min="0" inputmode="decimal" />
+      </div>
+      <button type="button" class="linkBtn" id="resetPriceBtn" style="flex:0 0 auto;margin-top:0">恢复默认价</button>
+    </div>
+
+    <div id="saleSection">
+      <label for="airdropUSD">预计出售总额 (USDT)<span class="note">（根据参考价推算）</span></label>
+      <input id="airdropUSD" type="number" step="1" value="1695000" readonly />
+      <div class="note" id="airdropFmt">—</div>
+    </div>
+
+    <div class="priceBox" id="priceBox">
+      <div class="priceItem">
+        <div class="v" id="bnbPriceV">—</div>
+        <div class="t">当前 BNB 价格（USDT）</div>
+      </div>
+      <div class="priceItem">
+        <div class="v" id="labPriceV">—</div>
+        <div class="t">KAT 参考价格</div>
+      </div>
+    </div>
+
+    <div class="countdownAuto" id="autoRefreshCountdown" aria-live="polite">下次自动刷新：— 秒</div>
+
+    <button type="button" id="refreshBtn">手动刷新</button>
+
+    <div class="viewRow">
+      <button id="profitOnlyBtn" class="miniBtn" type="button" aria-pressed="false">只看利润：关</button>
+      <div class="miniHint">（再次点击恢复全部）</div>
+    </div>
+
+    <div class="updateHint" id="lastUpdateHint">—</div>
+
+    <!-- Activity Status -->
+    <div class="status-section" id="statusSection">
       <div class="status-row">
         <span class="status-badge before" id="statusBadge"><span class="dot"></span><span id="statusLabel">加载中</span></span>
         <span class="status-countdown" id="statusCountdown" aria-live="polite">—</span>
       </div>
-      <div class="progress-slim" id="progressWrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-        <div class="bar" id="progressBar" style="width:0%"></div>
+      <div class="progress-container" id="progressWrap">
+        <div class="progress-bg" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBg">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
       </div>
     </div>
 
-    <!-- === Price bar === -->
-    <div class="price-bar" id="priceBar">
-      <div class="price-tag"><span class="label">BNB</span><span class="val" id="bnbPriceV">—</span></div>
-      <span class="meta-sep">|</span>
-      <div class="price-tag"><span class="label">KAT</span><span class="val" id="labPriceV">—</span></div>
-      <div class="meta-update">
-        <span id="lastUpdateHint">—</span>
-        <span id="autoRefreshHint" aria-live="polite"></span>
-        <button type="button" class="refresh-link" id="refreshBtn">立即刷新</button>
+    <!-- Core Result -->
+    <div class="result" id="resultBox" hidden aria-live="polite">
+      <div class="result-header">
+        <p>已募集 BNB：<span class="highlight" id="bnbBalance">—</span></p>
+        <p>目标：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
+        <p>超募倍数：<span class="highlight" id="multiplier">—</span></p>
+        <p>出售：100,000,000 KAT</p>
       </div>
-    </div>
+      <div class="result-body">
+        <p>
+          投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
+          可获得 <span class="success" id="tokenAmt">—</span> 枚 KAT ≈ <span class="success" id="usdValue">—</span>
+        </p>
+        <p>实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
+        <p>退回：<span class="refund" id="refundBNB">—</span> BNB</p>
 
-    <!-- === Main two-column === -->
-    <div class="main-grid">
-
-      <!-- Left: Input -->
-      <div class="input-panel">
-        <label for="userAmount">投入 BNB <span class="note">单人上限 3 BNB</span></label>
-        <input id="userAmount" type="number" step="0.01" value="3" min="0" max="3" inputmode="decimal" />
-
-        <label for="tokenPrice">参考价格 (USDT)<span class="note">可手动修改</span></label>
-        <div class="price-input-row">
-          <input id="tokenPrice" type="number" step="0.000001" value="0.016950" min="0" inputmode="decimal" />
-          <button type="button" class="link-btn" id="resetPriceBtn">使用市场价</button>
-        </div>
-
-        <div class="stat-block" id="saleSection">
-          <div class="stat-label">按当前参考价估算总值</div>
-          <div class="stat-value" id="airdropValue">—</div>
-          <div class="stat-sub" id="airdropFmt">—</div>
-        </div>
-      </div>
-
-      <!-- Right: Result -->
-      <div class="result-panel">
-        <div class="result-title-row">
-          <span class="result-title">预估结果</span>
-          <button type="button" class="mode-switch" id="modeSwitch" aria-pressed="false" title="切换极简/完整模式">
-            <span id="modeSwitchLabel">极简模式</span>
-            <span class="toggle-track"><span class="toggle-knob"></span></span>
-          </button>
-        </div>
-
-        <div id="resultEmpty" class="result-empty">输入参数后显示预估结果</div>
-
-        <div id="resultContent" style="display:none">
-          <div class="metric-grid">
-            <div class="metric-card">
-              <div class="mc-label">超募倍数</div>
-              <div class="mc-value" id="multiplier">—</div>
-              <div class="mc-sub">已募集 <span id="bnbBalance">—</span> BNB</div>
-            </div>
-            <div class="metric-card">
-              <div class="mc-label">预计获得</div>
-              <div class="mc-value success" id="tokenAmt">—</div>
-              <div class="mc-sub">KAT ≈ <span id="usdValue">—</span></div>
-            </div>
-            <div class="metric-card">
-              <div class="mc-label">预计实际扣款</div>
-              <div class="mc-value deduct" id="principalBNB">—</div>
-              <div class="mc-sub">BNB ≈ <span id="principalUSD">—</span></div>
-            </div>
-            <div class="metric-card profit-card-main span-2" id="profitCard">
-              <div class="mc-label">预估利润</div>
-              <div class="mc-value" id="profitUSD">—</div>
-            </div>
-          </div>
-
-          <div class="details-section">
-            <div class="detail-row"><span>投入</span><span class="dr-val"><span id="userInput">—</span> BNB</span></div>
-            <div class="detail-row"><span>占比</span><span class="dr-val"><span id="percent">—</span>%</span></div>
-            <div class="detail-row"><span>目标</span><span class="dr-val"><span id="targetBNBShow">—</span> BNB</span></div>
-            <div class="detail-row"><span>预计退回</span><span class="dr-val refund"><span id="refundBNB">—</span> BNB</span></div>
-          </div>
+        <div class="profit-card" id="profitCard">
+          <div class="profit-label">预估利润</div>
+          <p class="profitLine"><span class="profit-value" id="profitUSD">—</span></p>
         </div>
       </div>
     </div>
 
     <div class="ended-banner" id="endedMsg">活动已结束，数据已锁定。</div>
 
-    <!-- === Second screen === -->
+    <!-- ===== Second Screen: Tutorials, Invite, Resources ===== -->
     <div class="second-screen">
-      <div class="second-screen-title">附加资源</div>
+      <div class="second-screen-title">更多资源</div>
 
-      <div class="hint-line">
-        22点结束后，未被用于认购的BNB可以退回，获得的代币18号在交易所直接交易。
+      <button type="button" class="tutorials-toggle" id="tutorialsToggle" aria-expanded="false" aria-controls="tutorialsPanel">
+        <span>借 BNB 教程</span>
+        <span class="arrow" aria-hidden="true">▼</span>
+      </button>
+      <div class="tutorials-panel" id="tutorialsPanel" role="region">
+        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
+          <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
+          <span>链上借BNB教程</span>
+        </a>
+        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1977584958295392288" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
+          <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
+          <span>交易所借BNB教程</span>
+        </a>
+        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/2001254000516346195?s=20" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
+          <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
+          <span>币安钱包借BNB教程</span>
+        </a>
       </div>
 
-      <details class="tutorial-details">
-        <summary>借 BNB 教程</summary>
-        <div class="tutorial-list">
-          <a href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank" rel="noopener noreferrer">链上借 BNB 教程</a>
-          <a href="https://x.com/0xXIAOc/status/1977584958295392288" target="_blank" rel="noopener noreferrer">交易所借 BNB 教程</a>
-          <a href="https://x.com/0xXIAOc/status/2001254000516346195?s=20" target="_blank" rel="noopener noreferrer">币安钱包借 BNB 教程</a>
-        </div>
-      </details>
+      <div class="hintBanner">
+        <span class="hintMsg">
+          22点结束后，未被用于认购的BNB可以退回，获得的代币18号在交易所直接交易。
+        </span>
+      </div>
 
-      <div class="referral-mini">
-        <div class="rm-text">
-          <div class="rm-title">绑定邀请码，享手续费优惠 30%</div>
-          <div class="rm-sub">1分钟完成 · 仅绑定邀请码，不涉及转账/额外授权</div>
+      <div class="referral-card">
+        <div class="referral-text">
+          <div class="referral-headline">绑定邀请码，享手续费优惠 30%</div>
+          <div class="referral-sub">1分钟完成 · 仅绑定邀请码，不涉及转账/额外授权</div>
         </div>
-        <div class="rm-code">
-          <span class="rm-code-val">XIAOCC</span>
-          <button type="button" class="rm-copy" id="copyCodeBtn">复制</button>
+        <div class="referral-code-box">
+          <span class="referral-code-value">XIAOCC</span>
+          <button type="button" class="referral-copy-btn" id="copyCodeBtn">复制</button>
         </div>
-        <a class="rm-action" href="https://web3.binance.com/zh-CN/referral?ref=XIAOCC" target="_blank" rel="noopener noreferrer">
+        <a class="referral-cta" href="https://web3.binance.com/zh-CN/referral?ref=XIAOCC" target="_blank" rel="noopener noreferrer">
           绑定邀请码
         </a>
       </div>
@@ -473,9 +453,9 @@
   </div>
 
   <div class="footer">
-    作者：<a href="https://x.com/0xXIAOc" target="_blank" rel="noopener noreferrer">@0xXIAOc</a>
+    作者：<a href="https://x.com/0xXIAOc" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">@0xXIAOc</a>
     &nbsp;|&nbsp;
-    <a href="https://t.me/xiaoccaac" target="_blank" rel="noopener noreferrer">加入 Alpha 交流群</a>
+    <a href="https://t.me/xiaoccaac" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">加入Alpha交流群</a>
   </div>
 
   <script>
@@ -489,10 +469,7 @@
       END_TIME: new Date('2026-03-16T22:00:00+08:00'),
 
       PRICE_CACHE_MS: 60_000,
-
-      // Phase-based refresh intervals (seconds)
-      REFRESH_BEFORE_SEC: 30,
-      REFRESH_LIVE_SEC: 5,
+      REFRESH_INTERVAL_SEC: 5,
 
       PRICE_APIS: [
         'https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT',
@@ -512,7 +489,9 @@
 
       FINAL_REFRESH_BEFORE_END_MS: 60_000,
 
+      // Fallback snapshot for new visitors after activity ends (update after event)
       FINAL_SNAPSHOT: null
+      // Example: { dep: 1234.5678, updatedAt: '2026-03-16T21:59:00+08:00' }
     };
 
     /* ---------- DOM refs ---------- */
@@ -521,11 +500,10 @@
     const els = {
       userAmount: $('userAmount'),
       tokenPrice: $('tokenPrice'),
-      airdropValue: $('airdropValue'),
+      airdropUSD: $('airdropUSD'),
       airdropFmt: $('airdropFmt'),
       refreshBtn: $('refreshBtn'),
       lastUpdateHint: $('lastUpdateHint'),
-      autoRefreshHint: $('autoRefreshHint'),
       resetPriceBtn: $('resetPriceBtn'),
 
       bnbBalance: $('bnbBalance'),
@@ -538,31 +516,28 @@
       principalUSD: $('principalUSD'),
 
       profitUSD: $('profitUSD'),
-      profitCard: $('profitCard'),
       refundBNB: $('refundBNB'),
 
-      resultContent: $('resultContent'),
-      resultEmpty: $('resultEmpty'),
-      targetBNBShow: $('targetBNBShow'),
-
+      resultBox: $('resultBox'),
       statusBadge: $('statusBadge'),
       statusLabel: $('statusLabel'),
       statusCountdown: $('statusCountdown'),
       progressWrap: $('progressWrap'),
       progressBar: $('progressBar'),
+      progressBg: $('progressBg'),
+      errBanner: $('errBanner'),
+      targetAddress: $('targetAddress'),
+      targetBNBShow: $('targetBNBShow'),
 
       bnbPriceV: $('bnbPriceV'),
       labPriceV: $('labPriceV'),
-
-      errBanner: $('errBanner'),
-      staleBanner: $('staleBanner'),
+      autoRefreshCountdown: $('autoRefreshCountdown'),
       endedMsg: $('endedMsg'),
-      targetAddress: $('targetAddress'),
       contractLink: $('contractLink'),
-      addrShort: $('addrShort'),
 
-      modeSwitch: $('modeSwitch'),
-      modeSwitchLabel: $('modeSwitchLabel')
+      profitOnlyBtn: $('profitOnlyBtn'),
+      tutorialsToggle: $('tutorialsToggle'),
+      tutorialsPanel: $('tutorialsPanel')
     };
 
     /* ---------- State ---------- */
@@ -572,7 +547,7 @@
       profitOnly: false
     };
 
-    /* ---------- Number formatters ---------- */
+    /* ---------- Pre-built number formatters ---------- */
     const nf0 = new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 0 });
     const nf2 = new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 2 });
     const nf4 = new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 4 });
@@ -590,12 +565,13 @@
 
     const TZ = 'Asia/Shanghai';
 
+    /* ---------- Time helpers ---------- */
     function formatRangeForCN(st, et) {
       const tFmt = new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hour12: false });
       const parts = new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, month: 'numeric', day: 'numeric' }).formatToParts(st);
       const m = parts.find(p => p.type === 'month')?.value ?? '';
       const d = parts.find(p => p.type === 'day')?.value ?? '';
-      return `${m}月${d}日 ${tFmt.format(st)}-${tFmt.format(et)}`;
+      return `${m}月${d}日 ${tFmt.format(st)}-${tFmt.format(et)}（北京时间）`;
     }
 
     function formatClockForCN(date) {
@@ -610,7 +586,7 @@
     const RANGE_LABEL = formatRangeForCN(CONFIG.START_TIME, CONFIG.END_TIME);
     const LOCK_LABEL  = formatClockForCN(new Date(LOCK_MS));
 
-    /* ---------- Phase ---------- */
+    /* ---------- Phase state machine ---------- */
     function getPhase(now = Date.now()) {
       if (now < START_MS) return 'before';
       if (now >= END_MS) return 'ended';
@@ -618,51 +594,55 @@
       return 'live';
     }
 
-    function getRefreshMs() {
-      const phase = getPhase();
-      if (phase === 'before') return CONFIG.REFRESH_BEFORE_SEC * 1000;
-      if (phase === 'live') return CONFIG.REFRESH_LIVE_SEC * 1000;
-      return 0;
-    }
-
-    /* ---------- Cache ---------- */
+    /* ---------- Cache helpers ---------- */
     function cacheKey(suffix) {
       return `tge:${CONFIG.SYMBOL}:${els.targetAddress.value}:${suffix}`;
     }
+
     function cacheGet(key, maxAge) {
       try {
         const c = JSON.parse(localStorage.getItem(key) || 'null');
         if (c && c.v != null && (!maxAge || Date.now() - c.t < maxAge)) return c;
-      } catch (e) { console.debug('cacheGet error:', key, e); }
+      } catch (e) {
+        console.debug('cacheGet error:', key, e);
+      }
       return null;
     }
+
     function cacheSet(key, v) {
-      try { localStorage.setItem(key, JSON.stringify({ v, t: Date.now() })); }
-      catch (e) { console.debug('cacheSet error:', key, e); }
+      try { localStorage.setItem(key, JSON.stringify({ v, t: Date.now() })); } catch (e) {
+        console.debug('cacheSet error:', key, e);
+      }
     }
 
-    /* ---------- Network ---------- */
+    /* ---------- Network helpers ---------- */
     async function fetchJSON(url, options = {}, timeoutMs = 8000) {
       const controller = new AbortController();
       const t = setTimeout(() => controller.abort(), timeoutMs);
+
       try {
         const res = await fetch(url, { ...options, signal: controller.signal, cache: 'no-store' });
         if (!res.ok) {
-          throw new Error(res.status === 429 ? '请求过于频繁（429），请稍后重试' : `HTTP ${res.status}`);
+          const msg = res.status === 429
+            ? '请求过于频繁（429），请稍后重试'
+            : `HTTP ${res.status}`;
+          throw new Error(msg);
         }
         return await res.json();
       } catch (e) {
-        if (e.name === 'AbortError') throw new Error('请求超时');
+        if (e.name === 'AbortError') throw new Error('请求超时，请稍后重试或更换节点');
         throw e;
-      } finally { clearTimeout(t); }
+      } finally {
+        clearTimeout(t);
+      }
     }
 
-    /* ---------- Price ---------- */
+    /* ---------- Price helpers ---------- */
     function computePrice() {
       const tokenP = +els.tokenPrice.value || 0;
       const saleValue = (CONFIG.TOTAL_TOKENS || 0) * tokenP;
-      els.airdropValue.textContent = saleValue ? (fmt(saleValue, 0) + ' USDT') : '—';
-      els.airdropFmt.textContent = saleValue ? ('≈ ' + fmt(saleValue / 1e4) + ' 万 USDT') : '';
+      els.airdropUSD.value = Math.round(saleValue);
+      els.airdropFmt.textContent = saleValue ? ('≈ ' + fmt(saleValue / 1e4) + ' 万 USDT') : '—';
     }
 
     function syncLabPriceDisplay() {
@@ -674,26 +654,33 @@
       const key = cacheKey('bnbP');
       const cached = cacheGet(key, CONFIG.PRICE_CACHE_MS);
       if (cached) return cached.v;
+
       for (const url of CONFIG.PRICE_APIS) {
         try {
           const d = await fetchJSON(url, {}, 7000);
           const v = Number(d?.price ?? d?.binancecoin?.usd ?? d?.USD ?? 0);
           if (v) { cacheSet(key, v); return v; }
-        } catch (e) { console.debug('getBNBPrice fallback:', url, e.message); }
+        } catch (e) {
+          console.debug('getBNBPrice fallback:', url, e.message);
+        }
       }
       return 0;
     }
 
     async function getTokenPrice() {
       if (!CONFIG.TOKEN_PRICE_API) return 0;
+
       const key = cacheKey('tokP');
       const cached = cacheGet(key, CONFIG.PRICE_CACHE_MS);
       if (cached) return cached.v;
+
       try {
         const d = await fetchJSON(CONFIG.TOKEN_PRICE_API, {}, 7000);
         const p = Number(d?.price ?? 0);
         if (p) { cacheSet(key, p); return p; }
-      } catch (e) { console.debug('getTokenPrice error:', e.message); }
+      } catch (e) {
+        console.debug('getTokenPrice error:', e.message);
+      }
       return 0;
     }
 
@@ -702,37 +689,64 @@
         const [bnbUSDT, tokP] = await Promise.all([getBNBPrice(), getTokenPrice()]);
         STATE.bnbUSDT = bnbUSDT || 0;
         if (tokP) STATE.tokenUSDT = tokP;
-        els.bnbPriceV.textContent = STATE.bnbUSDT ? (fmt(STATE.bnbUSDT, 2) + ' USDT') : '—';
+
+        els.bnbPriceV.textContent = STATE.bnbUSDT ? (fmt(STATE.bnbUSDT, 4) + ' USDT') : '—';
+
         if (tokP && !els.tokenPrice.dataset.userEdited) {
           els.tokenPrice.value = Number(tokP).toFixed(6);
         }
-      } catch (e) { console.debug('updatePriceDisplay error:', e); }
+      } catch (e) {
+        console.debug('updatePriceDisplay error:', e);
+      }
     }
 
-    /* ---------- Balance ---------- */
+    /* ---------- Balance fetching (parallel race) ---------- */
     function weiHexToBNB(weiHex) {
       try {
         const wei = BigInt(weiHex);
         const base = 10n ** 18n;
-        return Number(`${(wei / base).toString()}.${(wei % base).toString().padStart(18, '0').slice(0, 6)}`);
-      } catch { return 0; }
+        const intPart = wei / base;
+        const fracPart = wei % base;
+        const fracStr = fracPart.toString().padStart(18, '0').slice(0, 6);
+        return Number(`${intPart.toString()}.${fracStr}`);
+      } catch {
+        return 0;
+      }
     }
 
     async function fetchBalance(addr) {
       if (!addr) return 0;
       const body = JSON.stringify({ jsonrpc: '2.0', method: 'eth_getBalance', params: [addr, 'latest'], id: 1 });
+
       const tasks = CONFIG.RPC_NODES.map(node =>
-        fetchJSON(node, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }, 4000)
-          .then(({ result }) => weiHexToBNB(result))
+        fetchJSON(node, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body
+        }, 4000).then(({ result }) => weiHexToBNB(result))
       );
-      try { return await Promise.any(tasks); }
-      catch (e) { console.debug('fetchBalance all failed:', e); return 0; }
+
+      try {
+        return await Promise.any(tasks);
+      } catch (e) {
+        console.debug('fetchBalance all failed:', e);
+        return 0;
+      }
     }
 
     /* ---------- Pure calculation ---------- */
-    function calcProjection({ userAmount, currentPool, targetBNB, totalTokens, tokenPrice, bnbPrice, includeUserInPool = true }) {
+    function calcProjection({
+      userAmount,
+      currentPool,
+      targetBNB,
+      totalTokens,
+      tokenPrice,
+      bnbPrice,
+      includeUserInPool = true
+    }) {
       const pool = includeUserInPool ? currentPool + userAmount : currentPool;
       if (pool <= 0) return null;
+
       const share = userAmount / pool;
       const tokens = share * totalTokens;
       const principalBNB = Math.min(share * targetBNB, userAmount);
@@ -740,10 +754,21 @@
       const tokenValueUSD = tokens * tokenPrice;
       const principalUSD = principalBNB * bnbPrice;
       const profitUSD = tokenValueUSD - principalUSD;
-      return { share, tokens, principalBNB, refundBNB, tokenValueUSD, principalUSD, profitUSD, multiplier: pool / targetBNB };
+
+      return {
+        share,
+        tokens,
+        principalBNB,
+        refundBNB,
+        tokenValueUSD,
+        principalUSD,
+        profitUSD,
+        multiplier: pool / targetBNB
+      };
     }
 
     /* ---------- Timers ---------- */
+    const REFRESH_MS = CONFIG.REFRESH_INTERVAL_SEC * 1000;
     let nextRefreshAt = 0;
     let refreshTimeoutId = null;
     let uiTickId = null;
@@ -757,40 +782,41 @@
     }
 
     function scheduleNextRefresh() {
-      clearTimeout(refreshTimeoutId);
-      const ms = getRefreshMs();
-      if (!ms || document.hidden) return;
+      const phase = getPhase();
+      if (phase !== 'live' || document.hidden) return;
 
-      nextRefreshAt = Date.now() + ms;
+      nextRefreshAt = Date.now() + REFRESH_MS;
+
       refreshTimeoutId = setTimeout(async () => {
         await refresh(false);
         scheduleNextRefresh();
-      }, ms);
+      }, REFRESH_MS);
     }
 
+    // Single 1-second UI tick: countdown + next refresh display
     function uiTick() {
-      tick();
-      updateAutoRefreshHint();
+      tick(); // activity countdown + progress bar
+      updateAutoRefreshDisplay();
     }
 
-    function updateAutoRefreshHint() {
+    function updateAutoRefreshDisplay() {
       const phase = getPhase();
       if (phase === 'locked' || phase === 'ended') {
-        els.autoRefreshHint.textContent = '已锁定';
+        els.autoRefreshCountdown.textContent = `数据已锁定：保持 ${LOCK_LABEL} 更新结果`;
         return;
       }
       if (phase === 'before') {
-        els.autoRefreshHint.textContent = '活动开始后加速刷新';
+        els.autoRefreshCountdown.textContent = '活动开始后自动刷新';
         return;
       }
       const s = Math.max(0, Math.ceil((nextRefreshAt - Date.now()) / 1000));
-      els.autoRefreshHint.textContent = `${s}s 后刷新`;
+      els.autoRefreshCountdown.textContent = `下次自动刷新：${s} 秒`;
     }
 
     function startTimers() {
       stopAllTimers();
-      const phase = getPhase();
 
+      const phase = getPhase();
       if (phase === 'locked' || phase === 'ended') {
         applyPhaseUI(phase);
         uiTick();
@@ -801,22 +827,26 @@
       uiTick();
       uiTickId = setInterval(uiTick, 1000);
 
-      if (phase === 'live' || phase === 'before') {
-        scheduleFinalRefreshBeforeEnd();
-      }
+      scheduleFinalRefreshBeforeEnd();
     }
 
     function scheduleFinalRefreshBeforeEnd() {
       clearTimeout(finalRefreshTimerId);
+      finalRefreshTimerId = null;
+
       const now = Date.now();
-      if (now >= LOCK_MS) { applyPhaseUI(getPhase()); return; }
+      if (now >= LOCK_MS || now >= END_MS) {
+        applyPhaseUI(getPhase());
+        return;
+      }
+
       finalRefreshTimerId = setTimeout(async () => {
         await refresh(false, true);
         applyPhaseUI('locked');
       }, LOCK_MS - now);
     }
 
-    /* ---------- Phase UI ---------- */
+    /* ---------- Phase-based UI ---------- */
     const PHASE_CONFIG = {
       before: { label: '未开始', cls: 'before' },
       live:   { label: '进行中', cls: 'live' },
@@ -830,23 +860,28 @@
       if (appliedPhase === phase) return;
       appliedPhase = phase;
 
+      // Update status badge
       const cfg = PHASE_CONFIG[phase];
-      els.statusBadge.className = 'status-badge ' + cfg.cls;
-      els.statusLabel.textContent = cfg.label;
+      if (els.statusBadge && cfg) {
+        els.statusBadge.className = 'status-badge ' + cfg.cls;
+        els.statusLabel.textContent = cfg.label;
+      }
+
+      // Show progress bar only during live phase
+      if (els.progressWrap) {
+        els.progressWrap.style.display = (phase === 'live') ? '' : 'none';
+      }
 
       if (phase === 'locked' || phase === 'ended') {
         stopAllTimers();
+        els.autoRefreshCountdown.textContent = `数据已锁定：保持 ${LOCK_LABEL} 更新结果`;
         els.refreshBtn.classList.add('muted');
         els.refreshBtn.disabled = true;
       }
 
       if (phase === 'ended') {
-        els.endedMsg.style.display = 'block';
+        if (els.endedMsg) els.endedMsg.style.display = 'block';
       }
-
-      // Show/hide progress bar based on phase
-      const showProgress = (phase === 'live');
-      els.progressWrap.style.display = showProgress ? '' : 'none';
     }
 
     /* ---------- Dep state ---------- */
@@ -859,7 +894,7 @@
         if (cached.t) {
           const dt = new Date(cached.t);
           if (!isNaN(dt.getTime()))
-            els.lastUpdateHint.textContent = '更新于 ' + dt.toLocaleTimeString('zh-CN', { hour12: false });
+            els.lastUpdateHint.textContent = '最后更新：' + dt.toLocaleTimeString('zh-CN', { hour12: false });
         }
       }
     }
@@ -868,26 +903,22 @@
       if (CONFIG.FINAL_SNAPSHOT && Number.isFinite(CONFIG.FINAL_SNAPSHOT.dep)) {
         latestDep = CONFIG.FINAL_SNAPSHOT.dep;
         if (CONFIG.FINAL_SNAPSHOT.updatedAt) {
-          els.lastUpdateHint.textContent = '更新于 ' + new Date(CONFIG.FINAL_SNAPSHOT.updatedAt).toLocaleTimeString('zh-CN', { hour12: false });
+          els.lastUpdateHint.textContent = '最后更新：' + new Date(CONFIG.FINAL_SNAPSHOT.updatedAt).toLocaleTimeString('zh-CN', { hour12: false });
         }
       }
     }
 
     function saveDepCache(dep) { cacheSet(cacheKey('dep'), dep); }
 
-    /* ---------- Render ---------- */
+    /* ---------- Render (display only) ---------- */
     function renderProjection(result, dep, user) {
       if (!result) {
-        els.resultContent.style.display = 'none';
-        els.resultEmpty.style.display = '';
+        els.resultBox.hidden = true;
         return;
       }
 
-      els.resultEmpty.style.display = 'none';
-      els.resultContent.style.display = '';
-
       els.bnbBalance.textContent = fmt(dep, 4);
-      els.multiplier.textContent = fmt(result.multiplier, 2) + 'x';
+      els.multiplier.textContent = fmt(result.multiplier, 2);
       els.userInput.textContent = fmt(user, 2);
       els.percent.textContent = fmt(result.share * 100, 4);
       els.tokenAmt.textContent = fmt(result.tokens, 2);
@@ -898,12 +929,17 @@
 
       const profit = result.profitUSD;
       els.profitUSD.textContent = (profit >= 0 ? '+' : '') + fmt(profit, 2) + ' USDT';
+      els.profitUSD.classList.remove('success', 'deduct');
+      els.profitUSD.classList.add(profit >= 0 ? 'success' : 'deduct');
 
-      els.profitCard.classList.remove('profit-positive', 'profit-negative');
-      els.profitCard.classList.add(profit >= 0 ? 'profit-positive' : 'profit-negative');
+      const pc = $('profitCard');
+      if (pc) {
+        pc.classList.remove('positive', 'negative');
+        pc.classList.add(profit >= 0 ? 'positive' : 'negative');
+      }
 
       els.refundBNB.textContent = fmt(result.refundBNB, 4);
-      els.targetBNBShow.textContent = fmt(CONFIG.TOTAL_TARGET_BNB, 6);
+      els.resultBox.hidden = false;
     }
 
     function render(dep = latestDep) {
@@ -926,9 +962,10 @@
       const bnbUSDT = STATE.bnbUSDT || 0;
       const target = CONFIG.TOTAL_TARGET_BNB;
 
+      els.targetBNBShow.textContent = target ? fmt(target, 6) : '—';
+
       if (!(user && price && bnbUSDT && latestDep && target)) {
-        els.resultContent.style.display = 'none';
-        els.resultEmpty.style.display = '';
+        els.resultBox.hidden = true;
         return;
       }
 
@@ -945,12 +982,15 @@
       renderProjection(result, latestDep, user);
     }
 
-    /* ---------- Refresh ---------- */
+    /* ---------- Refresh logic ---------- */
     let refreshing = false;
     let pendingForcedRefresh = false;
 
     async function refresh(manual = false, force = false) {
-      if (refreshing) { if (force) pendingForcedRefresh = true; return; }
+      if (refreshing) {
+        if (force) pendingForcedRefresh = true;
+        return;
+      }
 
       const phase = getPhase();
       if (!force && (phase === 'locked' || phase === 'ended')) {
@@ -962,25 +1002,15 @@
 
       refreshing = true;
       els.refreshBtn.disabled = true;
-      if (manual) {
-        els.errBanner.style.display = 'none';
-        els.staleBanner.style.display = 'none';
-      }
+      if (manual) els.errBanner.style.display = 'none';
 
       try {
         await updatePriceDisplay();
         const dep = await fetchBalance(els.targetAddress.value);
         saveDepCache(dep);
         render(dep);
-        els.lastUpdateHint.textContent = '更新于 ' + new Date().toLocaleTimeString('zh-CN', { hour12: false });
-        els.staleBanner.style.display = 'none';
+        els.lastUpdateHint.textContent = '最后更新：' + new Date().toLocaleTimeString('zh-CN', { hour12: false });
       } catch (e) {
-        // Keep old data visible, show stale warning
-        if (latestDep) {
-          els.staleBanner.textContent = '数据更新失败，当前显示缓存结果';
-          els.staleBanner.style.display = 'block';
-          render(latestDep);
-        }
         if (manual) {
           els.errBanner.textContent = e?.message || '网络错误';
           els.errBanner.style.display = 'block';
@@ -989,6 +1019,7 @@
       } finally {
         els.refreshBtn.disabled = false;
         refreshing = false;
+
         if (pendingForcedRefresh) {
           pendingForcedRefresh = false;
           setTimeout(() => refresh(false, true), 0);
@@ -1000,8 +1031,6 @@
     function tick() {
       const nowMs = Date.now();
       const phase = getPhase(nowMs);
-
-      // Apply phase UI on every tick (idempotent)
       applyPhaseUI(phase);
 
       if (phase === 'before') {
@@ -1034,18 +1063,19 @@
 
       const pct = ((nowMs - START_MS) / (END_MS - START_MS) * 100).toFixed(2);
       els.progressBar.style.width = pct + '%';
-      els.progressWrap.setAttribute('aria-valuenow', pct);
+      if (els.progressBg) els.progressBg.setAttribute('aria-valuenow', pct);
     }
 
     /* ---------- Profit-only mode ---------- */
     function setProfitOnlyMode(on) {
       STATE.profitOnly = !!on;
       document.body.classList.toggle('profitOnlyMode', STATE.profitOnly);
-      els.modeSwitch.setAttribute('aria-pressed', STATE.profitOnly ? 'true' : 'false');
+      els.profitOnlyBtn.setAttribute('aria-pressed', STATE.profitOnly ? 'true' : 'false');
+      els.profitOnlyBtn.textContent = STATE.profitOnly ? '只看利润：开' : '只看利润：关';
       localStorage.setItem('profitOnlyMode', STATE.profitOnly ? '1' : '0');
     }
 
-    /* ---------- Events ---------- */
+    /* ---------- Event handlers ---------- */
     els.tokenPrice.addEventListener('input', () => {
       els.tokenPrice.dataset.userEdited = '1';
       render();
@@ -1071,8 +1101,17 @@
       render();
     });
 
-    els.modeSwitch.addEventListener('click', () => {
+    els.profitOnlyBtn.addEventListener('click', () => {
       setProfitOnlyMode(!STATE.profitOnly);
+      if (STATE.profitOnly && !els.resultBox.hidden) {
+        els.resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+
+    els.tutorialsToggle.addEventListener('click', () => {
+      const expanded = els.tutorialsToggle.getAttribute('aria-expanded') === 'true';
+      els.tutorialsToggle.setAttribute('aria-expanded', !expanded);
+      els.tutorialsPanel.classList.toggle('open', !expanded);
     });
 
     $('copyCodeBtn').addEventListener('click', async () => {
@@ -1088,33 +1127,38 @@
     });
 
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) stopAllTimers();
-      else startTimers();
+      if (document.hidden) {
+        stopAllTimers();
+      } else {
+        startTimers();
+      }
     });
 
     /* ---------- Init ---------- */
     window.addEventListener('load', async () => {
-      setProfitOnlyMode(localStorage.getItem('profitOnlyMode') === '1');
+      const saved = localStorage.getItem('profitOnlyMode') === '1';
+      setProfitOnlyMode(saved);
 
       const addr = els.targetAddress.value;
       if (els.contractLink) {
         els.contractLink.href = `https://bscscan.com/address/${addr}`;
-        els.addrShort.textContent = addr.slice(0, 6) + '…' + addr.slice(-4);
+        els.contractLink.textContent = addr;
       }
 
       const phase = getPhase();
-      applyPhaseUI(phase);
 
       if (phase === 'locked' || phase === 'ended') {
         loadCachedDepIfAny();
         if (!latestDep) loadFinalSnapshot();
         render(latestDep);
+        applyPhaseUI(phase);
       } else {
         await updatePriceDisplay();
         startTimers();
         await refresh(false);
       }
 
+      // Single 1s UI tick for countdown + auto-refresh display
       if (!uiTickId) {
         uiTick();
         uiTickId = setInterval(uiTick, 1000);

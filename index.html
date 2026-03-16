@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>币安 Web3 钱包 第44期 独家TGE (UP)</title>
+  <title>币安 Web3 钱包 第七期 Prime Sale Pre-TGE （KAT）</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <meta name="color-scheme" content="light dark" />
   <style>
@@ -88,7 +88,6 @@
     .row{display:flex;gap:12px}
     .col{flex:1;min-width:0}
 
-    /* ===== 进度条：渐变 + 动画光效 ===== */
     .progress-container{margin-top:20px}
     .progress-bg{
       background:var(--c-border);height:10px;border-radius:10px;overflow:hidden;
@@ -114,7 +113,6 @@
       letter-spacing:.3px
     }
 
-    /* ===== 结果区：卡片式布局 ===== */
     .result{
       margin-top:20px;padding:0;border-radius:16px;
       border:1.5px solid var(--c-border);background:var(--c-card);
@@ -129,7 +127,6 @@
     .result-body{padding:16px 18px}
     .result-body p{margin:6px 0;font-size:14px;line-height:1.6}
 
-    /* 利润高亮卡 */
     .profit-card{
       margin:12px 0 6px;padding:16px;border-radius:var(--radius);
       text-align:center;transition:background .2s
@@ -157,7 +154,6 @@
     .footer a{color:var(--c-primary);text-decoration:none;font-weight:500}
     .footer a:hover{text-decoration:underline}
 
-    /* ===== 价格卡片 ===== */
     .priceBox{display:flex;gap:10px;align-items:stretch;margin-top:14px}
     .priceItem{
       flex:1;padding:12px 14px;border-radius:var(--radius);
@@ -182,7 +178,6 @@
     }
     .muted{opacity:.45;pointer-events:none;user-select:none}
 
-    /* ===== 教程链接 ===== */
     .tutorials{
       margin-top:14px;display:flex;flex-direction:column;align-items:center;gap:4px
     }
@@ -205,7 +200,6 @@
       -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat
     }
 
-    /* ===== 黄色提示条 ===== */
     .hintBanner{
       margin-top:14px;padding:12px 14px;border-radius:var(--radius);
       background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);
@@ -226,7 +220,6 @@
     .hintSub{text-align:right;font-size:12px;color:var(--c-sub);font-weight:600;line-height:1.35}
     .hintCode{font-size:13px;font-weight:800;color:var(--c-warn)}
 
-    /* ===== 只看利润按钮 ===== */
     .viewRow{margin-top:10px;display:flex;justify-content:flex-end;align-items:center;gap:10px}
     .miniBtn{
       width:auto;padding:7px 14px;font-size:13px;font-weight:600;
@@ -237,8 +230,7 @@
     .miniBtn:hover{background:rgba(0,102,255,.14);border-color:rgba(0,102,255,.35)}
     .miniHint{font-size:11px;color:var(--c-sub);font-weight:500}
 
-    /* ===== 只看利润模式 ===== */
-    body.profitOnlyMode #airdropSection{display:none!important}
+    body.profitOnlyMode #saleSection{display:none!important}
     body.profitOnlyMode #priceBox{display:none!important}
     body.profitOnlyMode .tutorials{display:none!important}
     body.profitOnlyMode .hintBanner{display:none!important}
@@ -249,7 +241,6 @@
     body.profitOnlyMode #resultBox .profit-card{margin:0;border-radius:16px;border:none}
     body.profitOnlyMode #resultBox .profit-card .profit-value{font-size:36px}
 
-    /* ===== 移动端适配 ===== */
     @media(max-width:560px){
       .container{margin:12px 8px;padding:20px 16px;border-radius:16px}
       h2{font-size:17px}
@@ -271,12 +262,11 @@
   <div class="container">
     <div id="errBanner" class="error-banner"></div>
 
-    <h2>币安 Web3 钱包 第44期 独家TGE (UP)</h2>
+    <h2>币安 Web3 钱包 第七期 Prime Sale Pre-TGE （KAT）</h2>
 
-    <!-- 合约地址（隐藏，仅内部使用；需要展示可把 .subline 的 display:none 移除） -->
     <div class="subline">合约：<a id="contractLink" href="#" target="_blank" rel="noopener noreferrer">—</a></div>
 
-    <input id="targetAddress" type="hidden" value="0xb03a10926da0f7e4d879581e36e120ee20df33b5" />
+    <input id="targetAddress" type="hidden" value="0x832061a427c1441d48a069212c6104e3d52a8f79" />
 
     <div class="row">
       <div class="col">
@@ -289,12 +279,12 @@
       </div>
     </div>
 
-    <label>参考价格 (USDT)<span class="note">默认参考价（可手动修改）</span></label>
-    <input id="tokenPrice" type="number" step="0.000001" value="0.084000" min="0" inputmode="decimal" />
+    <label>参考价格 (USDT)<span class="note">默认拉取接口价格（可手动修改）</span></label>
+    <input id="tokenPrice" type="number" step="0.000001" value="0.016950" min="0" inputmode="decimal" />
 
-    <div id="airdropSection">
-      <label>预计空投总额 (USDT)<span class="note">（根据参考价推算）</span></label>
-      <input id="airdropUSD" type="number" step="1" value="840000" readonly />
+    <div id="saleSection">
+      <label>预计出售总额 (USDT)<span class="note">（根据参考价推算）</span></label>
+      <input id="airdropUSD" type="number" step="1" value="1695000" readonly />
       <div class="note" id="airdropFmt">—</div>
     </div>
 
@@ -306,8 +296,8 @@
       <div class="priceItem">
         <div class="v" id="labPriceV">—</div>
         <div class="t">
-          UP 参考价格
-          <span class="premarketLink">默认参考价：0.084（可手动修改）</span>
+          KAT 参考价格
+          <span class="premarketLink">接口参考价：KATUSDT（可手动修改）</span>
         </div>
       </div>
     </div>
@@ -323,7 +313,6 @@
 
     <div class="updateHint" id="lastUpdateHint">—</div>
 
-    <!-- ===== 教程链接（灯泡图标已用 CSS mask 复用，无需重复 SVG） ===== -->
     <div class="tutorials">
       <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
         <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
@@ -337,19 +326,14 @@
         <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
         <span>币安钱包借BNB教程</span>
       </a>
-      <a class="tutorial-link" href="https://x.com/0xXIAOc/status/2032344697625276825?s=20" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
-        <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
-        <span>提取授权教程</span>
-      </a>
     </div>
 
-    <!-- ===== 黄色提示条 + 邀请码 ===== -->
     <div class="hintBanner">
       <div class="hintLeft">
         <span class="hintPrefix">提示：</span>
         <span class="hintMsg">
-          18点结束后，未被用于认购的BNB可以退回，<br>
-          获得的代币可以直接交易。
+          22点结束后，未被用于认购的BNB可以退回，<br>
+          获得的代币18号在交易所直接交易。
         </span>
       </div>
       <div class="hintRight">
@@ -373,12 +357,12 @@
         <p>📦 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
         <p>🎯 募集：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
         <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-        <p>💰 出售：10,000,000 UP<span id="bonusInfo" style="display:none"></span></p>
+        <p>💰 出售：100,000,000 KAT</p>
       </div>
       <div class="result-body">
         <p>
           🚀 投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-          可获得 <span class="success" id="tokenAmt">—</span> 枚 UP<span id="bonusLabel">（含赠送）</span> ≈ <span class="success" id="usdValue">—</span>
+          可获得 <span class="success" id="tokenAmt">—</span> 枚 KAT ≈ <span class="success" id="usdValue">—</span>
         </p>
         <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
         <p>🔄 退回：<span class="refund" id="refundBNB">—</span> BNB</p>
@@ -390,7 +374,6 @@
       </div>
     </div>
 
-    <!-- 保留 DOM，但不显示（按你要求） -->
     <div class="ended-banner" id="endedMsg">活动已结束，数据已锁定。</div>
   </div>
 
@@ -401,19 +384,14 @@
   </div>
 
   <script>
-    // ==== 配置（UP 专场）====
     const CONFIG = {
-      SYMBOL: 'UP',
-      TOTAL_TARGET_BNB: 78.8,
-      TOTAL_TOKENS: 10_000_000,
+      SYMBOL: 'KAT',
+      TOTAL_TARGET_BNB: 1368.155422,
+      TOTAL_TOKENS: 100_000_000,
       MAX_PER_USER_BNB: 3,
 
-      // ✅ 赠送关闭：不翻倍
-      BONUS_MULTIPLIER: 1,
-
-      // ✅ 时间：3月13日 16:00-18:00（北京时间）
-      START_TIME: new Date('2026-03-13T16:00:00+08:00'),
-      END_TIME: new Date('2026-03-13T18:00:00+08:00'),
+      START_TIME: new Date('2026-03-16T20:00:00+08:00'),
+      END_TIME: new Date('2026-03-16T22:00:00+08:00'),
 
       PRICE_CACHE_MS: 60_000,
       PRICE_DISPLAY_REFRESH_MS: 30_000,
@@ -425,8 +403,7 @@
         'https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD'
       ],
 
-      // ✅ UP 使用固定参考价格，不自动拉取代币价格
-      TOKEN_PRICE_API: '',
+      TOKEN_PRICE_API: 'https://fapi.binance.com/fapi/v2/ticker/price?symbol=KATUSDT',
 
       RPC_NODES: [
         'https://bsc-dataseed.binance.org/',
@@ -435,7 +412,6 @@
         'https://bsc-dataseed1.ninicoin.io/'
       ],
 
-      // ✅ 17:59 锁定（结束前 1 分钟）
       FINAL_REFRESH_BEFORE_END_MS: 60_000
     };
 
@@ -475,10 +451,7 @@
       endedMsg: $('endedMsg'),
       contractLink: $('contractLink'),
 
-      profitOnlyBtn: $('profitOnlyBtn'),
-
-      bonusInfo: $('bonusInfo'),
-      bonusLabel: $('bonusLabel')
+      profitOnlyBtn: $('profitOnlyBtn')
     };
 
     const STATE = {
@@ -506,16 +479,24 @@
       return `${m}月${d}日 ${ts}-${te}（北京时间）`;
     }
 
-    // 预计算常量（START_TIME / END_TIME / lockAt 都不变）
+    function formatClockForCN(date){
+      return new Intl.DateTimeFormat('zh-CN', {
+        timeZone: TZ,
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).format(date);
+    }
+
     const START_MS = CONFIG.START_TIME.getTime();
     const END_MS   = CONFIG.END_TIME.getTime();
     const LOCK_MS  = END_MS - (CONFIG.FINAL_REFRESH_BEFORE_END_MS || 60_000);
     const RANGE_LABEL = formatRangeForCN(CONFIG.START_TIME, CONFIG.END_TIME);
+    const LOCK_LABEL = formatClockForCN(new Date(LOCK_MS));
 
     const isLocked = () => Date.now() >= LOCK_MS;
     const isEnded  = () => Date.now() >= END_MS;
 
-    // ===== localStorage 缓存工具 =====
     function cacheGet(key, maxAge){
       try{
         const c = JSON.parse(localStorage.getItem(key) || 'null');
@@ -548,9 +529,9 @@
 
     function computePrice(){
       const tokenP = +els.tokenPrice.value || 0;
-      const airdrop = (CONFIG.TOTAL_TOKENS || 0) * (CONFIG.BONUS_MULTIPLIER || 1) * tokenP;
-      els.airdropUSD.value = Math.round(airdrop);
-      els.airdropFmt.textContent = airdrop ? ('≈ ' + fmt(airdrop/1e4) + ' 万 USDT') : '—';
+      const saleValue = (CONFIG.TOTAL_TOKENS || 0) * tokenP;
+      els.airdropUSD.value = Math.round(saleValue);
+      els.airdropFmt.textContent = saleValue ? ('≈ ' + fmt(saleValue/1e4) + ' 万 USDT') : '—';
     }
 
     function syncLabPriceDisplay(){
@@ -581,7 +562,7 @@
 
       try{
         const d = await fetchJSON(CONFIG.TOKEN_PRICE_API, {}, 7000);
-        const p = Number(d?.price);
+        const p = Number(d?.price ?? 0);
         if(p){ cacheSet(key, p); return p; }
       }catch{}
       return 0;
@@ -598,7 +579,6 @@
         if(tokP && !els.tokenPrice.dataset.userEdited){
           els.tokenPrice.value = Number(tokP).toFixed(6);
         }
-        // syncLabPriceDisplay 由后续 render() 统一调用，此处不再重复
       }catch(e){
         console.error('updatePriceDisplay error', e);
       }
@@ -633,7 +613,6 @@
       return 0;
     }
 
-    // ===== 自动刷新 =====
     let refreshIntervalMs = Math.max(+els.refreshSec.value||10,5) * 1000;
     let nextRefreshAt = 0;
     let refreshTimeoutId = null;
@@ -661,7 +640,7 @@
 
     function updateCountdownDisplay(){
       if(isLocked() || isEnded()){
-        els.autoRefreshCountdown.textContent = '数据已锁定：保持 17:59 更新结果';
+        els.autoRefreshCountdown.textContent = `数据已锁定：保持 ${LOCK_LABEL} 更新结果`;
         return;
       }
       const s = Math.max(0, Math.ceil((nextRefreshAt - Date.now()) / 1000));
@@ -700,7 +679,6 @@
       }, LOCK_MS - now);
     }
 
-    // ===== 结束/锁定状态 =====
     let lockStateApplied = false;
     function applyLockState(){
       if(lockStateApplied) return;
@@ -708,14 +686,12 @@
 
       stopAutoRefreshTimers();
 
-      els.autoRefreshCountdown.textContent = '数据已锁定：保持 17:59 更新结果';
+      els.autoRefreshCountdown.textContent = `数据已锁定：保持 ${LOCK_LABEL} 更新结果`;
 
-      // 禁止任何刷新相关操作（确保 17:59 后不会再变）
       els.refreshBtn.classList.add('muted');
       els.refreshBtn.disabled = true;
       els.refreshSec.disabled = true;
 
-      // 不显示 ended banner（按你要求）
       if(els.endedMsg) els.endedMsg.style.display = 'none';
     }
 
@@ -730,7 +706,6 @@
       if(els.endedMsg) els.endedMsg.style.display = 'none';
     }
 
-    // ===== 核心渲染 =====
     let latestDep = 0;
 
     function loadCachedDepIfAny(){
@@ -748,7 +723,7 @@
     function saveDepCache(dep){ cacheSet(`dep_${CONFIG.SYMBOL}`, dep); }
 
     function render(dep = latestDep){
-      if(dep) latestDep = dep;  // 缓存最新余额，供事件回调无参调用时复用
+      if(dep) latestDep = dep;
       if(isLocked()) applyLockState();
       if(isEnded()) applyEndState();
 
@@ -765,7 +740,7 @@
       const bnbUSDT = STATE.bnbUSDT || 0;
       const target = CONFIG.TOTAL_TARGET_BNB;
 
-      els.targetBNBShow.textContent = target ? fmt(target,2) : '—';
+      els.targetBNBShow.textContent = target ? fmt(target,6) : '—';
 
       if(!(user && price && bnbUSDT && dep && target)){
         els.resultBox.hidden = true;
@@ -773,8 +748,7 @@
       }
 
       const share = user / dep;
-      const baseTokens = share * CONFIG.TOTAL_TOKENS;
-      const tokens = baseTokens * (CONFIG.BONUS_MULTIPLIER || 1);
+      const tokens = share * CONFIG.TOTAL_TOKENS;
 
       const principal = Math.min(share * target, user);
       const refund = Math.max(user - principal, 0);
@@ -805,7 +779,6 @@
       els.resultBox.hidden = false;
     }
 
-    // ===== 刷新（force=true 用于 17:59 强制刷新）=====
     let refreshing = false;
     let pendingForcedRefresh = false;
 
@@ -815,10 +788,9 @@
         return;
       }
 
-      // 17:59 后不再拉数据（除非 force）
       if(!force && (isLocked() || isEnded())){
         loadCachedDepIfAny();
-        render(latestDep);  // render 内部已处理 lock/end 状态
+        render(latestDep);
         return;
       }
 
@@ -827,7 +799,6 @@
       if(manual) els.errBanner.style.display = 'none';
 
       try{
-        // 17:59 强制那次也会更新价格+余额
         await updatePriceDisplay();
         const dep = await fetchBalance(els.targetAddress.value);
         saveDepCache(dep);
@@ -886,7 +857,6 @@
       }
     }
 
-    // ===== 只看利润功能 =====
     function setProfitOnlyMode(on){
       STATE.profitOnly = !!on;
       document.body.classList.toggle('profitOnlyMode', STATE.profitOnly);
@@ -897,7 +867,7 @@
 
     els.tokenPrice.addEventListener('input', ()=>{
       els.tokenPrice.dataset.userEdited = '1';
-      render();  // render() 内部已调用 computePrice + syncLabPriceDisplay
+      render();
     });
 
     els.userAmount.addEventListener('input', ()=>{
@@ -927,39 +897,23 @@
       if(document.hidden){
         stopAutoRefreshTimers();
       }else{
-        // startAutoRefreshTimers 内部已处理 lock/end 状态
         startAutoRefreshTimers();
       }
     });
 
     window.addEventListener('load', async ()=>{
-      // 恢复“只看利润”状态
       const saved = localStorage.getItem('profitOnlyMode') === '1';
       setProfitOnlyMode(saved);
 
-      // 合约链接
       const addr = els.targetAddress.value;
       if(els.contractLink){
         els.contractLink.href = `https://bscscan.com/address/${addr}`;
         els.contractLink.textContent = addr;
       }
 
-      // 赠送文案控制（BONUS_MULTIPLIER=1 会隐藏）
-      const hasBonus = (CONFIG.BONUS_MULTIPLIER || 1) > 1;
-      els.bonusLabel.style.display = hasBonus ? 'inline' : 'none';
-      if(hasBonus){
-        els.bonusInfo.style.display = 'inline';
-        els.bonusInfo.innerHTML = `<br>🎁 赠送规则：每认购 1 枚额外赠送 1 枚（最终到帐=出售分配×${CONFIG.BONUS_MULTIPLIER}）`;
-      }else{
-        els.bonusInfo.style.display = 'none';
-      }
-
-      // render() 内部会调用 computePrice + syncLabPriceDisplay，此处无需重复
-
-      // 若已经锁定/结束：只从缓存恢复（不再拉链上）
       if(isLocked() || isEnded()){
         loadCachedDepIfAny();
-        render(latestDep);  // render 内部已处理 lock/end 状态
+        render(latestDep);
       }else{
         await updatePriceDisplay();
         startAutoRefreshTimers();
@@ -968,7 +922,6 @@
 
       setInterval(tick, 500);
 
-      // 价格显示：锁定后也停止更新（保证 17:59 数据不变）
       setInterval(()=>{
         if(!isEnded() && !isLocked()) updatePriceDisplay();
       }, CONFIG.PRICE_DISPLAY_REFRESH_MS);

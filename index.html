@@ -84,6 +84,9 @@
     }
     button:hover{background:var(--c-primary-dark);box-shadow:0 4px 12px rgba(0,102,255,.3)}
     button:active{transform:scale(.98)}
+    button:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px}
+
+    input:focus-visible{border-color:var(--c-primary);box-shadow:0 0 0 3px var(--c-primary-light)}
 
     .row{display:flex;gap:12px}
     .col{flex:1;min-width:0}
@@ -164,11 +167,18 @@
     .priceItem .v{font-weight:800;font-size:17px;letter-spacing:-.3px}
     .priceItem .t{font-size:11px;color:var(--c-sub);margin-top:6px;line-height:1.4}
 
-    .premarketLink,.premarketLink:visited{
-      display:block;margin-top:4px;color:inherit;
-      text-decoration:underline;text-underline-offset:3px;font-weight:700
+    .priceNote{
+      display:block;margin-top:4px;color:var(--c-sub);
+      font-size:11px;font-weight:400
     }
-    .premarketLink:hover{color:var(--c-primary)}
+
+    .linkBtn{
+      display:inline;background:none;border:none;color:var(--c-primary);
+      cursor:pointer;font-size:11px;font-weight:600;padding:0;margin:0;
+      width:auto;box-shadow:none;text-decoration:underline;text-underline-offset:2px
+    }
+    .linkBtn:hover{color:var(--c-primary-dark);background:none;box-shadow:none}
+    .linkBtn:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;background:none;box-shadow:none}
 
     .countdownAuto{font-size:12px;color:var(--c-sub);margin-top:10px;text-align:center;font-weight:500}
 
@@ -178,9 +188,30 @@
     }
     .muted{opacity:.45;pointer-events:none;user-select:none}
 
-    .tutorials{
-      margin-top:14px;display:flex;flex-direction:column;align-items:center;gap:4px
+    /* --- Second screen: tutorials, invite code --- */
+    .second-screen{margin-top:28px;border-top:1px solid var(--c-border);padding-top:20px}
+    .second-screen-title{
+      font-size:13px;color:var(--c-sub);font-weight:600;text-align:center;margin-bottom:12px
     }
+
+    .tutorials-toggle{
+      width:100%;padding:10px 14px;font-size:14px;font-weight:600;
+      background:var(--c-card2);color:var(--c-text);border:1.5px solid var(--c-border);
+      border-radius:var(--radius);cursor:pointer;text-align:left;
+      display:flex;justify-content:space-between;align-items:center;
+      box-shadow:none;margin-top:0
+    }
+    .tutorials-toggle:hover{border-color:var(--c-primary);background:var(--c-primary-light);box-shadow:none}
+    .tutorials-toggle:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px;box-shadow:none}
+    .tutorials-toggle .arrow{transition:transform .2s;font-size:12px}
+    .tutorials-toggle[aria-expanded="true"] .arrow{transform:rotate(180deg)}
+
+    .tutorials-panel{
+      display:none;flex-direction:column;align-items:center;gap:4px;
+      margin-top:8px;padding:8px 0
+    }
+    .tutorials-panel.open{display:flex}
+
     .tutorial-link{
       display:inline-flex;align-items:center;justify-content:center;gap:8px;
       font-weight:700;font-size:14px;color:var(--c-primary);
@@ -228,18 +259,26 @@
       margin-top:0;transition:background .15s,border-color .15s
     }
     .miniBtn:hover{background:rgba(0,102,255,.14);border-color:rgba(0,102,255,.35)}
+    .miniBtn:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px}
     .miniHint{font-size:11px;color:var(--c-sub);font-weight:500}
 
     body.profitOnlyMode #saleSection{display:none!important}
     body.profitOnlyMode #priceBox{display:none!important}
-    body.profitOnlyMode .tutorials{display:none!important}
-    body.profitOnlyMode .hintBanner{display:none!important}
+    body.profitOnlyMode .second-screen{display:none!important}
     body.profitOnlyMode #resultBox .result-header,
     body.profitOnlyMode #resultBox .result-body>p:not(.profitLine),
     body.profitOnlyMode #resultBox .result-body>hr{display:none!important}
     body.profitOnlyMode #resultBox .result-body{padding:0}
     body.profitOnlyMode #resultBox .profit-card{margin:0;border-radius:16px;border:none}
     body.profitOnlyMode #resultBox .profit-card .profit-value{font-size:36px}
+
+    @media(prefers-reduced-motion:reduce){
+      *{
+        animation:none!important;
+        transition:none!important;
+        scroll-behavior:auto!important
+      }
+    }
 
     @media(max-width:560px){
       .container{margin:12px 8px;padding:20px 16px;border-radius:16px}
@@ -260,7 +299,7 @@
 
 <body>
   <div class="container">
-    <div id="errBanner" class="error-banner"></div>
+    <div id="errBanner" class="error-banner" role="alert"></div>
 
     <h2>币安 Web3 钱包 第七期 Prime Sale Pre-TGE （KAT）</h2>
 
@@ -268,27 +307,26 @@
 
     <input id="targetAddress" type="hidden" value="0x832061a427c1441d48a069212c6104e3d52a8f79" />
 
-    <div class="row">
+    <!-- ===== First Screen: Input + Core Result + Status ===== -->
+
+    <label for="userAmount">投入 BNB <span class="note">单人上限 3 BNB</span></label>
+    <input id="userAmount" type="number" step="0.01" value="3" min="0" max="3" inputmode="decimal" />
+
+    <label for="tokenPrice">参考价格 (USDT)<span class="note">默认拉取接口价格（可手动修改）</span></label>
+    <div class="row" style="align-items:center;gap:8px">
       <div class="col">
-        <label>投入 BNB <span class="note">单人上限 3 BNB</span></label>
-        <input id="userAmount" type="number" step="0.01" value="3" min="0" max="3" inputmode="decimal" />
+        <input id="tokenPrice" type="number" step="0.000001" value="0.016950" min="0" inputmode="decimal" />
       </div>
-      <div class="col">
-        <label>刷新频率 (秒)<span class="note">最少 5 秒</span></label>
-        <input id="refreshSec" type="number" step="1" value="10" min="5" inputmode="numeric" />
-      </div>
+      <button type="button" class="linkBtn" id="resetPriceBtn" style="flex:0 0 auto;margin-top:0">恢复默认价</button>
     </div>
 
-    <label>参考价格 (USDT)<span class="note">默认拉取接口价格（可手动修改）</span></label>
-    <input id="tokenPrice" type="number" step="0.000001" value="0.016950" min="0" inputmode="decimal" />
-
     <div id="saleSection">
-      <label>预计出售总额 (USDT)<span class="note">（根据参考价推算）</span></label>
+      <label for="airdropUSD">预计出售总额 (USDT)<span class="note">（根据参考价推算）</span></label>
       <input id="airdropUSD" type="number" step="1" value="1695000" readonly />
       <div class="note" id="airdropFmt">—</div>
     </div>
 
-    <div class="priceBox" id="priceBox" aria-hidden="false">
+    <div class="priceBox" id="priceBox">
       <div class="priceItem">
         <div class="v" id="bnbPriceV">—</div>
         <div class="t">当前 BNB 价格（USDT）</div>
@@ -297,75 +335,45 @@
         <div class="v" id="labPriceV">—</div>
         <div class="t">
           KAT 参考价格
-          <span class="premarketLink">接口参考价：KATUSDT（可手动修改）</span>
+          <span class="priceNote">数据源近似按 USD/USDT 1:1 处理</span>
         </div>
       </div>
     </div>
 
-    <div class="countdownAuto" id="autoRefreshCountdown">下次自动刷新：— 秒</div>
+    <div class="countdownAuto" id="autoRefreshCountdown" aria-live="polite">下次自动刷新：— 秒</div>
 
-    <button id="refreshBtn">🔄 手动刷新</button>
+    <button type="button" id="refreshBtn">手动刷新</button>
 
     <div class="viewRow">
-      <button id="profitOnlyBtn" class="miniBtn" type="button" aria-pressed="false">👁 只看利润：关</button>
+      <button id="profitOnlyBtn" class="miniBtn" type="button" aria-pressed="false">只看利润：关</button>
       <div class="miniHint">（再次点击恢复全部）</div>
     </div>
 
     <div class="updateHint" id="lastUpdateHint">—</div>
 
-    <div class="tutorials">
-      <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
-        <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
-        <span>链上借BNB教程</span>
-      </a>
-      <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1977584958295392288" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
-        <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
-        <span>交易所借BNB教程</span>
-      </a>
-      <a class="tutorial-link" href="https://x.com/0xXIAOc/status/2001254000516346195?s=20" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
-        <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
-        <span>币安钱包借BNB教程</span>
-      </a>
-    </div>
-
-    <div class="hintBanner">
-      <div class="hintLeft">
-        <span class="hintPrefix">提示：</span>
-        <span class="hintMsg">
-          22点结束后，未被用于认购的BNB可以退回，<br>
-          获得的代币18号在交易所直接交易。
-        </span>
-      </div>
-      <div class="hintRight">
-        <a class="hintBtn" href="https://web3.binance.com/zh-CN/referral?ref=XIAOCC" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
-          币安钱包绑定邀请码 手续费立减30%
-        </a>
-        <div class="hintSub">
-          点击上方一键绑定邀请码<br>
-          <span class="hintCode">邀请码：XIAOCC</span>
-        </div>
-      </div>
-    </div>
-
+    <!-- Activity Status -->
     <div class="progress-container" id="progressSection">
-      <div class="progress-bg"><div class="progress-bar" id="progressBar"></div></div>
-      <div class="countdown" id="countdownText">倒计时加载中…</div>
+      <div class="progress-bg" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBg">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="countdown" id="countdownText" aria-live="polite">活动时间进度加载中…</div>
     </div>
 
-    <div class="result" id="resultBox" hidden>
+    <!-- Core Result -->
+    <div class="result" id="resultBox" hidden aria-live="polite">
       <div class="result-header">
-        <p>📦 BNB 余额：<span class="highlight" id="bnbBalance">—</span></p>
-        <p>🎯 募集：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
-        <p>🔥 超募倍数：<span class="highlight" id="multiplier">—</span></p>
-        <p>💰 出售：100,000,000 KAT</p>
+        <p>已募集 BNB：<span class="highlight" id="bnbBalance">—</span></p>
+        <p>目标：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
+        <p>超募倍数：<span class="highlight" id="multiplier">—</span></p>
+        <p>出售：100,000,000 KAT</p>
       </div>
       <div class="result-body">
         <p>
-          🚀 投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
+          投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
           可获得 <span class="success" id="tokenAmt">—</span> 枚 KAT ≈ <span class="success" id="usdValue">—</span>
         </p>
-        <p>💸 实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
-        <p>🔄 退回：<span class="refund" id="refundBNB">—</span> BNB</p>
+        <p>实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
+        <p>退回：<span class="refund" id="refundBNB">—</span> BNB</p>
 
         <div class="profit-card" id="profitCard">
           <div class="profit-label">预估利润</div>
@@ -375,12 +383,55 @@
     </div>
 
     <div class="ended-banner" id="endedMsg">活动已结束，数据已锁定。</div>
+
+    <!-- ===== Second Screen: Tutorials, Invite, Resources ===== -->
+    <div class="second-screen">
+      <div class="second-screen-title">更多资源</div>
+
+      <button type="button" class="tutorials-toggle" id="tutorialsToggle" aria-expanded="false" aria-controls="tutorialsPanel">
+        <span>借 BNB 教程</span>
+        <span class="arrow" aria-hidden="true">▼</span>
+      </button>
+      <div class="tutorials-panel" id="tutorialsPanel" role="region">
+        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
+          <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
+          <span>链上借BNB教程</span>
+        </a>
+        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1977584958295392288" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
+          <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
+          <span>交易所借BNB教程</span>
+        </a>
+        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/2001254000516346195?s=20" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
+          <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
+          <span>币安钱包借BNB教程</span>
+        </a>
+      </div>
+
+      <div class="hintBanner">
+        <div class="hintLeft">
+          <span class="hintPrefix">提示：</span>
+          <span class="hintMsg">
+            22点结束后，未被用于认购的BNB可以退回，<br>
+            获得的代币18号在交易所直接交易。
+          </span>
+        </div>
+        <div class="hintRight">
+          <a class="hintBtn" href="https://web3.binance.com/zh-CN/referral?ref=XIAOCC" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
+            币安钱包绑定邀请码 手续费立减30%
+          </a>
+          <div class="hintSub">
+            点击上方一键绑定邀请码<br>
+            <span class="hintCode">邀请码：XIAOCC</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="footer">
     作者：<a href="https://x.com/0xXIAOc" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">@0xXIAOc</a>
     &nbsp;|&nbsp;
-    <a href="https://t.me/xiaoccaac" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">✈️加入Alpha交流群</a>
+    <a href="https://t.me/xiaoccaac" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">加入Alpha交流群</a>
   </div>
 
   <script>
@@ -394,7 +445,7 @@
       END_TIME: new Date('2026-03-16T22:00:00+08:00'),
 
       PRICE_CACHE_MS: 60_000,
-      PRICE_DISPLAY_REFRESH_MS: 30_000,
+      REFRESH_INTERVAL_SEC: 5,
 
       PRICE_APIS: [
         'https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT',
@@ -412,9 +463,14 @@
         'https://bsc-dataseed1.ninicoin.io/'
       ],
 
-      FINAL_REFRESH_BEFORE_END_MS: 60_000
+      FINAL_REFRESH_BEFORE_END_MS: 60_000,
+
+      // Fallback snapshot for new visitors after activity ends (update after event)
+      FINAL_SNAPSHOT: null
+      // Example: { dep: 1234.5678, updatedAt: '2026-03-16T21:59:00+08:00' }
     };
 
+    /* ---------- DOM refs ---------- */
     const $ = id => document.getElementById(id);
 
     const els = {
@@ -422,9 +478,9 @@
       tokenPrice: $('tokenPrice'),
       airdropUSD: $('airdropUSD'),
       airdropFmt: $('airdropFmt'),
-      refreshSec: $('refreshSec'),
       refreshBtn: $('refreshBtn'),
       lastUpdateHint: $('lastUpdateHint'),
+      resetPriceBtn: $('resetPriceBtn'),
 
       bnbBalance: $('bnbBalance'),
       multiplier: $('multiplier'),
@@ -441,6 +497,7 @@
       resultBox: $('resultBox'),
       countdownText: $('countdownText'),
       progressBar: $('progressBar'),
+      progressBg: $('progressBg'),
       errBanner: $('errBanner'),
       targetAddress: $('targetAddress'),
       targetBNBShow: $('targetBNBShow'),
@@ -451,40 +508,48 @@
       endedMsg: $('endedMsg'),
       contractLink: $('contractLink'),
 
-      profitOnlyBtn: $('profitOnlyBtn')
+      profitOnlyBtn: $('profitOnlyBtn'),
+      tutorialsToggle: $('tutorialsToggle'),
+      tutorialsPanel: $('tutorialsPanel')
     };
 
+    /* ---------- State ---------- */
     const STATE = {
       bnbUSDT: 0,
       tokenUSDT: 0,
       profitOnly: false
     };
 
-    const fmt = (n, d = 0) => Number(n).toLocaleString('zh-CN', { maximumFractionDigits: d });
-    const TZ = 'Asia/Shanghai';
+    /* ---------- Pre-built number formatters ---------- */
+    const nf0 = new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 0 });
+    const nf2 = new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 2 });
+    const nf4 = new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 4 });
+    const nf6 = new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 6 });
 
-    function formatRangeForCN(st, et){
-      const getNum = (date, opt) =>
-        new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, ...opt })
-          .format(date)
-          .replace(/\D/g, '');
-
-      const m = getNum(st, { month: 'numeric' });
-      const d = getNum(st, { day: 'numeric' });
-
-      const tFmt = new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hour12: false });
-      const ts = tFmt.format(st);
-      const te = tFmt.format(et);
-
-      return `${m}月${d}日 ${ts}-${te}（北京时间）`;
+    function fmt(n, d = 0) {
+      switch (d) {
+        case 0: return nf0.format(n);
+        case 2: return nf2.format(n);
+        case 4: return nf4.format(n);
+        case 6: return nf6.format(n);
+        default: return Number(n).toLocaleString('zh-CN', { maximumFractionDigits: d });
+      }
     }
 
-    function formatClockForCN(date){
+    const TZ = 'Asia/Shanghai';
+
+    /* ---------- Time helpers ---------- */
+    function formatRangeForCN(st, et) {
+      const tFmt = new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hour12: false });
+      const parts = new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, month: 'numeric', day: 'numeric' }).formatToParts(st);
+      const m = parts.find(p => p.type === 'month')?.value ?? '';
+      const d = parts.find(p => p.type === 'day')?.value ?? '';
+      return `${m}月${d}日 ${tFmt.format(st)}-${tFmt.format(et)}（北京时间）`;
+    }
+
+    function formatClockForCN(date) {
       return new Intl.DateTimeFormat('zh-CN', {
-        timeZone: TZ,
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
+        timeZone: TZ, hour: '2-digit', minute: '2-digit', hour12: false
       }).format(date);
     }
 
@@ -492,154 +557,224 @@
     const END_MS   = CONFIG.END_TIME.getTime();
     const LOCK_MS  = END_MS - (CONFIG.FINAL_REFRESH_BEFORE_END_MS || 60_000);
     const RANGE_LABEL = formatRangeForCN(CONFIG.START_TIME, CONFIG.END_TIME);
-    const LOCK_LABEL = formatClockForCN(new Date(LOCK_MS));
+    const LOCK_LABEL  = formatClockForCN(new Date(LOCK_MS));
 
-    const isLocked = () => Date.now() >= LOCK_MS;
-    const isEnded  = () => Date.now() >= END_MS;
+    /* ---------- Phase state machine ---------- */
+    function getPhase(now = Date.now()) {
+      if (now < START_MS) return 'before';
+      if (now >= END_MS) return 'ended';
+      if (now >= LOCK_MS) return 'locked';
+      return 'live';
+    }
 
-    function cacheGet(key, maxAge){
-      try{
+    /* ---------- Cache helpers ---------- */
+    function cacheKey(suffix) {
+      return `tge:${CONFIG.SYMBOL}:${els.targetAddress.value}:${suffix}`;
+    }
+
+    function cacheGet(key, maxAge) {
+      try {
         const c = JSON.parse(localStorage.getItem(key) || 'null');
-        if(c && c.v != null && (!maxAge || Date.now() - c.t < maxAge)) return c;
-      }catch{}
+        if (c && c.v != null && (!maxAge || Date.now() - c.t < maxAge)) return c;
+      } catch (e) {
+        console.debug('cacheGet error:', key, e);
+      }
       return null;
     }
-    function cacheSet(key, v){ try{ localStorage.setItem(key, JSON.stringify({v, t:Date.now()})); }catch{} }
 
-    async function fetchJSON(url, options = {}, timeoutMs = 8000){
+    function cacheSet(key, v) {
+      try { localStorage.setItem(key, JSON.stringify({ v, t: Date.now() })); } catch (e) {
+        console.debug('cacheSet error:', key, e);
+      }
+    }
+
+    /* ---------- Network helpers ---------- */
+    async function fetchJSON(url, options = {}, timeoutMs = 8000) {
       const controller = new AbortController();
       const t = setTimeout(() => controller.abort(), timeoutMs);
 
-      try{
+      try {
         const res = await fetch(url, { ...options, signal: controller.signal, cache: 'no-store' });
-        if(!res.ok){
+        if (!res.ok) {
           const msg = res.status === 429
-            ? '请求过于频繁（429），请降低刷新频率'
+            ? '请求过于频繁（429），请稍后重试'
             : `HTTP ${res.status}`;
           throw new Error(msg);
         }
         return await res.json();
-      }catch(e){
-        if(e.name === 'AbortError') throw new Error('请求超时，请稍后重试或更换节点');
+      } catch (e) {
+        if (e.name === 'AbortError') throw new Error('请求超时，请稍后重试或更换节点');
         throw e;
-      }finally{
+      } finally {
         clearTimeout(t);
       }
     }
 
-    function computePrice(){
+    /* ---------- Price helpers ---------- */
+    function computePrice() {
       const tokenP = +els.tokenPrice.value || 0;
       const saleValue = (CONFIG.TOTAL_TOKENS || 0) * tokenP;
       els.airdropUSD.value = Math.round(saleValue);
-      els.airdropFmt.textContent = saleValue ? ('≈ ' + fmt(saleValue/1e4) + ' 万 USDT') : '—';
+      els.airdropFmt.textContent = saleValue ? ('≈ ' + fmt(saleValue / 1e4) + ' 万 USDT') : '—';
     }
 
-    function syncLabPriceDisplay(){
+    function syncLabPriceDisplay() {
       const p = +els.tokenPrice.value || 0;
       els.labPriceV.textContent = p ? (p.toFixed(6) + ' USDT') : '—';
     }
 
-    async function getBNBPrice(){
-      const cached = cacheGet('bnbP', CONFIG.PRICE_CACHE_MS);
-      if(cached) return cached.v;
+    async function getBNBPrice() {
+      const key = cacheKey('bnbP');
+      const cached = cacheGet(key, CONFIG.PRICE_CACHE_MS);
+      if (cached) return cached.v;
 
-      for(const url of CONFIG.PRICE_APIS){
-        try{
+      for (const url of CONFIG.PRICE_APIS) {
+        try {
           const d = await fetchJSON(url, {}, 7000);
           const v = Number(d?.price ?? d?.binancecoin?.usd ?? d?.USD ?? 0);
-          if(v){ cacheSet('bnbP', v); return v; }
-        }catch{}
+          if (v) { cacheSet(key, v); return v; }
+        } catch (e) {
+          console.debug('getBNBPrice fallback:', url, e.message);
+        }
       }
       return 0;
     }
 
-    async function getTokenPrice(){
-      if(!CONFIG.TOKEN_PRICE_API) return 0;
+    async function getTokenPrice() {
+      if (!CONFIG.TOKEN_PRICE_API) return 0;
 
-      const key = `tokP_${CONFIG.SYMBOL}`;
+      const key = cacheKey('tokP');
       const cached = cacheGet(key, CONFIG.PRICE_CACHE_MS);
-      if(cached) return cached.v;
+      if (cached) return cached.v;
 
-      try{
+      try {
         const d = await fetchJSON(CONFIG.TOKEN_PRICE_API, {}, 7000);
         const p = Number(d?.price ?? 0);
-        if(p){ cacheSet(key, p); return p; }
-      }catch{}
+        if (p) { cacheSet(key, p); return p; }
+      } catch (e) {
+        console.debug('getTokenPrice error:', e.message);
+      }
       return 0;
     }
 
-    async function updatePriceDisplay(){
-      try{
+    async function updatePriceDisplay() {
+      try {
         const [bnbUSDT, tokP] = await Promise.all([getBNBPrice(), getTokenPrice()]);
         STATE.bnbUSDT = bnbUSDT || 0;
-        if(tokP) STATE.tokenUSDT = tokP;
+        if (tokP) STATE.tokenUSDT = tokP;
 
-        els.bnbPriceV.textContent = STATE.bnbUSDT ? (fmt(STATE.bnbUSDT,4) + ' USDT') : '—';
+        els.bnbPriceV.textContent = STATE.bnbUSDT ? (fmt(STATE.bnbUSDT, 4) + ' USDT') : '—';
 
-        if(tokP && !els.tokenPrice.dataset.userEdited){
+        if (tokP && !els.tokenPrice.dataset.userEdited) {
           els.tokenPrice.value = Number(tokP).toFixed(6);
         }
-      }catch(e){
-        console.error('updatePriceDisplay error', e);
+      } catch (e) {
+        console.debug('updatePriceDisplay error:', e);
       }
     }
 
-    function weiHexToBNB(weiHex){
-      try{
+    /* ---------- Balance fetching (parallel race) ---------- */
+    function weiHexToBNB(weiHex) {
+      try {
         const wei = BigInt(weiHex);
         const base = 10n ** 18n;
         const intPart = wei / base;
         const fracPart = wei % base;
-        const fracStr = fracPart.toString().padStart(18,'0').slice(0, 6);
+        const fracStr = fracPart.toString().padStart(18, '0').slice(0, 6);
         return Number(`${intPart.toString()}.${fracStr}`);
-      }catch{
+      } catch {
         return 0;
       }
     }
 
-    async function fetchBalance(addr){
-      if(!addr) return 0;
-      const body = JSON.stringify({jsonrpc:'2.0',method:'eth_getBalance',params:[addr,'latest'],id:1});
-      for(const node of CONFIG.RPC_NODES){
-        try{
-          const {result} = await fetchJSON(node,{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body
-          }, 7000);
-          return weiHexToBNB(result);
-        }catch{}
+    async function fetchBalance(addr) {
+      if (!addr) return 0;
+      const body = JSON.stringify({ jsonrpc: '2.0', method: 'eth_getBalance', params: [addr, 'latest'], id: 1 });
+
+      const tasks = CONFIG.RPC_NODES.map(node =>
+        fetchJSON(node, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body
+        }, 4000).then(({ result }) => weiHexToBNB(result))
+      );
+
+      try {
+        return await Promise.any(tasks);
+      } catch (e) {
+        console.debug('fetchBalance all failed:', e);
+        return 0;
       }
-      return 0;
     }
 
-    let refreshIntervalMs = Math.max(+els.refreshSec.value||10,5) * 1000;
+    /* ---------- Pure calculation ---------- */
+    function calcProjection({
+      userAmount,
+      currentPool,
+      targetBNB,
+      totalTokens,
+      tokenPrice,
+      bnbPrice,
+      includeUserInPool = true
+    }) {
+      const pool = includeUserInPool ? currentPool + userAmount : currentPool;
+      if (pool <= 0) return null;
+
+      const share = userAmount / pool;
+      const tokens = share * totalTokens;
+      const principalBNB = Math.min(share * targetBNB, userAmount);
+      const refundBNB = Math.max(userAmount - principalBNB, 0);
+      const tokenValueUSD = tokens * tokenPrice;
+      const principalUSD = principalBNB * bnbPrice;
+      const profitUSD = tokenValueUSD - principalUSD;
+
+      return {
+        share,
+        tokens,
+        principalBNB,
+        refundBNB,
+        tokenValueUSD,
+        principalUSD,
+        profitUSD,
+        multiplier: pool / targetBNB
+      };
+    }
+
+    /* ---------- Timers ---------- */
+    const REFRESH_MS = CONFIG.REFRESH_INTERVAL_SEC * 1000;
     let nextRefreshAt = 0;
     let refreshTimeoutId = null;
-    let countdownTimerId = null;
+    let uiTickId = null;
     let finalRefreshTimerId = null;
 
-    function stopAutoRefreshTimers(){
+    function stopAllTimers() {
       clearTimeout(refreshTimeoutId);
-      clearInterval(countdownTimerId);
+      clearInterval(uiTickId);
       clearTimeout(finalRefreshTimerId);
-      refreshTimeoutId = countdownTimerId = finalRefreshTimerId = null;
+      refreshTimeoutId = uiTickId = finalRefreshTimerId = null;
     }
 
-    function scheduleNextRefresh(){
-      if(isEnded() || isLocked() || document.hidden) return;
+    function scheduleNextRefresh() {
+      const phase = getPhase();
+      if (phase !== 'live' || document.hidden) return;
 
-      refreshIntervalMs = Math.max(+els.refreshSec.value||10,5) * 1000;
-      nextRefreshAt = Date.now() + refreshIntervalMs;
+      nextRefreshAt = Date.now() + REFRESH_MS;
 
-      refreshTimeoutId = setTimeout(async ()=>{
+      refreshTimeoutId = setTimeout(async () => {
         await refresh(false);
         scheduleNextRefresh();
-      }, refreshIntervalMs);
+      }, REFRESH_MS);
     }
 
-    function updateCountdownDisplay(){
-      if(isLocked() || isEnded()){
+    // Single 1-second UI tick: countdown + next refresh display
+    function uiTick() {
+      tick(); // activity countdown + progress bar
+      updateAutoRefreshDisplay();
+    }
+
+    function updateAutoRefreshDisplay() {
+      const phase = getPhase();
+      if (phase === 'locked' || phase === 'ended') {
         els.autoRefreshCountdown.textContent = `数据已锁定：保持 ${LOCK_LABEL} 更新结果`;
         return;
       }
@@ -647,91 +782,129 @@
       els.autoRefreshCountdown.textContent = `下次自动刷新：${s} 秒`;
     }
 
-    function startAutoRefreshTimers(){
-      stopAutoRefreshTimers();
+    function startTimers() {
+      stopAllTimers();
 
-      if(isLocked() || isEnded()){
-        applyLockState();
-        updateCountdownDisplay();
+      const phase = getPhase();
+      if (phase === 'locked' || phase === 'ended') {
+        applyPhaseUI(phase);
+        uiTick();
         return;
       }
 
       scheduleNextRefresh();
-      updateCountdownDisplay();
-      countdownTimerId = setInterval(updateCountdownDisplay, 250);
+      uiTick();
+      uiTickId = setInterval(uiTick, 1000);
 
       scheduleFinalRefreshBeforeEnd();
     }
 
-    function scheduleFinalRefreshBeforeEnd(){
+    function scheduleFinalRefreshBeforeEnd() {
       clearTimeout(finalRefreshTimerId);
       finalRefreshTimerId = null;
 
       const now = Date.now();
-      if(now >= LOCK_MS || now >= END_MS){
-        applyLockState();
+      if (now >= LOCK_MS || now >= END_MS) {
+        applyPhaseUI(getPhase());
         return;
       }
 
-      finalRefreshTimerId = setTimeout(async ()=>{
+      finalRefreshTimerId = setTimeout(async () => {
         await refresh(false, true);
-        applyLockState();
+        applyPhaseUI('locked');
       }, LOCK_MS - now);
     }
 
-    let lockStateApplied = false;
-    function applyLockState(){
-      if(lockStateApplied) return;
-      lockStateApplied = true;
+    /* ---------- Phase-based UI ---------- */
+    let appliedPhase = null;
 
-      stopAutoRefreshTimers();
+    function applyPhaseUI(phase) {
+      if (appliedPhase === phase) return;
+      appliedPhase = phase;
 
-      els.autoRefreshCountdown.textContent = `数据已锁定：保持 ${LOCK_LABEL} 更新结果`;
+      if (phase === 'locked' || phase === 'ended') {
+        stopAllTimers();
+        els.autoRefreshCountdown.textContent = `数据已锁定：保持 ${LOCK_LABEL} 更新结果`;
+        els.refreshBtn.classList.add('muted');
+        els.refreshBtn.disabled = true;
+      }
 
-      els.refreshBtn.classList.add('muted');
-      els.refreshBtn.disabled = true;
-      els.refreshSec.disabled = true;
-
-      if(els.endedMsg) els.endedMsg.style.display = 'none';
+      if (phase === 'ended') {
+        els.countdownText.textContent = '已结束';
+        if (els.endedMsg) els.endedMsg.style.display = 'none';
+      }
     }
 
-    let endStateApplied = false;
-    function applyEndState(){
-      if(endStateApplied) return;
-      endStateApplied = true;
-
-      applyLockState();
-
-      els.countdownText.textContent = '已结束';
-      if(els.endedMsg) els.endedMsg.style.display = 'none';
-    }
-
+    /* ---------- Dep state ---------- */
     let latestDep = 0;
 
-    function loadCachedDepIfAny(){
-      const cached = cacheGet(`dep_${CONFIG.SYMBOL}`);
-      if(cached){
-        latestDep = Number(cached.v) || latestDep;
-        if(cached.t){
+    function loadCachedDepIfAny() {
+      const cached = cacheGet(cacheKey('dep'));
+      if (cached) {
+        if (Number.isFinite(Number(cached.v))) latestDep = Number(cached.v);
+        if (cached.t) {
           const dt = new Date(cached.t);
-          if(!isNaN(dt.getTime()))
-            els.lastUpdateHint.textContent = '最后更新：' + dt.toLocaleTimeString('zh-CN',{hour12:false});
+          if (!isNaN(dt.getTime()))
+            els.lastUpdateHint.textContent = '最后更新：' + dt.toLocaleTimeString('zh-CN', { hour12: false });
         }
       }
     }
 
-    function saveDepCache(dep){ cacheSet(`dep_${CONFIG.SYMBOL}`, dep); }
+    function loadFinalSnapshot() {
+      if (CONFIG.FINAL_SNAPSHOT && Number.isFinite(CONFIG.FINAL_SNAPSHOT.dep)) {
+        latestDep = CONFIG.FINAL_SNAPSHOT.dep;
+        if (CONFIG.FINAL_SNAPSHOT.updatedAt) {
+          els.lastUpdateHint.textContent = '最后更新：' + new Date(CONFIG.FINAL_SNAPSHOT.updatedAt).toLocaleTimeString('zh-CN', { hour12: false });
+        }
+      }
+    }
 
-    function render(dep = latestDep){
-      if(dep) latestDep = dep;
-      if(isLocked()) applyLockState();
-      if(isEnded()) applyEndState();
+    function saveDepCache(dep) { cacheSet(cacheKey('dep'), dep); }
+
+    /* ---------- Render (display only) ---------- */
+    function renderProjection(result, dep, user) {
+      if (!result) {
+        els.resultBox.hidden = true;
+        return;
+      }
+
+      els.bnbBalance.textContent = fmt(dep, 4);
+      els.multiplier.textContent = fmt(result.multiplier, 2);
+      els.userInput.textContent = fmt(user, 2);
+      els.percent.textContent = fmt(result.share * 100, 4);
+      els.tokenAmt.textContent = fmt(result.tokens, 2);
+      els.usdValue.textContent = fmt(result.tokenValueUSD, 2) + ' USDT';
+
+      els.principalBNB.textContent = fmt(result.principalBNB, 4);
+      els.principalUSD.textContent = fmt(result.principalUSD, 2) + ' USDT';
+
+      const profit = result.profitUSD;
+      els.profitUSD.textContent = (profit >= 0 ? '+' : '') + fmt(profit, 2) + ' USDT';
+      els.profitUSD.classList.remove('success', 'deduct');
+      els.profitUSD.classList.add(profit >= 0 ? 'success' : 'deduct');
+
+      const pc = $('profitCard');
+      if (pc) {
+        pc.classList.remove('positive', 'negative');
+        pc.classList.add(profit >= 0 ? 'positive' : 'negative');
+      }
+
+      els.refundBNB.textContent = fmt(result.refundBNB, 4);
+      els.resultBox.hidden = false;
+    }
+
+    function render(dep = latestDep) {
+      if (Number.isFinite(dep)) latestDep = dep;
+
+      const phase = getPhase();
+      if (phase === 'locked') applyPhaseUI('locked');
+      if (phase === 'ended') applyPhaseUI('ended');
 
       computePrice();
       syncLabPriceDisplay();
 
       let user = +els.userAmount.value || 0;
-      if(user > CONFIG.MAX_PER_USER_BNB){
+      if (user > CONFIG.MAX_PER_USER_BNB) {
         user = CONFIG.MAX_PER_USER_BNB;
         els.userAmount.value = user.toFixed(2);
       }
@@ -740,191 +913,189 @@
       const bnbUSDT = STATE.bnbUSDT || 0;
       const target = CONFIG.TOTAL_TARGET_BNB;
 
-      els.targetBNBShow.textContent = target ? fmt(target,6) : '—';
+      els.targetBNBShow.textContent = target ? fmt(target, 6) : '—';
 
-      if(!(user && price && bnbUSDT && dep && target)){
+      if (!(user && price && bnbUSDT && latestDep && target)) {
         els.resultBox.hidden = true;
         return;
       }
 
-      const share = user / dep;
-      const tokens = share * CONFIG.TOTAL_TOKENS;
+      const result = calcProjection({
+        userAmount: user,
+        currentPool: latestDep,
+        targetBNB: target,
+        totalTokens: CONFIG.TOTAL_TOKENS,
+        tokenPrice: price,
+        bnbPrice: bnbUSDT,
+        includeUserInPool: true
+      });
 
-      const principal = Math.min(share * target, user);
-      const refund = Math.max(user - principal, 0);
-      const multi = dep / target;
-
-      els.bnbBalance.textContent = fmt(dep,4);
-      els.multiplier.textContent = fmt(multi,2);
-      els.userInput.textContent = fmt(user,2);
-      els.percent.textContent = fmt(share*100,4);
-      els.tokenAmt.textContent = fmt(tokens,2);
-      els.usdValue.textContent = fmt(tokens*price,2) + ' USDT';
-
-      els.principalBNB.textContent = fmt(principal,4);
-      els.principalUSD.textContent = fmt(principal*bnbUSDT,2) + ' USDT';
-
-      const profit = (tokens * price) - (principal * bnbUSDT);
-      els.profitUSD.textContent = (profit >= 0 ? '+' : '') + fmt(profit, 2) + ' USDT';
-      els.profitUSD.classList.remove('success', 'deduct');
-      els.profitUSD.classList.add(profit >= 0 ? 'success' : 'deduct');
-
-      const pc = $('profitCard');
-      if(pc){
-        pc.classList.remove('positive','negative');
-        pc.classList.add(profit >= 0 ? 'positive' : 'negative');
-      }
-
-      els.refundBNB.textContent = fmt(refund,4);
-      els.resultBox.hidden = false;
+      renderProjection(result, latestDep, user);
     }
 
+    /* ---------- Refresh logic ---------- */
     let refreshing = false;
     let pendingForcedRefresh = false;
 
-    async function refresh(manual=false, force=false){
-      if(refreshing){
-        if(force) pendingForcedRefresh = true;
+    async function refresh(manual = false, force = false) {
+      if (refreshing) {
+        if (force) pendingForcedRefresh = true;
         return;
       }
 
-      if(!force && (isLocked() || isEnded())){
+      const phase = getPhase();
+      if (!force && (phase === 'locked' || phase === 'ended')) {
         loadCachedDepIfAny();
+        if (!latestDep) loadFinalSnapshot();
         render(latestDep);
         return;
       }
 
       refreshing = true;
       els.refreshBtn.disabled = true;
-      if(manual) els.errBanner.style.display = 'none';
+      if (manual) els.errBanner.style.display = 'none';
 
-      try{
+      try {
         await updatePriceDisplay();
         const dep = await fetchBalance(els.targetAddress.value);
         saveDepCache(dep);
         render(dep);
-        els.lastUpdateHint.textContent = '最后更新：' + new Date().toLocaleTimeString('zh-CN',{hour12:false});
-      }catch(e){
-        if(manual){
+        els.lastUpdateHint.textContent = '最后更新：' + new Date().toLocaleTimeString('zh-CN', { hour12: false });
+      } catch (e) {
+        if (manual) {
           els.errBanner.textContent = e?.message || '网络错误';
           els.errBanner.style.display = 'block';
         }
-        console.error(e);
-      }finally{
+        console.debug('refresh error:', e);
+      } finally {
         els.refreshBtn.disabled = false;
         refreshing = false;
 
-        if(pendingForcedRefresh){
+        if (pendingForcedRefresh) {
           pendingForcedRefresh = false;
           setTimeout(() => refresh(false, true), 0);
         }
       }
     }
 
-    function tick(){
+    /* ---------- Activity countdown ---------- */
+    function tick() {
       const nowMs = Date.now();
 
-      if(nowMs < START_MS){
+      if (nowMs < START_MS) {
         els.countdownText.textContent = `活动未开始：${RANGE_LABEL}`;
         els.progressBar.style.width = '0%';
+        if (els.progressBg) els.progressBg.setAttribute('aria-valuenow', '0');
         return;
       }
 
-      if(nowMs >= END_MS){
+      if (nowMs >= END_MS) {
         els.progressBar.style.width = '100%';
-        applyEndState();
+        if (els.progressBg) els.progressBg.setAttribute('aria-valuenow', '100');
+        applyPhaseUI('ended');
         return;
       }
 
       const diff = END_MS - nowMs;
-      const hours = Math.floor(diff/3.6e6);
-      const mins = Math.floor((diff%3.6e6)/6e4);
-      const secs = Math.floor((diff%6e4)/1e3);
+      const hours = Math.floor(diff / 3.6e6);
+      const mins  = Math.floor((diff % 3.6e6) / 6e4);
+      const secs  = Math.floor((diff % 6e4) / 1e3);
 
-      const txt = hours>0
+      const txt = hours > 0
         ? `${hours} 小时 ${mins} 分`
-        : (mins>0 ? `${mins} 分 ${secs} 秒` : `${(diff/1e3).toFixed(1)} 秒`);
+        : (mins > 0 ? `${mins} 分 ${secs} 秒` : `${(diff / 1e3).toFixed(1)} 秒`);
 
-      els.countdownText.textContent = `剩余时间：${txt}`;
-      els.progressBar.style.width = ((nowMs - START_MS) / (END_MS - START_MS) * 100).toFixed(2) + '%';
+      els.countdownText.textContent = `活动时间进度 — 剩余：${txt}`;
+      const pct = ((nowMs - START_MS) / (END_MS - START_MS) * 100).toFixed(2);
+      els.progressBar.style.width = pct + '%';
+      if (els.progressBg) els.progressBg.setAttribute('aria-valuenow', pct);
     }
 
-    function applyInterval(){
-      const sec = Math.max(+els.refreshSec.value||10,5);
-      refreshIntervalMs = sec * 1000;
-      if(!isEnded() && !isLocked()){
-        startAutoRefreshTimers();
-      }
-    }
-
-    function setProfitOnlyMode(on){
+    /* ---------- Profit-only mode ---------- */
+    function setProfitOnlyMode(on) {
       STATE.profitOnly = !!on;
       document.body.classList.toggle('profitOnlyMode', STATE.profitOnly);
       els.profitOnlyBtn.setAttribute('aria-pressed', STATE.profitOnly ? 'true' : 'false');
-      els.profitOnlyBtn.textContent = STATE.profitOnly ? '👁 只看利润：开' : '👁 只看利润：关';
+      els.profitOnlyBtn.textContent = STATE.profitOnly ? '只看利润：开' : '只看利润：关';
       localStorage.setItem('profitOnlyMode', STATE.profitOnly ? '1' : '0');
     }
 
-    els.tokenPrice.addEventListener('input', ()=>{
+    /* ---------- Event handlers ---------- */
+    els.tokenPrice.addEventListener('input', () => {
       els.tokenPrice.dataset.userEdited = '1';
       render();
     });
 
-    els.userAmount.addEventListener('input', ()=>{
+    els.userAmount.addEventListener('input', () => {
       let v = +els.userAmount.value || 0;
-      if(v > CONFIG.MAX_PER_USER_BNB){
+      if (v > CONFIG.MAX_PER_USER_BNB) {
         v = CONFIG.MAX_PER_USER_BNB;
         els.userAmount.value = v.toFixed(2);
       }
       render();
     });
 
-    els.refreshSec.addEventListener('change', applyInterval);
-
-    els.refreshBtn.addEventListener('click', async ()=>{
+    els.refreshBtn.addEventListener('click', async () => {
       await refresh(true);
-      startAutoRefreshTimers();
+      startTimers();
     });
 
-    els.profitOnlyBtn.addEventListener('click', ()=>{
+    els.resetPriceBtn.addEventListener('click', async () => {
+      delete els.tokenPrice.dataset.userEdited;
+      await updatePriceDisplay();
+      render();
+    });
+
+    els.profitOnlyBtn.addEventListener('click', () => {
       setProfitOnlyMode(!STATE.profitOnly);
-      if(STATE.profitOnly && !els.resultBox.hidden){
-        els.resultBox.scrollIntoView({ behavior:'smooth', block:'center' });
+      if (STATE.profitOnly && !els.resultBox.hidden) {
+        els.resultBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     });
 
-    document.addEventListener('visibilitychange', ()=>{
-      if(document.hidden){
-        stopAutoRefreshTimers();
-      }else{
-        startAutoRefreshTimers();
+    els.tutorialsToggle.addEventListener('click', () => {
+      const expanded = els.tutorialsToggle.getAttribute('aria-expanded') === 'true';
+      els.tutorialsToggle.setAttribute('aria-expanded', !expanded);
+      els.tutorialsPanel.classList.toggle('open', !expanded);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopAllTimers();
+      } else {
+        startTimers();
       }
     });
 
-    window.addEventListener('load', async ()=>{
+    /* ---------- Init ---------- */
+    window.addEventListener('load', async () => {
       const saved = localStorage.getItem('profitOnlyMode') === '1';
       setProfitOnlyMode(saved);
 
       const addr = els.targetAddress.value;
-      if(els.contractLink){
+      if (els.contractLink) {
         els.contractLink.href = `https://bscscan.com/address/${addr}`;
         els.contractLink.textContent = addr;
       }
 
-      if(isLocked() || isEnded()){
+      const phase = getPhase();
+
+      if (phase === 'locked' || phase === 'ended') {
         loadCachedDepIfAny();
+        if (!latestDep) loadFinalSnapshot();
         render(latestDep);
-      }else{
+        applyPhaseUI(phase);
+      } else {
         await updatePriceDisplay();
-        startAutoRefreshTimers();
+        startTimers();
         await refresh(false);
       }
 
-      setInterval(tick, 500);
-
-      setInterval(()=>{
-        if(!isEnded() && !isLocked()) updatePriceDisplay();
-      }, CONFIG.PRICE_DISPLAY_REFRESH_MS);
+      // Single 1s UI tick for countdown + auto-refresh display
+      if (!uiTickId) {
+        uiTick();
+        uiTickId = setInterval(uiTick, 1000);
+      }
     });
   </script>
 </body>

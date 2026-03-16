@@ -26,7 +26,7 @@
       --shadow:0 4px 24px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
     }
     @media(prefers-color-scheme:dark){
-      :root{
+      :root:not([data-theme="light"]){
         --c-bg:#0f1117;
         --c-card:#1a1d2e;
         --c-card2:#222640;
@@ -43,6 +43,23 @@
         --c-refund:#38bdf8;
         --shadow:0 4px 24px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.2);
       }
+    }
+    [data-theme="dark"]{
+      --c-bg:#0f1117;
+      --c-card:#1a1d2e;
+      --c-card2:#222640;
+      --c-text:#e8eaed;
+      --c-sub:#8b92a5;
+      --c-border:#2d3148;
+      --c-primary:#4d8eff;
+      --c-primary-light:rgba(77,142,255,.12);
+      --c-primary-dark:#6ea0ff;
+      --c-success:#34d399;
+      --c-success-bg:rgba(52,211,153,.1);
+      --c-error:#f87171;
+      --c-error-bg:rgba(248,113,113,.08);
+      --c-refund:#38bdf8;
+      --shadow:0 4px 24px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.2);
     }
     *{box-sizing:border-box;margin:0;padding:0}
     body{
@@ -164,9 +181,22 @@
       background:var(--c-error);color:#fff;font-size:13px
     }
 
-    .footer{margin-top:24px;text-align:center;font-size:13px;color:var(--c-sub);padding-bottom:20px}
+    .footer{
+      margin-top:24px;text-align:center;font-size:13px;color:var(--c-sub);padding-bottom:20px;
+      display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap
+    }
     .footer a{color:var(--c-primary);text-decoration:none;font-weight:500}
     .footer a:hover{text-decoration:underline}
+    .footer-pill{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:8px 16px;border-radius:999px;font-size:13px;font-weight:600;
+      border:1.5px solid var(--c-border);background:var(--c-card);color:var(--c-text);
+      text-decoration:none;cursor:pointer;transition:border-color .2s,background .2s;
+      white-space:nowrap
+    }
+    .footer-pill:hover{border-color:var(--c-primary);background:var(--c-primary-light)}
+    .footer-pill svg{width:16px;height:16px;flex-shrink:0}
+    button.footer-pill{box-shadow:none;width:auto;margin-top:0}
 
     .priceBox{display:flex;gap:10px;align-items:stretch;margin-top:14px}
     .priceItem{
@@ -322,7 +352,7 @@
   <div class="container">
     <div id="errBanner" class="error-banner" role="alert"></div>
 
-    <h2>币安 Web3 钱包 第七期 Prime Sale Pre-TGE （KAT）</h2>
+    <h2 data-i18n="title">币安 Web3 钱包 第七期 Prime Sale Pre-TGE （KAT）</h2>
 
     <div class="subline">合约：<a id="contractLink" href="#" target="_blank" rel="noopener noreferrer">—</a></div>
 
@@ -330,19 +360,19 @@
 
     <!-- ===== First Screen: Input + Core Result + Status ===== -->
 
-    <label for="userAmount">投入 BNB <span class="note">单人上限 3 BNB</span></label>
+    <label for="userAmount"><span data-i18n="label.invest">投入 BNB</span> <span class="note" data-i18n="label.investNote">单人上限 3 BNB</span></label>
     <input id="userAmount" type="number" step="0.01" value="3" min="0" max="3" inputmode="decimal" />
 
-    <label for="tokenPrice">参考价格 (USDT)<span class="note">默认拉取接口价格（可手动修改）</span></label>
+    <label for="tokenPrice"><span data-i18n="label.price">参考价格 (USDT)</span><span class="note" data-i18n="label.priceNote">默认拉取接口价格（可手动修改）</span></label>
     <div class="row" style="align-items:center;gap:8px">
       <div class="col">
         <input id="tokenPrice" type="number" step="0.000001" value="0.016950" min="0" inputmode="decimal" />
       </div>
-      <button type="button" class="linkBtn" id="resetPriceBtn" style="flex:0 0 auto;margin-top:0">恢复默认价</button>
+      <button type="button" class="linkBtn" id="resetPriceBtn" style="flex:0 0 auto;margin-top:0" data-i18n="btn.resetPrice">恢复默认价</button>
     </div>
 
     <div id="saleSection">
-      <label for="airdropUSD">预计出售总额 (USDT)<span class="note">（根据参考价推算）</span></label>
+      <label for="airdropUSD"><span data-i18n="label.totalSale">预计出售总额 (USDT)</span><span class="note" data-i18n="label.totalSaleNote">（根据参考价推算）</span></label>
       <input id="airdropUSD" type="number" step="1" value="1695000" readonly />
       <div class="note" id="airdropFmt">—</div>
     </div>
@@ -350,21 +380,21 @@
     <div class="priceBox" id="priceBox">
       <div class="priceItem">
         <div class="v" id="bnbPriceV">—</div>
-        <div class="t">当前 BNB 价格（USDT）</div>
+        <div class="t" data-i18n="price.bnb">当前 BNB 价格（USDT）</div>
       </div>
       <div class="priceItem">
         <div class="v" id="labPriceV">—</div>
-        <div class="t">KAT 参考价格 · <a href="https://www.binance.com/zh-CN/futures/KATUSDT" target="_blank" rel="noopener noreferrer" style="color:var(--c-primary);text-decoration:none;font-weight:500">价格参考币安合约</a></div>
+        <div class="t"><span data-i18n="price.token">KAT 参考价格</span> · <a href="https://www.binance.com/zh-CN/futures/KATUSDT" target="_blank" rel="noopener noreferrer" style="color:var(--c-primary);text-decoration:none;font-weight:500" data-i18n="price.tokenLink">价格参考币安合约</a></div>
       </div>
     </div>
 
     <div class="countdownAuto" id="autoRefreshCountdown" aria-live="polite">下次自动刷新：— 秒</div>
 
-    <button type="button" id="refreshBtn">手动刷新</button>
+    <button type="button" id="refreshBtn" data-i18n="btn.refresh">手动刷新</button>
 
     <div class="viewRow">
       <button id="profitOnlyBtn" class="miniBtn" type="button" aria-pressed="false">只看利润：关</button>
-      <div class="miniHint">（再次点击恢复全部）</div>
+      <div class="miniHint" data-i18n="hint.profitToggle">（再次点击恢复全部）</div>
     </div>
 
     <div class="updateHint" id="lastUpdateHint">—</div>
@@ -385,77 +415,84 @@
     <!-- Core Result -->
     <div class="result" id="resultBox" hidden aria-live="polite">
       <div class="result-header">
-        <p>已募集 BNB：<span class="highlight" id="bnbBalance">—</span></p>
-        <p>目标：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
-        <p>超募倍数：<span class="highlight" id="multiplier">—</span></p>
-        <p>出售：100,000,000 KAT</p>
+        <p><span data-i18n="result.raised">已募集 BNB</span>：<span class="highlight" id="bnbBalance">—</span></p>
+        <p><span data-i18n="result.target">目标</span>：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
+        <p><span data-i18n="result.multiplier">超募倍数</span>：<span class="highlight" id="multiplier">—</span></p>
+        <p><span data-i18n="result.sale">出售：100,000,000 KAT</span></p>
       </div>
       <div class="result-body">
         <p>
-          投入 <span class="highlight" id="userInput">—</span> BNB（占比 <span class="highlight" id="percent">—</span>%）<br>
-          可获得 <span class="success" id="tokenAmt">—</span> 枚 KAT ≈ <span class="success" id="usdValue">—</span>
+          <span data-i18n="result.invest">投入</span> <span class="highlight" id="userInput">—</span> BNB（<span data-i18n="result.share">占比</span> <span class="highlight" id="percent">—</span>%）<br>
+          <span data-i18n="result.receive">可获得</span> <span class="success" id="tokenAmt">—</span> <span data-i18n="result.tokens">枚 KAT</span> ≈ <span class="success" id="usdValue">—</span>
         </p>
-        <p>实际扣款：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
-        <p>退回：<span class="refund" id="refundBNB">—</span> BNB</p>
+        <p><span data-i18n="result.deducted">实际扣款</span>：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
+        <p><span data-i18n="result.refund">退回</span>：<span class="refund" id="refundBNB">—</span> BNB</p>
 
         <div class="profit-card" id="profitCard">
-          <div class="profit-label">预估利润</div>
+          <div class="profit-label" data-i18n="result.profit">预估利润</div>
           <p class="profitLine"><span class="profit-value" id="profitUSD">—</span></p>
         </div>
       </div>
     </div>
 
-    <div class="ended-banner" id="endedMsg">活动已结束，数据已锁定。</div>
+    <div class="ended-banner" id="endedMsg" data-i18n="status.ended">活动已结束，数据已锁定。</div>
 
     <!-- ===== Second Screen: Tutorials, Invite, Resources ===== -->
     <div class="second-screen">
-      <div class="second-screen-title">更多资源</div>
+
 
       <button type="button" class="tutorials-toggle" id="tutorialsToggle" aria-expanded="false" aria-controls="tutorialsPanel">
-        <span>借 BNB 教程</span>
+        <span data-i18n="tutorial.title">借 BNB 教程</span>
         <span class="arrow" aria-hidden="true">▼</span>
       </button>
       <div class="tutorials-panel" id="tutorialsPanel" role="region">
         <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1929136552757830056" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
           <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
-          <span>链上借BNB教程</span>
+          <span data-i18n="tutorial.onchain">链上借BNB教程</span>
         </a>
         <a class="tutorial-link" href="https://x.com/0xXIAOc/status/1977584958295392288" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
           <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
-          <span>交易所借BNB教程</span>
+          <span data-i18n="tutorial.exchange">交易所借BNB教程</span>
         </a>
         <a class="tutorial-link" href="https://x.com/0xXIAOc/status/2001254000516346195?s=20" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
           <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
-          <span>币安钱包借BNB教程</span>
+          <span data-i18n="tutorial.wallet">币安钱包借BNB教程</span>
         </a>
       </div>
 
       <div class="hintBanner">
         <span class="hintMsg">
-          22点结束后，未被用于认购的BNB可以退回，获得的代币18号在交易所直接交易。
+          <span data-i18n="hint.banner">22点结束后，未被用于认购的BNB可以退回，获得的代币18号在交易所直接交易。</span>
         </span>
       </div>
 
       <div class="referral-card">
         <div class="referral-text">
-          <div class="referral-headline">币安钱包绑定邀请码 享手续费优惠 30%（全网最高）</div>
-          <div class="referral-sub">1分钟完成 · 仅绑定邀请码</div>
+          <div class="referral-headline" data-i18n="referral.headline">币安钱包绑定邀请码 享手续费优惠 30%（全网最高）</div>
+          <div class="referral-sub" data-i18n="referral.sub">10秒完成绑定</div>
         </div>
+        <a class="referral-cta" href="https://web3.binance.com/zh-CN/referral?ref=XIAOCC" target="_blank" rel="noopener noreferrer">
+          <span data-i18n="referral.cta">点击前往绑定</span>
+        </a>
         <div class="referral-code-box">
           <span class="referral-code-value">XIAOCC</span>
           <button type="button" class="referral-copy-btn" id="copyCodeBtn">复制</button>
         </div>
-        <a class="referral-cta" href="https://web3.binance.com/zh-CN/referral?ref=XIAOCC" target="_blank" rel="noopener noreferrer">
-          点击一键绑定
-        </a>
       </div>
     </div>
   </div>
 
   <div class="footer">
-    作者：<a href="https://x.com/0xXIAOc" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">@0xXIAOc</a>
-    &nbsp;|&nbsp;
-    <a href="https://t.me/xiaoccaac" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">加入Alpha交流群</a>
+    <a class="footer-pill" href="https://x.com/0xXIAOc" target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      @0xXIAOc
+    </a>
+    <a class="footer-pill" href="https://t.me/xiaoccaac" target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0h-.056zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+      <span data-i18n="footer.telegram">加入交流群</span>
+    </a>
+    <button type="button" class="footer-pill" id="langToggle">EN</button>
+    <button type="button" class="footer-pill" id="darkToggle" aria-label="Toggle dark mode">🌙</button>
   </div>
 
   <script>
@@ -624,13 +661,13 @@
         const res = await fetch(url, { ...options, signal: controller.signal, cache: 'no-store' });
         if (!res.ok) {
           const msg = res.status === 429
-            ? '请求过于频繁（429），请稍后重试'
+            ? t('err.429')
             : `HTTP ${res.status}`;
           throw new Error(msg);
         }
         return await res.json();
       } catch (e) {
-        if (e.name === 'AbortError') throw new Error('请求超时，请稍后重试或更换节点');
+        if (e.name === 'AbortError') throw new Error(t('err.timeout'));
         throw e;
       } finally {
         clearTimeout(t);
@@ -642,7 +679,11 @@
       const tokenP = +els.tokenPrice.value || 0;
       const saleValue = (CONFIG.TOTAL_TOKENS || 0) * tokenP;
       els.airdropUSD.value = Math.round(saleValue);
-      els.airdropFmt.textContent = saleValue ? ('≈ ' + fmt(saleValue / 1e4) + ' 万 USDT') : '—';
+      if (currentLang === 'en') {
+        els.airdropFmt.textContent = saleValue ? t('airdropFmt', { v: fmt(saleValue / 1e6, 2) }) : '—';
+      } else {
+        els.airdropFmt.textContent = saleValue ? t('airdropFmt', { v: fmt(saleValue / 1e4) }) : '—';
+      }
     }
 
     function syncLabPriceDisplay() {
@@ -802,15 +843,15 @@
     function updateAutoRefreshDisplay() {
       const phase = getPhase();
       if (phase === 'locked' || phase === 'ended') {
-        els.autoRefreshCountdown.textContent = `数据已锁定：保持 ${LOCK_LABEL} 更新结果`;
+        els.autoRefreshCountdown.textContent = t('autoRefresh.locked', { time: LOCK_LABEL });
         return;
       }
       if (phase === 'before') {
-        els.autoRefreshCountdown.textContent = '活动开始后自动刷新';
+        els.autoRefreshCountdown.textContent = t('autoRefresh.before');
         return;
       }
       const s = Math.max(0, Math.ceil((nextRefreshAt - Date.now()) / 1000));
-      els.autoRefreshCountdown.textContent = `下次自动刷新：${s} 秒`;
+      els.autoRefreshCountdown.textContent = t('autoRefresh.next', { s });
     }
 
     function startTimers() {
@@ -847,11 +888,12 @@
     }
 
     /* ---------- Phase-based UI ---------- */
+    const PHASE_I18N = { before: 'status.before', live: 'status.live', locked: 'status.locked', ended: 'status.endedLabel' };
     const PHASE_CONFIG = {
-      before: { label: '未开始', cls: 'before' },
-      live:   { label: '进行中', cls: 'live' },
-      locked: { label: '已锁定', cls: 'locked' },
-      ended:  { label: '已结束', cls: 'ended' }
+      before: { cls: 'before' },
+      live:   { cls: 'live' },
+      locked: { cls: 'locked' },
+      ended:  { cls: 'ended' }
     };
 
     let appliedPhase = null;
@@ -864,7 +906,7 @@
       const cfg = PHASE_CONFIG[phase];
       if (els.statusBadge && cfg) {
         els.statusBadge.className = 'status-badge ' + cfg.cls;
-        els.statusLabel.textContent = cfg.label;
+        els.statusLabel.textContent = t(PHASE_I18N[phase]);
       }
 
       // Show progress bar only during live phase
@@ -874,7 +916,7 @@
 
       if (phase === 'locked' || phase === 'ended') {
         stopAllTimers();
-        els.autoRefreshCountdown.textContent = `数据已锁定：保持 ${LOCK_LABEL} 更新结果`;
+        els.autoRefreshCountdown.textContent = t('autoRefresh.locked', { time: LOCK_LABEL });
         els.refreshBtn.classList.add('muted');
         els.refreshBtn.disabled = true;
       }
@@ -894,7 +936,7 @@
         if (cached.t) {
           const dt = new Date(cached.t);
           if (!isNaN(dt.getTime()))
-            els.lastUpdateHint.textContent = '最后更新：' + dt.toLocaleTimeString('zh-CN', { hour12: false });
+            els.lastUpdateHint.textContent = t('lastUpdate', { time: dt.toLocaleTimeString('zh-CN', { hour12: false }) });
         }
       }
     }
@@ -903,7 +945,7 @@
       if (CONFIG.FINAL_SNAPSHOT && Number.isFinite(CONFIG.FINAL_SNAPSHOT.dep)) {
         latestDep = CONFIG.FINAL_SNAPSHOT.dep;
         if (CONFIG.FINAL_SNAPSHOT.updatedAt) {
-          els.lastUpdateHint.textContent = '最后更新：' + new Date(CONFIG.FINAL_SNAPSHOT.updatedAt).toLocaleTimeString('zh-CN', { hour12: false });
+          els.lastUpdateHint.textContent = t('lastUpdate', { time: new Date(CONFIG.FINAL_SNAPSHOT.updatedAt).toLocaleTimeString('zh-CN', { hour12: false }) });
         }
       }
     }
@@ -1009,10 +1051,10 @@
         const dep = await fetchBalance(els.targetAddress.value);
         saveDepCache(dep);
         render(dep);
-        els.lastUpdateHint.textContent = '最后更新：' + new Date().toLocaleTimeString('zh-CN', { hour12: false });
+        els.lastUpdateHint.textContent = t('lastUpdate', { time: new Date().toLocaleTimeString('zh-CN', { hour12: false }) });
       } catch (e) {
         if (manual) {
-          els.errBanner.textContent = e?.message || '网络错误';
+          els.errBanner.textContent = e?.message || t('err.network');
           els.errBanner.style.display = 'block';
         }
         console.debug('refresh error:', e);
@@ -1038,18 +1080,19 @@
         const h = Math.floor(diff / 3.6e6);
         const m = Math.floor((diff % 3.6e6) / 6e4);
         const s = Math.floor((diff % 6e4) / 1e3);
-        const txt = h > 0 ? `${h}时${m}分` : (m > 0 ? `${m}分${s}秒` : `${s}秒`);
-        els.statusCountdown.textContent = `${RANGE_LABEL} · 距开始 ${txt}`;
+        const th = t('time.h'), tm = t('time.m'), ts = t('time.s');
+        const txt = h > 0 ? `${h}${th}${m}${tm}` : (m > 0 ? `${m}${tm}${s}${ts}` : `${s}${ts}`);
+        els.statusCountdown.textContent = t('countdown.before', { range: RANGE_LABEL, time: txt });
         return;
       }
 
       if (phase === 'ended') {
-        els.statusCountdown.textContent = '活动已结束';
+        els.statusCountdown.textContent = t('countdown.ended');
         return;
       }
 
       if (phase === 'locked') {
-        els.statusCountdown.textContent = `数据已锁定，按 ${LOCK_LABEL} 快照计算`;
+        els.statusCountdown.textContent = t('countdown.locked', { time: LOCK_LABEL });
         return;
       }
 
@@ -1058,8 +1101,9 @@
       const h = Math.floor(diff / 3.6e6);
       const m = Math.floor((diff % 3.6e6) / 6e4);
       const s = Math.floor((diff % 6e4) / 1e3);
-      const txt = h > 0 ? `${h}时${m}分` : (m > 0 ? `${m}分${s}秒` : `${(diff / 1e3).toFixed(1)}秒`);
-      els.statusCountdown.textContent = `剩余 ${txt}`;
+      const th = t('time.h'), tm = t('time.m'), ts = t('time.s');
+      const txt = h > 0 ? `${h}${th}${m}${tm}` : (m > 0 ? `${m}${tm}${s}${ts}` : `${(diff / 1e3).toFixed(1)}${ts}`);
+      els.statusCountdown.textContent = t('countdown.remaining', { time: txt });
 
       const pct = ((nowMs - START_MS) / (END_MS - START_MS) * 100).toFixed(2);
       els.progressBar.style.width = pct + '%';
@@ -1071,7 +1115,7 @@
       STATE.profitOnly = !!on;
       document.body.classList.toggle('profitOnlyMode', STATE.profitOnly);
       els.profitOnlyBtn.setAttribute('aria-pressed', STATE.profitOnly ? 'true' : 'false');
-      els.profitOnlyBtn.textContent = STATE.profitOnly ? '只看利润：开' : '只看利润：关';
+      els.profitOnlyBtn.textContent = t(STATE.profitOnly ? 'profitOnly.on' : 'profitOnly.off');
       localStorage.setItem('profitOnlyMode', STATE.profitOnly ? '1' : '0');
     }
 
@@ -1118,12 +1162,18 @@
       const btn = $('copyCodeBtn');
       try {
         await navigator.clipboard.writeText('XIAOCC');
-        btn.textContent = '已复制';
-        setTimeout(() => { btn.textContent = '复制'; }, 1500);
+        btn.textContent = t('copy.done');
+        setTimeout(() => { btn.textContent = t('copy.btn'); }, 1500);
       } catch {
-        btn.textContent = '复制失败';
-        setTimeout(() => { btn.textContent = '复制'; }, 1500);
+        btn.textContent = t('copy.fail');
+        setTimeout(() => { btn.textContent = t('copy.btn'); }, 1500);
       }
+    });
+
+    $('darkToggle').addEventListener('click', toggleTheme);
+
+    $('langToggle').addEventListener('click', () => {
+      setLang(currentLang === 'zh' ? 'en' : 'zh');
     });
 
     document.addEventListener('visibilitychange', () => {
@@ -1134,10 +1184,209 @@
       }
     });
 
+    /* ---------- i18n ---------- */
+    const I18N = {
+      zh: {
+        'title': '币安 Web3 钱包 第七期 Prime Sale Pre-TGE （KAT）',
+        'label.invest': '投入 BNB',
+        'label.investNote': '单人上限 3 BNB',
+        'label.price': '参考价格 (USDT)',
+        'label.priceNote': '默认拉取接口价格（可手动修改）',
+        'btn.resetPrice': '恢复默认价',
+        'label.totalSale': '预计出售总额 (USDT)',
+        'label.totalSaleNote': '（根据参考价推算）',
+        'price.bnb': '当前 BNB 价格（USDT）',
+        'price.token': 'KAT 参考价格',
+        'price.tokenLink': '价格参考币安合约',
+        'btn.refresh': '手动刷新',
+        'hint.profitToggle': '（再次点击恢复全部）',
+        'result.raised': '已募集 BNB',
+        'result.target': '目标',
+        'result.multiplier': '超募倍数',
+        'result.sale': '出售：100,000,000 KAT',
+        'result.invest': '投入',
+        'result.share': '占比',
+        'result.receive': '可获得',
+        'result.tokens': '枚 KAT',
+        'result.deducted': '实际扣款',
+        'result.refund': '退回',
+        'result.profit': '预估利润',
+        'status.ended': '活动已结束，数据已锁定。',
+        'tutorial.title': '借 BNB 教程',
+        'tutorial.onchain': '链上借BNB教程',
+        'tutorial.exchange': '交易所借BNB教程',
+        'tutorial.wallet': '币安钱包借BNB教程',
+        'hint.banner': '22点结束后，未被用于认购的BNB可以退回，获得的代币18号在交易所直接交易。',
+        'referral.headline': '币安钱包绑定邀请码 享手续费优惠 30%（全网最高）',
+        'referral.sub': '10秒完成绑定',
+        'referral.cta': '点击前往绑定',
+        'footer.telegram': '加入交流群',
+        'profitOnly.on': '只看利润：开',
+        'profitOnly.off': '只看利润：关',
+        'autoRefresh.before': '活动开始后自动刷新',
+        'autoRefresh.locked': '数据已锁定：保持 {time} 更新结果',
+        'autoRefresh.next': '下次自动刷新：{s} 秒',
+        'status.loading': '加载中',
+        'status.before': '未开始',
+        'status.live': '进行中',
+        'status.locked': '已锁定',
+        'status.endedLabel': '已结束',
+        'countdown.before': '{range} · 距开始 {time}',
+        'countdown.ended': '活动已结束',
+        'countdown.locked': '数据已锁定，按 {time} 快照计算',
+        'countdown.remaining': '剩余 {time}',
+        'lastUpdate': '最后更新：{time}',
+        'copy.done': '已复制',
+        'copy.fail': '复制失败',
+        'copy.btn': '复制',
+        'airdropFmt': '≈ {v} 万 USDT',
+        'time.h': '时',
+        'time.m': '分',
+        'time.s': '秒',
+        'err.429': '请求过于频繁（429），请稍后重试',
+        'err.timeout': '请求超时，请稍后重试或更换节点',
+        'err.network': '网络错误'
+      },
+      en: {
+        'title': 'Binance Web3 Wallet Prime Sale Pre-TGE #7 (KAT)',
+        'label.invest': 'Invest BNB',
+        'label.investNote': 'Max 3 BNB per user',
+        'label.price': 'Ref. Price (USDT)',
+        'label.priceNote': 'Auto-fetched (editable)',
+        'btn.resetPrice': 'Reset Price',
+        'label.totalSale': 'Est. Total Sale (USDT)',
+        'label.totalSaleNote': '(based on ref. price)',
+        'price.bnb': 'Current BNB Price (USDT)',
+        'price.token': 'KAT Ref. Price',
+        'price.tokenLink': 'Binance Futures',
+        'btn.refresh': 'Refresh',
+        'hint.profitToggle': '(Click again to restore all)',
+        'result.raised': 'Raised BNB',
+        'result.target': 'Target',
+        'result.multiplier': 'Oversubscription',
+        'result.sale': 'Sale: 100,000,000 KAT',
+        'result.invest': 'Invest',
+        'result.share': 'Share',
+        'result.receive': 'Receive',
+        'result.tokens': 'KAT',
+        'result.deducted': 'Deducted',
+        'result.refund': 'Refund',
+        'result.profit': 'Est. Profit',
+        'status.ended': 'Event ended. Data locked.',
+        'tutorial.title': 'Borrow BNB Guide',
+        'tutorial.onchain': 'On-chain BNB Borrow Guide',
+        'tutorial.exchange': 'Exchange BNB Borrow Guide',
+        'tutorial.wallet': 'Binance Wallet BNB Borrow Guide',
+        'hint.banner': 'After 22:00, unused BNB for subscription will be refunded. Tokens available for trading on the 18th.',
+        'referral.headline': 'Binance Wallet Referral Code — 30% Fee Discount (Best Offer)',
+        'referral.sub': 'Bind in 10 seconds',
+        'referral.cta': 'Go to Bind',
+        'footer.telegram': 'Join Community',
+        'profitOnly.on': 'Profit Only: ON',
+        'profitOnly.off': 'Profit Only: OFF',
+        'autoRefresh.before': 'Auto-refresh after event starts',
+        'autoRefresh.locked': 'Data locked: snapshot at {time}',
+        'autoRefresh.next': 'Next refresh: {s}s',
+        'status.loading': 'Loading',
+        'status.before': 'Not Started',
+        'status.live': 'Live',
+        'status.locked': 'Locked',
+        'status.endedLabel': 'Ended',
+        'countdown.before': '{range} · Starts in {time}',
+        'countdown.ended': 'Event ended',
+        'countdown.locked': 'Data locked at {time} snapshot',
+        'countdown.remaining': '{time} left',
+        'lastUpdate': 'Last update: {time}',
+        'copy.done': 'Copied',
+        'copy.fail': 'Failed',
+        'copy.btn': 'Copy',
+        'airdropFmt': '≈ {v}M USDT',
+        'time.h': 'h',
+        'time.m': 'm',
+        'time.s': 's',
+        'err.429': 'Rate limited (429), please retry later',
+        'err.timeout': 'Request timed out, please retry',
+        'err.network': 'Network error'
+      }
+    };
+
+    let currentLang = localStorage.getItem('lang') || 'zh';
+
+    function t(key, params) {
+      const str = (I18N[currentLang] || I18N.zh)[key] || (I18N.zh)[key] || key;
+      if (!params) return str;
+      return str.replace(/\{(\w+)\}/g, (_, k) => params[k] ?? '');
+    }
+
+    function applyI18n() {
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        el.textContent = t(el.dataset.i18n);
+      });
+      document.documentElement.lang = currentLang === 'zh' ? 'zh' : 'en';
+      // Update lang toggle button text
+      const langBtn = $('langToggle');
+      if (langBtn) langBtn.textContent = currentLang === 'zh' ? 'EN' : '中文';
+      // Re-apply profit only button text
+      els.profitOnlyBtn.textContent = t(STATE.profitOnly ? 'profitOnly.on' : 'profitOnly.off');
+    }
+
+    function setLang(lang) {
+      currentLang = lang;
+      localStorage.setItem('lang', lang);
+      applyI18n();
+      // Re-render dynamic text
+      computePrice();
+      syncLabPriceDisplay();
+      tick();
+      updateAutoRefreshDisplay();
+    }
+
+    /* ---------- Dark mode ---------- */
+    function getDarkPref() {
+      const saved = localStorage.getItem('theme');
+      if (saved) return saved;
+      return 'auto';
+    }
+
+    function applyTheme(mode) {
+      const root = document.documentElement;
+      if (mode === 'dark') {
+        root.setAttribute('data-theme', 'dark');
+      } else if (mode === 'light') {
+        root.setAttribute('data-theme', 'light');
+      } else {
+        root.removeAttribute('data-theme');
+      }
+      const btn = $('darkToggle');
+      const isDark = mode === 'dark' || (mode === 'auto' && window.matchMedia('(prefers-color-scheme:dark)').matches);
+      if (btn) btn.textContent = isDark ? '☀️' : '🌙';
+    }
+
+    function toggleTheme() {
+      const current = getDarkPref();
+      let next;
+      if (current === 'auto') {
+        const systemDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+        next = systemDark ? 'light' : 'dark';
+      } else if (current === 'dark') {
+        next = 'light';
+      } else {
+        next = 'dark';
+      }
+      localStorage.setItem('theme', next);
+      applyTheme(next);
+    }
+
+    // Apply theme immediately
+    applyTheme(getDarkPref());
+
     /* ---------- Init ---------- */
     window.addEventListener('load', async () => {
       const saved = localStorage.getItem('profitOnlyMode') === '1';
       setProfitOnlyMode(saved);
+
+      // Apply i18n
+      applyI18n();
 
       const addr = els.targetAddress.value;
       if (els.contractLink) {

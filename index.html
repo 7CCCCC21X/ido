@@ -167,11 +167,6 @@
     .priceItem .v{font-weight:800;font-size:17px;letter-spacing:-.3px}
     .priceItem .t{font-size:11px;color:var(--c-sub);margin-top:6px;line-height:1.4}
 
-    .priceNote{
-      display:block;margin-top:4px;color:var(--c-sub);
-      font-size:11px;font-weight:400
-    }
-
     .linkBtn{
       display:inline;background:none;border:none;color:var(--c-primary);
       cursor:pointer;font-size:11px;font-weight:600;padding:0;margin:0;
@@ -231,25 +226,52 @@
       -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat
     }
 
+    .referral-card{
+      margin-top:14px;padding:20px;border-radius:var(--radius);
+      background:linear-gradient(135deg,#fff7ed,#fffbeb);
+      border:1.5px solid rgba(245,158,11,.35);
+      text-align:center
+    }
+    @media(prefers-color-scheme:dark){
+      .referral-card{background:linear-gradient(135deg,#2a2010,#1f1c14);border-color:rgba(245,158,11,.3)}
+    }
+    .referral-headline{
+      font-size:24px;font-weight:900;color:#d97706;
+      letter-spacing:-.5px;line-height:1.2;margin-bottom:4px
+    }
+    .referral-sub{font-size:13px;color:var(--c-sub);font-weight:500;margin-bottom:14px}
+    .referral-code-box{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:10px 20px;border-radius:10px;
+      background:rgba(245,158,11,.1);border:2px dashed rgba(217,119,6,.4);
+      margin-bottom:14px
+    }
+    .referral-code-label{font-size:12px;color:var(--c-sub);font-weight:500}
+    .referral-code-value{font-size:20px;font-weight:900;color:#d97706;letter-spacing:2px}
+    .referral-copy-btn{
+      width:auto;padding:4px 10px;font-size:11px;font-weight:600;
+      border-radius:6px;background:rgba(217,119,6,.15);color:#d97706;
+      border:1px solid rgba(217,119,6,.3);cursor:pointer;
+      margin-top:0;box-shadow:none;transition:background .15s
+    }
+    .referral-copy-btn:hover{background:rgba(217,119,6,.25);box-shadow:none}
+    .referral-cta{
+      display:inline-block;padding:12px 32px;font-size:15px;font-weight:700;
+      color:#fff;background:linear-gradient(135deg,#f59e0b,#d97706);
+      border-radius:999px;text-decoration:none;
+      box-shadow:0 4px 14px rgba(217,119,6,.3);
+      transition:transform .15s,box-shadow .15s
+    }
+    .referral-cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(217,119,6,.4)}
+    .referral-cta:active{transform:scale(.97)}
+    .referral-safety{font-size:11px;color:var(--c-sub);margin-top:10px;font-weight:400}
+
     .hintBanner{
       margin-top:14px;padding:12px 14px;border-radius:var(--radius);
       background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.4);
-      display:grid;grid-template-columns:minmax(0,1fr) auto;
-      align-items:center;column-gap:12px;width:100%
+      text-align:center
     }
-    .hintLeft{display:flex;align-items:flex-start;gap:6px;min-width:0}
-    .hintPrefix{color:var(--c-warn);font-weight:800;font-size:12px;white-space:nowrap;margin-top:1px}
     .hintMsg{color:var(--c-warn);font-weight:700;font-size:12px;line-height:1.4;word-break:break-word}
-    .hintRight{justify-self:end;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
-    .hintBtn{
-      color:var(--c-warn);font-weight:800;font-size:12px;text-decoration:none;
-      white-space:nowrap;padding:8px 14px;border-radius:999px;
-      border:1px solid rgba(245,158,11,.45);background:rgba(245,158,11,.08);
-      transition:background .15s
-    }
-    .hintBtn:hover{background:rgba(245,158,11,.16)}
-    .hintSub{text-align:right;font-size:12px;color:var(--c-sub);font-weight:600;line-height:1.35}
-    .hintCode{font-size:13px;font-weight:800;color:var(--c-warn)}
 
     .viewRow{margin-top:10px;display:flex;justify-content:flex-end;align-items:center;gap:10px}
     .miniBtn{
@@ -286,10 +308,8 @@
       .row{flex-direction:column;gap:0}
       .priceBox{flex-direction:column;gap:8px}
       .priceItem{padding:10px 12px}
-      .hintBanner{grid-template-columns:1fr;row-gap:10px}
-      .hintRight{align-items:stretch}
-      .hintBtn{width:100%;text-align:center}
-      .hintSub{text-align:center}
+      .referral-headline{font-size:20px}
+      .referral-code-value{font-size:17px}
       .result-header{grid-template-columns:1fr;gap:4px}
       .profit-card .profit-value{font-size:22px}
       .viewRow{justify-content:center}
@@ -333,10 +353,7 @@
       </div>
       <div class="priceItem">
         <div class="v" id="labPriceV">—</div>
-        <div class="t">
-          KAT 参考价格
-          <span class="priceNote">数据源近似按 USD/USDT 1:1 处理</span>
-        </div>
+        <div class="t">KAT 参考价格</div>
       </div>
     </div>
 
@@ -408,22 +425,26 @@
       </div>
 
       <div class="hintBanner">
-        <div class="hintLeft">
-          <span class="hintPrefix">提示：</span>
-          <span class="hintMsg">
-            22点结束后，未被用于认购的BNB可以退回，<br>
-            获得的代币18号在交易所直接交易。
-          </span>
-        </div>
-        <div class="hintRight">
-          <a class="hintBtn" href="https://web3.binance.com/zh-CN/referral?ref=XIAOCC" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
-            币安钱包绑定邀请码 手续费立减30%
-          </a>
-          <div class="hintSub">
-            点击上方一键绑定邀请码<br>
-            <span class="hintCode">邀请码：XIAOCC</span>
+        <span class="hintMsg">
+          22点结束后，未被用于认购的BNB可以退回，获得的代币18号在交易所直接交易。
+        </span>
+      </div>
+
+      <div class="referral-card">
+        <div class="referral-headline">手续费优惠 30%</div>
+        <div class="referral-sub">先绑定邀请码，再交易更划算</div>
+        <div class="referral-code-box">
+          <div>
+            <div class="referral-code-label">邀请码</div>
+            <div class="referral-code-value">XIAOCC</div>
           </div>
+          <button type="button" class="referral-copy-btn" id="copyCodeBtn">复制</button>
         </div>
+        <br>
+        <a class="referral-cta" href="https://web3.binance.com/zh-CN/referral?ref=XIAOCC" target="_blank" rel="noopener noreferrer">
+          立即绑定领取优惠
+        </a>
+        <div class="referral-safety">官方页面操作 | 1分钟完成 | 仅绑定邀请码，不涉及转账/额外授权</div>
       </div>
     </div>
   </div>
@@ -1057,6 +1078,18 @@
       const expanded = els.tutorialsToggle.getAttribute('aria-expanded') === 'true';
       els.tutorialsToggle.setAttribute('aria-expanded', !expanded);
       els.tutorialsPanel.classList.toggle('open', !expanded);
+    });
+
+    $('copyCodeBtn').addEventListener('click', async () => {
+      const btn = $('copyCodeBtn');
+      try {
+        await navigator.clipboard.writeText('XIAOCC');
+        btn.textContent = '已复制';
+        setTimeout(() => { btn.textContent = '复制'; }, 1500);
+      } catch {
+        btn.textContent = '复制失败';
+        setTimeout(() => { btn.textContent = '复制'; }, 1500);
+      }
     });
 
     document.addEventListener('visibilitychange', () => {

@@ -1,12 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>币安 Web3 钱包 第七期 Prime Sale Pre-TGE （KAT）</title>
+  <title>币安 Web3 钱包 第45期 独家TGE （PRL）</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <meta name="color-scheme" content="light dark" />
-  <style>
+  <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=aNz2jg__yAKM8fu9Rzi0a79Xhah6RuJGcZA8leTh5H9qhby3UA9URMHu9qoa_D3ASg_pNzeI6VGdpRhmODA8ZZDE69s7hzhqCXFDO4R6TwbS0X94MCetVrpts2DskoyMkZlzzGMMvBeHOE55LxRZF6nRdJbpA20zQ08YLjA7EnwbofTz3mI54ZPJ6JLM8klhjNJ6oeVtdHy3g4DAE6QVGYG72fqmqo_0VrpMHd9Nv3sIfcXcdkkvL3d7XndsRV6qPiJ5ArteKC7oiJChBC1tqg" charset="UTF-8"></script><style>
     :root{
       --c-bg:#f0f2f5;
       --c-card:#fff;
@@ -362,28 +361,28 @@
   <div class="container">
     <div id="errBanner" class="error-banner" role="alert"></div>
 
-    <h2 data-i18n="title">币安 Web3 钱包 第七期 Prime Sale Pre-TGE （KAT）</h2>
+    <h2 data-i18n="title">币安 Web3 钱包 第45期 独家TGE （PRL）</h2>
 
     <div class="subline">合约：<a id="contractLink" href="#" target="_blank" rel="noopener noreferrer">—</a></div>
 
-    <input id="targetAddress" type="hidden" value="0x832061a427c1441d48a069212c6104e3d52a8f79" />
+    <input id="targetAddress" type="hidden" value="0xd4b27c86228ec0a3286f0c93f73fa2e2832519a0" />
 
     <!-- ===== First Screen: Input + Core Result + Status ===== -->
 
     <label for="userAmount"><span data-i18n="label.invest">投入 BNB</span> <span class="note" data-i18n="label.investNote">单人上限 3 BNB</span></label>
     <input id="userAmount" type="number" step="0.01" value="3" min="0" max="3" inputmode="decimal" />
 
-    <label for="tokenPrice"><span data-i18n="label.price">参考价格 (USDT)</span><span class="note" data-i18n="label.priceNote">默认拉取接口价格（可手动修改）</span></label>
+    <label for="tokenPrice"><span data-i18n="label.price">参考价格 (USDT)</span><span class="note" data-i18n="label.priceNote">默认使用参考价（可手动修改）</span></label>
     <div class="row" style="align-items:center;gap:8px">
       <div class="col">
-        <input id="tokenPrice" type="number" step="0.000001" value="0.016950" min="0" inputmode="decimal" />
+        <input id="tokenPrice" type="number" step="0.000001" value="0.075000" min="0" inputmode="decimal" />
       </div>
       <button type="button" class="linkBtn" id="resetPriceBtn" style="flex:0 0 auto;margin-top:0" data-i18n="btn.resetPrice">恢复默认价</button>
     </div>
 
     <div id="saleSection">
       <label for="airdropUSD"><span data-i18n="label.totalSale">预计出售总额 (USDT)</span><span class="note" data-i18n="label.totalSaleNote">（根据参考价推算）</span></label>
-      <input id="airdropUSD" type="number" step="1" value="1695000" readonly />
+      <input id="airdropUSD" type="number" step="1" value="750000" readonly />
       <div class="note" id="airdropFmt">—</div>
     </div>
 
@@ -394,7 +393,7 @@
       </div>
       <div class="priceItem">
         <div class="v" id="labPriceV">—</div>
-        <div class="t"><a href="https://www.binance.com/zh-CN/futures/KATUSDT" target="_blank" rel="noopener noreferrer" style="color:var(--c-sub);text-decoration:none" data-i18n="price.token">KAT 参考价（来自币安合约）</a></div>
+        <div class="t"><span data-i18n="price.token">PRL 参考价（默认参考价）</span></div>
       </div>
     </div>
 
@@ -428,12 +427,12 @@
         <p><span data-i18n="result.raised">已募集 BNB</span>：<span class="highlight" id="bnbBalance">—</span></p>
         <p><span data-i18n="result.target">目标</span>：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
         <p><span data-i18n="result.multiplier">超募倍数</span>：<span class="highlight" id="multiplier">—</span></p>
-        <p><span data-i18n="result.sale">出售：100,000,000 KAT</span></p>
+        <p><span data-i18n="result.sale">出售：10,000,000 PRL</span></p>
       </div>
       <div class="result-body">
         <p>
           <span data-i18n="result.invest">投入</span> <span class="highlight" id="userInput">—</span> BNB（<span data-i18n="result.share">占比</span> <span class="highlight" id="percent">—</span>%）<br>
-          <span data-i18n="result.receive">可获得</span> <span class="success" id="tokenAmt">—</span> <span data-i18n="result.tokens">枚 KAT</span> ≈ <span class="success" id="usdValue">—</span>
+          <span data-i18n="result.receive">可获得</span> <span class="success" id="tokenAmt">—</span> <span data-i18n="result.tokens">枚 PRL</span> ≈ <span class="success" id="usdValue">—</span>
         </p>
         <p><span data-i18n="result.deducted">实际扣款</span>：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
         <p><span data-i18n="result.refund">退回</span>：<span class="refund" id="refundBNB">—</span> BNB</p>
@@ -452,7 +451,7 @@
 
 
       <button type="button" class="tutorials-toggle" id="tutorialsToggle" aria-expanded="false" aria-controls="tutorialsPanel">
-        <span data-i18n="tutorial.title">借 BNB 教程</span>
+        <span data-i18n="tutorial.title">相关教程</span>
         <span class="arrow" aria-hidden="true">▼</span>
       </button>
       <div class="tutorials-panel" id="tutorialsPanel" role="region">
@@ -468,11 +467,15 @@
           <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
           <span data-i18n="tutorial.wallet">币安钱包借BNB教程</span>
         </a>
+        <a class="tutorial-link" href="https://x.com/0xXIAOc/status/2036680144988127523?s=20" target="_blank" rel="noopener noreferrer" title="点击将跳转到网站">
+          <span class="ico" aria-hidden="true"><span class="ico-bulb"></span></span>
+          <span data-i18n="tutorial.approval">提前授权教程</span>
+        </a>
       </div>
 
       <div class="hintBanner">
         <span class="hintMsg">
-          <span data-i18n="hint.banner">22点结束后，未被用于认购的BNB可以退回，获得的代币18号在交易所直接交易。</span>
+          <span data-i18n="hint.banner">18点结束后，未被用于认购的BNB可以退回，获得的代币可以直接交易。</span>
         </span>
       </div>
 
@@ -507,13 +510,13 @@
 
   <script>
     const CONFIG = {
-      SYMBOL: 'KAT',
-      TOTAL_TARGET_BNB: 1368.155422,
-      TOTAL_TOKENS: 100_000_000,
+      SYMBOL: 'PRL',
+      TOTAL_TARGET_BNB: 159.59,
+      TOTAL_TOKENS: 10_000_000,
       MAX_PER_USER_BNB: 3,
 
-      START_TIME: new Date('2026-03-16T20:00:00+08:00'),
-      END_TIME: new Date('2026-03-16T22:00:00+08:00'),
+      START_TIME: new Date('2026-03-25T16:00:00+08:00'),
+      END_TIME: new Date('2026-03-25T18:00:00+08:00'),
 
       PRICE_CACHE_MS: 60_000,
       REFRESH_INTERVAL_SEC: 5,
@@ -525,7 +528,8 @@
         'https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD'
       ],
 
-      TOKEN_PRICE_API: 'https://fapi.binance.com/fapi/v2/ticker/price?symbol=KATUSDT',
+      DEFAULT_TOKEN_PRICE: 0.075,
+      TOKEN_PRICE_API: '',
 
       RPC_NODES: [
         'https://bsc-dataseed.binance.org/',
@@ -538,7 +542,7 @@
 
       // Fallback snapshot for new visitors after activity ends (update after event)
       FINAL_SNAPSHOT: null
-      // Example: { dep: 1234.5678, updatedAt: '2026-03-16T21:59:00+08:00' }
+      // Example: { dep: 123.4567, updatedAt: '2026-03-25T17:59:00+08:00' }
     };
 
     /* ---------- DOM refs ---------- */
@@ -665,7 +669,7 @@
     /* ---------- Network helpers ---------- */
     async function fetchJSON(url, options = {}, timeoutMs = 8000) {
       const controller = new AbortController();
-      const t = setTimeout(() => controller.abort(), timeoutMs);
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
       try {
         const res = await fetch(url, { ...options, signal: controller.signal, cache: 'no-store' });
@@ -680,7 +684,7 @@
         if (e.name === 'AbortError') throw new Error(t('err.timeout'));
         throw e;
       } finally {
-        clearTimeout(t);
+        clearTimeout(timeoutId);
       }
     }
 
@@ -719,11 +723,11 @@
     }
 
     async function getTokenPrice() {
-      if (!CONFIG.TOKEN_PRICE_API) return 0;
-
       const key = cacheKey('tokP');
       const cached = cacheGet(key, CONFIG.PRICE_CACHE_MS);
       if (cached) return cached.v;
+
+      if (!CONFIG.TOKEN_PRICE_API) return CONFIG.DEFAULT_TOKEN_PRICE || 0;
 
       try {
         const d = await fetchJSON(CONFIG.TOKEN_PRICE_API, {}, 7000);
@@ -732,7 +736,7 @@
       } catch (e) {
         console.debug('getTokenPrice error:', e.message);
       }
-      return 0;
+      return CONFIG.DEFAULT_TOKEN_PRICE || 0;
     }
 
     async function updatePriceDisplay() {
@@ -1197,35 +1201,36 @@
     /* ---------- i18n ---------- */
     const I18N = {
       zh: {
-        'title': '币安 Web3 钱包 第七期 Prime Sale Pre-TGE （KAT）',
+        'title': '币安 Web3 钱包 第45期 独家TGE （PRL）',
         'label.invest': '投入 BNB',
         'label.investNote': '单人上限 3 BNB',
         'label.price': '参考价格 (USDT)',
-        'label.priceNote': '默认拉取接口价格（可手动修改）',
+        'label.priceNote': '默认使用参考价（可手动修改）',
         'btn.resetPrice': '恢复默认价',
         'label.totalSale': '预计出售总额 (USDT)',
         'label.totalSaleNote': '（根据参考价推算）',
         'price.bnb': '当前 BNB 价格（USDT）',
-        'price.token': 'KAT 参考价（来自币安合约）',
+        'price.token': 'PRL 参考价（默认参考价）',
         'btn.refresh': '手动刷新',
         'hint.profitToggle': '（再次点击恢复全部）',
         'result.raised': '已募集 BNB',
         'result.target': '目标',
         'result.multiplier': '超募倍数',
-        'result.sale': '出售：100,000,000 KAT',
+        'result.sale': '出售：10,000,000 PRL',
         'result.invest': '投入',
         'result.share': '占比',
         'result.receive': '可获得',
-        'result.tokens': '枚 KAT',
+        'result.tokens': '枚 PRL',
         'result.deducted': '实际扣款',
         'result.refund': '退回',
         'result.profit': '预估利润',
         'status.ended': '活动已结束，数据已锁定。',
-        'tutorial.title': '借 BNB 教程',
+        'tutorial.title': '相关教程',
         'tutorial.onchain': '链上借BNB教程',
         'tutorial.exchange': '交易所借BNB教程',
         'tutorial.wallet': '币安钱包借BNB教程',
-        'hint.banner': '22点结束后，未被用于认购的BNB可以退回，获得的代币18号在交易所直接交易。',
+        'tutorial.approval': '提前授权教程',
+        'hint.banner': '18点结束后，未被用于认购的BNB可以退回，获得的代币可以直接交易。',
         'referral.headline': '币安钱包绑定邀请码 享手续费优惠 30%（全网最高）',
         'referral.sub': '10秒完成绑定',
         'referral.cta': '点击前往绑定',
@@ -1257,35 +1262,36 @@
         'err.network': '网络错误'
       },
       en: {
-        'title': 'Binance Web3 Wallet Prime Sale Pre-TGE #7 (KAT)',
+        'title': 'Binance Web3 Wallet Exclusive TGE #45 (PRL)',
         'label.invest': 'Invest BNB',
         'label.investNote': 'Max 3 BNB per user',
         'label.price': 'Ref. Price (USDT)',
-        'label.priceNote': 'Auto-fetched (editable)',
+        'label.priceNote': 'Default reference price (editable)',
         'btn.resetPrice': 'Reset Price',
         'label.totalSale': 'Est. Total Sale (USDT)',
         'label.totalSaleNote': '(based on ref. price)',
         'price.bnb': 'Current BNB Price (USDT)',
-        'price.token': 'KAT Ref. Price (Binance Futures)',
+        'price.token': 'PRL Ref. Price (Default)',
         'btn.refresh': 'Refresh',
         'hint.profitToggle': '(Click again to restore all)',
         'result.raised': 'Raised BNB',
         'result.target': 'Target',
         'result.multiplier': 'Oversubscription',
-        'result.sale': 'Sale: 100,000,000 KAT',
+        'result.sale': 'Sale: 10,000,000 PRL',
         'result.invest': 'Invest',
         'result.share': 'Share',
         'result.receive': 'Receive',
-        'result.tokens': 'KAT',
+        'result.tokens': 'PRL',
         'result.deducted': 'Deducted',
         'result.refund': 'Refund',
         'result.profit': 'Est. Profit',
         'status.ended': 'Event ended. Data locked.',
-        'tutorial.title': 'Borrow BNB Guide',
+        'tutorial.title': 'Guides',
         'tutorial.onchain': 'On-chain BNB Borrow Guide',
         'tutorial.exchange': 'Exchange BNB Borrow Guide',
         'tutorial.wallet': 'Binance Wallet BNB Borrow Guide',
-        'hint.banner': 'After 22:00, unused BNB for subscription will be refunded. Tokens available for trading on the 18th.',
+        'tutorial.approval': 'Advance Approval Guide',
+        'hint.banner': 'After 18:00, unused BNB for subscription will be refunded. Tokens can be traded directly.',
         'referral.headline': 'Binance Wallet Referral Code — 30% Fee Discount (Best Offer)',
         'referral.sub': 'Bind in 10 seconds',
         'referral.cta': 'Go to Bind',

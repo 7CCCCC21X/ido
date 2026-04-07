@@ -366,12 +366,9 @@
     <div class="subline">
       合约：
       <a id="contractLink" href="#" target="_blank" rel="noopener noreferrer">—</a>
-      /
-      <a id="backupContractLink" href="#" target="_blank" rel="noopener noreferrer">—</a>
     </div>
 
     <input id="targetAddress" type="hidden" value="0x8343179c139f2de6059fa85a9ce5876d1dbff5b1" />
-    <input id="backupAddress" type="hidden" value="0x3d435433E2cE6Fc595D434f199A3A4d3D346aa59" />
 
     <!-- ===== First Screen: Input + Core Result + Status ===== -->
 
@@ -581,7 +578,6 @@
       progressBg: $('progressBg'),
       errBanner: $('errBanner'),
       targetAddress: $('targetAddress'),
-      backupAddress: $('backupAddress'),
       targetBNBShow: $('targetBNBShow'),
 
       bnbPriceV: $('bnbPriceV'),
@@ -589,7 +585,6 @@
       autoRefreshCountdown: $('autoRefreshCountdown'),
       endedMsg: $('endedMsg'),
       contractLink: $('contractLink'),
-      backupContractLink: $('backupContractLink'),
 
       profitOnlyBtn: $('profitOnlyBtn'),
       tutorialsToggle: $('tutorialsToggle'),
@@ -623,7 +618,7 @@
 
     function getTargetAddresses() {
       const seen = new Set();
-      return [els.targetAddress?.value, els.backupAddress?.value]
+      return [els.targetAddress?.value]
         .map(v => (v || '').trim())
         .filter(addr => {
           if (!addr) return false;
@@ -1427,14 +1422,10 @@
       // Apply i18n
       applyI18n();
 
-      const [primaryAddr = '', backupAddr = ''] = getTargetAddresses();
+      const [primaryAddr = ''] = getTargetAddresses();
       if (els.contractLink && primaryAddr) {
         els.contractLink.href = `https://bscscan.com/address/${primaryAddr}`;
         els.contractLink.textContent = primaryAddr;
-      }
-      if (els.backupContractLink && backupAddr) {
-        els.backupContractLink.href = `https://bscscan.com/address/${backupAddr}`;
-        els.backupContractLink.textContent = `${backupAddr}（备用）`;
       }
 
       await updatePriceDisplay();

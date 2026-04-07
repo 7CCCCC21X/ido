@@ -455,7 +455,7 @@
 
     <!-- Snapshot export panel (shown at lock time for admin to copy) -->
     <div id="snapshotPanel" style="display:none; margin:12px auto; max-width:460px; padding:12px 16px; background:var(--card-bg,#1e1e2e); border:1px solid #f5a623; border-radius:10px; font-size:13px;">
-      <div style="color:#f5a623; font-weight:600; margin-bottom:6px;" id="snapshotTitle">📋 快照数据（自动保存中…）</div>
+      <div style="color:#f5a623; font-weight:600; margin-bottom:6px;">📋 快照数据（复制后粘贴到 snapshot.json，push 即可永久保留）</div>
       <textarea id="snapshotText" readonly style="width:100%; height:60px; background:var(--bg,#0d0d1a); color:var(--fg,#e0e0e0); border:1px solid #333; border-radius:6px; padding:8px; font-family:monospace; font-size:12px; resize:vertical;"></textarea>
       <button type="button" id="copySnapshotBtn" style="margin-top:6px; padding:6px 16px; background:#f5a623; color:#000; border:none; border-radius:6px; cursor:pointer; font-size:13px; font-weight:600;">复制快照</button>
       <span id="copySnapshotHint" style="margin-left:8px; color:#4caf50; font-size:12px; display:none;">✓ 已复制</span>
@@ -932,7 +932,7 @@
 
       finalRefreshTimerId = setTimeout(async () => {
         await refresh(false, true);
-        autoSaveSnapshot(latestDep);
+        showSnapshotPanel(latestDep);
         applyPhaseUI('locked');
       }, LOCK_MS - now);
     }
@@ -1015,70 +1015,29 @@
 
     function saveDepCache(dep) { cacheSet(cacheKey('dep'), dep); }
 
-    /* ---------- Snapshot auto-save ---------- */
-    let snapshotSaved = false;
-
-    function buildSnapshot(dep) {
+    /* ---------- Snapshot export (manual) ---------- */
+    function showSnapshotPanel(dep) {
+      if (!els.snapshotPanel || CONFIG.FINAL_SNAPSHOT) return;
       const now = new Date();
       const bj = new Date(now.getTime() + (now.getTimezoneOffset() + 480) * 60000);
       const pad = n => String(n).padStart(2, '0');
-      return {
+      const snapshot = {
         dep: Math.round(dep * 10000) / 10000,
         updatedAt: `${bj.getFullYear()}-${pad(bj.getMonth()+1)}-${pad(bj.getDate())}T${pad(bj.getHours())}:${pad(bj.getMinutes())}:${pad(bj.getSeconds())}+08:00`
       };
+      els.snapshotText.value = JSON.stringify(snapshot, null, 2);
+      els.snapshotPanel.style.display = 'block';
     }
 
-    async function autoSaveSnapshot(dep) {
-      if (snapshotSaved || CONFIG.FINAL_SNAPSHOT) return;
-      snapshotSaved = true;
-
-      const snapshot = buildSnapshot(dep);
-
-      // Show panel as fallback / status indicator
-      if (els.snapshotPanel) {
-        els.snapshotText.value = JSON.stringify(snapshot, null, 2);
-        els.snapshotPanel.style.display = 'block';
-      }
-
-      // Auto-commit via serverless function
-      try {
-        const res = await fetch('/api/save-snapshot', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(snapshot)
-        });
-        if (res.ok) {
-          CONFIG.FINAL_SNAPSHOT = snapshot;
-          const title = document.getElementById('snapshotTitle');
-          if (title) title.textContent = '✅ 快照已自动保存到 GitHub，Vercel 将自动重新部署';
-          if (els.copySnapshotHint) {
-            els.copySnapshotHint.textContent = '✓ 已自动保存';
-            els.copySnapshotHint.style.display = 'inline';
-          }
-          console.log('Snapshot auto-saved:', snapshot);
-        } else {
-          const title = document.getElementById('snapshotTitle');
-          if (title) title.textContent = '⚠️ 自动保存失败，请手动复制下方数据到 snapshot.json';
-          console.warn('Auto-save failed, status:', res.status);
-        }
-      } catch (e) {
-        const title = document.getElementById('snapshotTitle');
-        if (title) title.textContent = '⚠️ 自动保存失败，请手动复制下方数据到 snapshot.json';
-        console.warn('Auto-save request failed:', e);
-      }
-    }
-
-    // Copy button (manual fallback)
+    // Copy button
     if (els.copySnapshotBtn) {
       els.copySnapshotBtn.addEventListener('click', () => {
         els.snapshotText.select();
         navigator.clipboard.writeText(els.snapshotText.value).then(() => {
-          els.copySnapshotHint.textContent = '✓ 已复制';
           els.copySnapshotHint.style.display = 'inline';
           setTimeout(() => els.copySnapshotHint.style.display = 'none', 2000);
         }).catch(() => {
           document.execCommand('copy');
-          els.copySnapshotHint.textContent = '✓ 已复制';
           els.copySnapshotHint.style.display = 'inline';
           setTimeout(() => els.copySnapshotHint.style.display = 'none', 2000);
         });
@@ -1536,7 +1495,7 @@
         loadCachedDepIfAny();
         if (!latestDep) await loadFinalSnapshot();
         render(latestDep);
-        if (latestDep) autoSaveSnapshot(latestDep);
+        if (latestDep) showSnapshotPanel(latestDep);
         applyPhaseUI(phase);
       } else {
         startTimers();

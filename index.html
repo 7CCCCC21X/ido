@@ -455,7 +455,7 @@
 
     <!-- Snapshot export panel (shown at lock time for admin to copy) -->
     <div id="snapshotPanel" style="display:none; margin:12px auto; max-width:460px; padding:12px 16px; background:var(--card-bg,#1e1e2e); border:1px solid #f5a623; border-radius:10px; font-size:13px;">
-      <div style="color:#f5a623; font-weight:600; margin-bottom:6px;">📋 快照数据（复制后更新到代码中即可永久保留）</div>
+      <div style="color:#f5a623; font-weight:600; margin-bottom:6px;">📋 快照数据（复制后粘贴到 snapshot.json，push 即可永久保留）</div>
       <textarea id="snapshotText" readonly style="width:100%; height:60px; background:var(--bg,#0d0d1a); color:var(--fg,#e0e0e0); border:1px solid #333; border-radius:6px; padding:8px; font-family:monospace; font-size:12px; resize:vertical;"></textarea>
       <button type="button" id="copySnapshotBtn" style="margin-top:6px; padding:6px 16px; background:#f5a623; color:#000; border:none; border-radius:6px; cursor:pointer; font-size:13px; font-weight:600;">复制快照</button>
       <span id="copySnapshotHint" style="margin-left:8px; color:#4caf50; font-size:12px; display:none;">✓ 已复制</span>
@@ -991,13 +991,26 @@
       }
     }
 
-    function loadFinalSnapshot() {
+    async function loadFinalSnapshot() {
+      // 1. Try inline config first
       if (CONFIG.FINAL_SNAPSHOT && Number.isFinite(CONFIG.FINAL_SNAPSHOT.dep)) {
         latestDep = CONFIG.FINAL_SNAPSHOT.dep;
-        if (CONFIG.FINAL_SNAPSHOT.updatedAt) {
+        if (CONFIG.FINAL_SNAPSHOT.updatedAt)
           els.lastUpdateHint.textContent = t('lastUpdate', { time: new Date(CONFIG.FINAL_SNAPSHOT.updatedAt).toLocaleTimeString('zh-CN', { hour12: false }) });
-        }
+        return;
       }
+      // 2. Fetch from snapshot.json
+      try {
+        const res = await fetch('snapshot.json?_=' + Date.now());
+        if (!res.ok) return;
+        const snap = await res.json();
+        if (snap && Number.isFinite(snap.dep)) {
+          CONFIG.FINAL_SNAPSHOT = snap;
+          latestDep = snap.dep;
+          if (snap.updatedAt)
+            els.lastUpdateHint.textContent = t('lastUpdate', { time: new Date(snap.updatedAt).toLocaleTimeString('zh-CN', { hour12: false }) });
+        }
+      } catch (e) { console.debug('snapshot.json load failed:', e); }
     }
 
     function saveDepCache(dep) { cacheSet(cacheKey('dep'), dep); }
@@ -1015,7 +1028,7 @@
       const pad = n => String(n).padStart(2, '0');
       snapshot.updatedAt = `${bj.getFullYear()}-${pad(bj.getMonth()+1)}-${pad(bj.getDate())}T${pad(bj.getHours())}:${pad(bj.getMinutes())}:${pad(bj.getSeconds())}+08:00`;
 
-      const json = `FINAL_SNAPSHOT: ${JSON.stringify(snapshot)}`;
+      const json = JSON.stringify(snapshot, null, 2);
       els.snapshotText.value = json;
       els.snapshotPanel.style.display = 'block';
     }
@@ -1120,7 +1133,7 @@
       const phase = getPhase();
       if (!force && (phase === 'locked' || phase === 'ended')) {
         loadCachedDepIfAny();
-        if (!latestDep) loadFinalSnapshot();
+        if (!latestDep) await loadFinalSnapshot();
         render(latestDep);
         return;
       }
@@ -1484,7 +1497,7 @@
 
       if (phase === 'locked' || phase === 'ended') {
         loadCachedDepIfAny();
-        if (!latestDep) loadFinalSnapshot();
+        if (!latestDep) await loadFinalSnapshot();
         render(latestDep);
         if (latestDep) showSnapshotPanel(latestDep);
         applyPhaseUI(phase);

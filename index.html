@@ -1082,6 +1082,50 @@
 
     function saveDepCache(dep) { cacheSet(cacheKey('dep'), dep); }
 
+    // Self-contained "last data" snapshot: pool + prices + the price actually
+    // shown, so the ended-state result can render even when no live price fetch
+    // succeeds on a later visit. Refreshed on every successful live refresh, so
+    // it always holds the most recent data the moment the event ends.
+    function saveFinalSnapshot() {
+      if (!(latestDep > 0)) return;
+      cacheSet(cacheKey('final'), {
+        dep: latestDep,
+        bnbUSDT: STATE.bnbUSDT || 0,
+        tokenUSDT: (+els.tokenPrice.value || STATE.tokenUSDT || 0)
+      });
+    }
+
+    // Restore the local final snapshot. Pool/time always win (they're frozen);
+    // prices only fill in when a live fetch didn't already provide them, so a
+    // returning user still sees fresh prices when online but never a blank result.
+    function loadLocalFinalSnapshot() {
+      const cached = cacheGet(cacheKey('final'));
+      const snap = cached && cached.v;
+      if (!snap || !Number.isFinite(Number(snap.dep)) || Number(snap.dep) <= 0) return false;
+
+      latestDep = Number(snap.dep);
+
+      if ((!STATE.bnbUSDT || STATE.bnbUSDT <= 0) && Number(snap.bnbUSDT) > 0) {
+        STATE.bnbUSDT = Number(snap.bnbUSDT);
+        els.bnbPriceV.textContent = fmt(STATE.bnbUSDT, 4) + ' USDT';
+        els.bnbPriceV.classList.remove('skel');
+      }
+      if (Number(snap.tokenUSDT) > 0) {
+        STATE.tokenUSDT = Number(snap.tokenUSDT);
+        if (!els.tokenPrice.dataset.userEdited) {
+          els.tokenPrice.value = Number(snap.tokenUSDT).toFixed(6);
+        }
+      }
+      if (cached.t) setLastUpdate(cached.t);
+      return true;
+    }
+
+    // Restore preserved data for the locked/ended phase, most authoritative first.
+    function restoreEndedData() {
+      if (!loadLocalFinalSnapshot()) loadCachedDepIfAny();
+      if (!latestDep) loadFinalSnapshot();
+    }
+
     /* ---------- Value-change pulse ---------- */
     const prevValues = {};
     // Re-trigger the CSS pulse animation only when the displayed text actually
@@ -1191,8 +1235,7 @@
 
       const phase = getPhase();
       if (!force && (phase === 'locked' || phase === 'ended')) {
-        loadCachedDepIfAny();
-        if (!latestDep) loadFinalSnapshot();
+        restoreEndedData();
         render(latestDep);
         return;
       }
@@ -1210,6 +1253,7 @@
         saveDepCache(dep);
         render(dep);
         setLastUpdate(Date.now());
+        saveFinalSnapshot();
       } catch (e) {
         if (manual) {
           els.errBanner.textContent = e?.message || t('err.network');
@@ -1612,8 +1656,7 @@
       const phase = getPhase();
 
       if (phase === 'locked' || phase === 'ended') {
-        loadCachedDepIfAny();
-        if (!latestDep) loadFinalSnapshot();
+        restoreEndedData();
         render(latestDep);
         applyPhaseUI(phase);
       } else {

@@ -336,14 +336,6 @@
       padding:2px 2px 8px;width:100%
     }
     .history-count{font-size:11px;color:var(--c-sub);font-weight:500}
-    .history-clear{
-      width:auto;padding:4px 12px;font-size:11px;font-weight:600;
-      border-radius:999px;background:transparent;color:var(--c-sub);
-      border:1px solid var(--c-border);margin-top:0;box-shadow:none;
-      transition:background .15s,color .15s,border-color .15s
-    }
-    .history-clear:hover{color:var(--c-error,#e5484d);border-color:var(--c-error,#e5484d);background:rgba(229,72,77,.08);box-shadow:none}
-    .history-clear:disabled{opacity:.4;cursor:default}
     .history-list{
       display:flex;flex-direction:column;gap:6px;width:100%;
       max-height:280px;overflow-y:auto;padding-right:2px
@@ -537,7 +529,6 @@
       <div class="tutorials-panel history-panel" id="historyPanel" role="region">
         <div class="history-bar">
           <span class="history-count" id="historyCount">—</span>
-          <button type="button" class="history-clear" id="historyClear" data-i18n="history.clear">清空</button>
         </div>
         <div class="history-list" id="historyList"></div>
       </div>
@@ -689,8 +680,7 @@
       historyToggle: $('historyToggle'),
       historyPanel: $('historyPanel'),
       historyList: $('historyList'),
-      historyCount: $('historyCount'),
-      historyClear: $('historyClear')
+      historyCount: $('historyCount')
     };
 
     /* ---------- State ---------- */
@@ -1225,51 +1215,15 @@
 
     /* ---------- History log ----------
      * Time-series of the fundraise progress so a user can scroll back through
-     * past records. Two sources are merged:
-     *   - local (this device's localStorage) — works offline / before the server
-     *     has anything, and updates instantly on each refresh;
-     *   - server (Vercel KV, via /api/pool-snapshot?action=history) — GLOBAL, so a
-     *     brand-new visitor with an empty cache still sees the past records.
-     * Each stored point is just { t, dep, bnbUSDT }; the oversubscription and the
-     * estimated profit are computed at render time from the user's current input,
-     * which keeps local and server points uniform and mergeable.
-     * Recording is throttled to ~1 point per minute on both sides.
+     * past records. The series is GLOBAL: it lives server-side (Vercel KV, via
+     * /api/pool-snapshot?action=history) and every visitor sees exactly the same
+     * records — there is no separate per-device cache. Each stored point is
+     * { t, dep, bnbUSDT, sym }; oversubscription, participants and the estimated
+     * profit are derived at render time. Recording (throttled to ~1/min) happens
+     * server-side whenever the snapshot is captured.
      */
     const HISTORY = (() => {
-      const MAX = 300;
-      const MIN_INTERVAL_MS = 60_000;
-      const BUCKET_MS = 60_000; // dedupe granularity when merging the two sources
-
-      const key = () => cacheKey('history');
-      let serverPoints = []; // in-memory cache of the global series
-
-      function load() {
-        try {
-          const arr = JSON.parse(localStorage.getItem(key()) || '[]');
-          return Array.isArray(arr) ? arr : [];
-        } catch (e) {
-          console.debug('history load error:', e);
-          return [];
-        }
-      }
-
-      function save(arr) {
-        try { localStorage.setItem(key(), JSON.stringify(arr.slice(-MAX))); }
-        catch (e) { console.debug('history save error:', e); }
-      }
-
-      // Merge local + server points, dedup to one point per minute (keep newest
-      // within the bucket), sorted oldest→newest.
-      function merged() {
-        const map = new Map();
-        for (const p of [...load(), ...serverPoints]) {
-          if (!p || !(Number(p.dep) > 0) || !Number.isFinite(Number(p.t))) continue;
-          const bucket = Math.floor(p.t / BUCKET_MS);
-          const prev = map.get(bucket);
-          if (!prev || p.t > prev.t) map.set(bucket, p);
-        }
-        return [...map.values()].sort((a, b) => a.t - b.t);
-      }
+      let serverPoints = []; // in-memory copy of the global series
 
       // Estimated profit for a historical point, using that point's BNB price
       // (fallback to the current one) and the user's current inputs.
@@ -1287,21 +1241,8 @@
         return r.profitUSD;
       }
 
-      function record() {
-        const dep = latestDep;
-        if (!(dep > 0)) return;
-        const arr = load();
-        const last = arr[arr.length - 1];
-        const now = Date.now();
-        // Throttle: at most one local record per minute.
-        if (last && now - last.t < MIN_INTERVAL_MS) return;
-        arr.push({ t: now, dep, bnbUSDT: STATE.bnbUSDT || 0, sym: CONFIG.SYMBOL });
-        save(arr);
-        render();
-      }
-
-      // Pull the global series from the backend (best-effort) and re-render so a
-      // cache-less visitor still sees past records.
+      // Pull the global series from the backend (best-effort) and re-render, so
+      // every visitor — including a brand-new one — sees the same past records.
       async function fetchServer() {
         if (!CONFIG.POOL_SNAPSHOT_API) return;
         try {
@@ -1309,7 +1250,9 @@
           url.searchParams.set('action', 'history');
           const d = await fetchJSON(url.toString(), {}, 6000);
           if (d && Array.isArray(d.history)) {
-            serverPoints = d.history.filter(p => p && Number(p.dep) > 0 && Number.isFinite(Number(p.t)));
+            serverPoints = d.history
+              .filter(p => p && Number(p.dep) > 0 && Number.isFinite(Number(p.t)))
+              .sort((a, b) => a.t - b.t);
             render();
           }
         } catch (e) {
@@ -1317,18 +1260,10 @@
         }
       }
 
-      function clear() {
-        // Clears this device's local log. Global (server) records persist and
-        // will reappear from the backend.
-        try { localStorage.removeItem(key()); } catch (e) { /* ignore */ }
-        render();
-      }
-
       function render() {
         if (!els.historyList) return;
-        const arr = merged();
+        const arr = serverPoints;
         els.historyCount.textContent = t('history.count', { n: arr.length });
-        els.historyClear.disabled = load().length === 0;
 
         if (!arr.length) {
           els.historyList.innerHTML = `<div class="history-empty">${t('history.empty')}</div>`;
@@ -1336,7 +1271,8 @@
         }
 
         const timeFmt = new Intl.DateTimeFormat(currentLang === 'en' ? 'en-GB' : 'zh-CN', {
-          timeZone: TZ, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+          timeZone: TZ, month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
         });
         const target = CONFIG.TOTAL_TARGET_BNB;
 
@@ -1375,7 +1311,7 @@
         els.historyList.innerHTML = rows;
       }
 
-      return { record, clear, render, fetchServer };
+      return { render, fetchServer };
     })();
 
     /* ---------- Value-change pulse ---------- */
@@ -1489,7 +1425,6 @@
       if (!force && (phase === 'locked' || phase === 'ended')) {
         restoreEndedData();
         render(latestDep);
-        HISTORY.record();
         return;
       }
 
@@ -1507,7 +1442,6 @@
         render(dep);
         setLastUpdate(Date.now());
         saveFinalSnapshot();
-        HISTORY.record();
       } catch (e) {
         if (manual) {
           els.errBanner.textContent = e?.message || t('err.network');
@@ -1638,8 +1572,6 @@
       if (!expanded) { HISTORY.render(); HISTORY.fetchServer(); }
     });
 
-    els.historyClear.addEventListener('click', () => HISTORY.clear());
-
     // Copy with a legacy fallback for non-secure contexts / older browsers
     // where navigator.clipboard is unavailable.
     async function copyText(text) {
@@ -1759,7 +1691,6 @@
         'err.network': '网络错误',
         'history.title': '历史记录',
         'history.empty': '暂无记录，活动进行中会自动记录募集进度',
-        'history.clear': '清空',
         'history.count': '共 {n} 条记录',
         'history.k.pool': '募集',
         'history.k.users': '人数',
@@ -1834,7 +1765,6 @@
         'err.network': 'Network error',
         'history.title': 'History',
         'history.empty': 'No records yet — progress is logged automatically while the event is live',
-        'history.clear': 'Clear',
         'history.count': '{n} records',
         'history.k.pool': 'Raised',
         'history.k.users': 'Players',
@@ -1941,13 +1871,11 @@
         restoreEndedData();
         render(latestDep);
         applyPhaseUI(phase);
-        HISTORY.record();
         // 2) Upgrade with the global snapshot so new devices / visitors see it too.
         const srv = await fetchServerSnapshot();
         if (srv) {
           applyServerSnapshot(srv);
           render(latestDep);
-          HISTORY.record();
         }
       } else {
         startTimers();

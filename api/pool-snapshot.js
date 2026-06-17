@@ -26,6 +26,7 @@ import { createClient } from 'redis';
 const CONFIG = {
   SYMBOL: 'RE',
   ADDRESS: (process.env.POOL_ADDRESS || '0xc5510b179d80451d3b062732b1768085d9ef8689').toLowerCase(),
+  TOKEN_PROJECT_NAME: 'Re', // Aspecta project_address (English name, not contract)
   START_MS: new Date('2026-06-17T20:00:00+08:00').getTime(),
   END_MS: new Date('2026-06-17T22:00:00+08:00').getTime(),
   RPC_NODES: [
@@ -127,6 +128,57 @@ async function fetchBNBPrice() {
   return 0;
 }
 
+/* ---------- RE token price (Aspecta k-line) ---------- */
+// Aspecta returns prices as 18-decimal fixed-point integer strings.
+function toPrice(value) {
+  if (value == null) return null;
+  const s = String(value).trim();
+  if (/^-?\d+$/.test(s)) {
+    const neg = s.startsWith('-');
+    const digits = (neg ? s.slice(1) : s).padStart(19, '0');
+    const intPart = digits.slice(0, -18) || '0';
+    const fracPart = digits.slice(-18);
+    return (neg ? -1 : 1) * Number(`${intPart}.${fracPart}`);
+  }
+  const n = Number(s);
+  return Number.isFinite(n) ? n / 1e18 : null;
+}
+
+// Latest candle's close_price for the requested project (matched by
+// project_address; falls back to the first item with candles).
+function extractTokenPrice(raw, projectName) {
+  const list = Array.isArray(raw) ? raw : (raw && Array.isArray(raw.data) ? raw.data : []);
+  if (!list.length) return 0;
+  const want = (projectName || '').toLowerCase();
+  let item = want ? list.find(x => String(x?.project_address ?? '').toLowerCase() === want) : null;
+  if (!item) item = list.find(x => Array.isArray(x?.k_line) && x.k_line.length) || list[0];
+  const kline = Array.isArray(item?.k_line) ? item.k_line.slice() : [];
+  if (!kline.length) return 0;
+  kline.sort((a, b) => (a.ended_at - b.ended_at));
+  const price = toPrice(kline[kline.length - 1]?.close_price);
+  return Number.isFinite(price) && price > 0 ? price : 0;
+}
+
+async function fetchTokenPrice() {
+  try {
+    const url = new URL('https://trade.aspecta.ai/api/hermes/trading/k-line');
+    url.searchParams.set('project_address', CONFIG.TOKEN_PROJECT_NAME);
+    url.searchParams.set('offset', '24');
+    url.searchParams.set('window_type', '1h');
+    const d = await fetchJSON(url.toString(), {
+      headers: {
+        accept: 'application/json',
+        'user-agent': 'Mozilla/5.0',
+        ...(process.env.ASPECTA_COOKIE ? { cookie: process.env.ASPECTA_COOKIE } : {})
+      }
+    }, 6000);
+    return extractTokenPrice(d, CONFIG.TOKEN_PROJECT_NAME) || 0;
+  } catch (e) {
+    console.error('fetchTokenPrice failed:', e?.message);
+    return 0;
+  }
+}
+
 /* ---------- Capture (guarded) ---------- */
 async function capture() {
   const now = Date.now();
@@ -140,9 +192,12 @@ async function capture() {
   // The pool only grows during the sale — never overwrite with a smaller value.
   if (existing && Number(existing.dep) > dep) return { skipped: 'not_greater', existing };
 
-  const bnbUSDT = await fetchBNBPrice(); // best-effort; 0 is fine, frontend can fetch live
+  // Prices are best-effort; if a fetch fails, keep the last good value.
+  const [bnbFetched, tokFetched] = await Promise.all([fetchBNBPrice(), fetchTokenPrice()]);
+  const bnbUSDT = bnbFetched > 0 ? bnbFetched : Number(existing?.bnbUSDT) || 0;
+  const tokenUSDT = tokFetched > 0 ? tokFetched : Number(existing?.tokenUSDT) || 0;
 
-  const snap = { dep, bnbUSDT, t: now, updatedAt: new Date(now).toISOString() };
+  const snap = { dep, bnbUSDT, tokenUSDT, t: now, updatedAt: new Date(now).toISOString() };
   await kvSet(KV_KEY, snap);
   return { captured: snap };
 }

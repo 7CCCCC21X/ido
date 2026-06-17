@@ -16,10 +16,12 @@
  *       重复/延迟调用也不会把好数据覆盖坏。
  *
  * 部署前置（唯一的一次性手动步骤）：
- *   在 Vercel 项目 → Storage → 连接一个 KV（Upstash）。连接后会自动注入
- *   KV_REST_API_URL / KV_REST_API_TOKEN 环境变量，本文件直接就能用。
+ *   在 Vercel 项目 → Storage → 连接一个 Redis（Redis Cloud 免费档 / Upstash 均可）。
+ *   连接后会自动注入 REDIS_URL（或 KV_URL）连接串，本文件直接就能用。
  *   可选：设置 CRON_SECRET，则抓取要求 Bearer 校验，更安全。
  */
+
+import { createClient } from 'redis';
 
 const CONFIG = {
   SYMBOL: 'RE',
@@ -40,30 +42,43 @@ const CONFIG = {
   ]
 };
 
-const KV_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || '';
-const KV_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || '';
+const REDIS_URL = process.env.REDIS_URL || process.env.KV_URL || '';
 const KV_KEY = `tge:final:${CONFIG.SYMBOL}:${CONFIG.ADDRESS}`;
 
-/* ---------- KV (Upstash REST) helpers ---------- */
-async function kvGet(key) {
-  if (!KV_URL || !KV_TOKEN) return null;
-  const r = await fetch(`${KV_URL}/get/${encodeURIComponent(key)}`, {
-    headers: { Authorization: `Bearer ${KV_TOKEN}` }
+/* ---------- Redis (TCP) helpers ---------- */
+// Reuse the connection across warm invocations; reconnect on cold start.
+let _client = null;
+async function getClient() {
+  if (!REDIS_URL) throw new Error('Redis not configured (missing REDIS_URL / KV_URL)');
+  if (_client && _client.isOpen) return _client;
+  _client = createClient({
+    url: REDIS_URL,
+    socket: {
+      connectTimeout: 5000,
+      // Give up quickly instead of retrying forever inside a serverless call.
+      reconnectStrategy: retries => (retries > 2 ? false : 200)
+    }
   });
-  if (!r.ok) return null;
-  const j = await r.json(); // { result: "<stored string>" | null }
-  if (j == null || j.result == null) return null;
-  try { return JSON.parse(j.result); } catch { return null; }
+  _client.on('error', e => console.error('redis error:', e?.message));
+  await _client.connect();
+  return _client;
+}
+
+async function kvGet(key) {
+  try {
+    const c = await getClient();
+    const v = await c.get(key);
+    if (v == null) return null;
+    try { return JSON.parse(v); } catch { return null; }
+  } catch (e) {
+    console.error('kvGet failed:', e?.message);
+    return null;
+  }
 }
 
 async function kvSet(key, value) {
-  if (!KV_URL || !KV_TOKEN) throw new Error('KV not configured (missing KV_REST_API_URL / KV_REST_API_TOKEN)');
-  const r = await fetch(`${KV_URL}/set/${encodeURIComponent(key)}`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${KV_TOKEN}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(value)
-  });
-  if (!r.ok) throw new Error(`KV set failed: HTTP ${r.status}`);
+  const c = await getClient();
+  await c.set(key, JSON.stringify(value));
   return true;
 }
 

@@ -528,19 +528,11 @@
       ],
 
       DEFAULT_TOKEN_PRICE: 0.05,
-      TOKEN_PRICE_API: 'https://trade.aspecta.ai/api/hermes/trading/k-line',
-      // Aspecta uses the project's English name (not the contract) as project_address.
-      TOKEN_PROJECT_NAME: 'RE',
-      // Aspecta sends no CORS headers, so a static page must relay through a proxy.
-      // Tried in order until one works. 最稳定的做法：部署仓库里的
-      // aspecta-proxy-worker.js（Cloudflare Worker），把下面第一行取消注释
-      // 并替换成你自己的 worker 地址（结尾保留 /?url=）。
-      CORS_PROXIES: [
-        // 'https://aspecta-proxy.你的子域.workers.dev/?url=',
-        'https://api.allorigins.win/raw?url=',
-        'https://api.codetabs.com/v1/proxy/?quest=',
-        'https://corsproxy.io/?url='
-      ],
+      // 同源后端代理：前端请求它，由它去请求 Aspecta 并补上 CORS 头。
+      // 实现见仓库 /api/aspecta-kline.js（部署到 Vercel 等支持 serverless 的平台）。
+      TOKEN_PRICE_PROXY: '/api/aspecta-kline',
+      // Aspecta 用项目英文名（不是合约地址）作为 project_address。
+      TOKEN_PROJECT_NAME: 'Re',
 
       RPC_NODES: [
         'https://bsc-dataseed.binance.org/',
@@ -790,24 +782,17 @@
       const cached = cacheGet(key, CONFIG.PRICE_CACHE_MS);
       if (cached) return cached.v;
 
-      if (!CONFIG.TOKEN_PRICE_API) return CONFIG.DEFAULT_TOKEN_PRICE || 0;
+      if (!CONFIG.TOKEN_PRICE_PROXY) return CONFIG.DEFAULT_TOKEN_PRICE || 0;
 
-      const url = new URL(CONFIG.TOKEN_PRICE_API);
-      url.searchParams.set('project_address', CONFIG.TOKEN_PROJECT_NAME || '');
-      url.searchParams.set('offset', '24');
-      url.searchParams.set('window_type', '1h');
-      const target = url.toString();
-
-      // Aspecta blocks cross-origin requests; relay through a CORS proxy if direct fails.
-      for (const proxy of (CONFIG.CORS_PROXIES?.length ? CONFIG.CORS_PROXIES : [''])) {
-        const reqUrl = proxy ? proxy + encodeURIComponent(target) : target;
-        try {
-          const d = await fetchJSON(reqUrl, {}, 7000);
-          const p = extractTokenPrice(d, CONFIG.TOKEN_PROJECT_NAME);
-          if (p) { cacheSet(key, p); return p; }
-        } catch (e) {
-          console.debug('getTokenPrice failed via', proxy || '(direct)', e.message);
-        }
+      try {
+        // 请求同源后端代理（/api/aspecta-kline），由后端去请求 Aspecta，避免浏览器 CORS 拦截。
+        const url = new URL(CONFIG.TOKEN_PRICE_PROXY, location.href);
+        url.searchParams.set('project', CONFIG.TOKEN_PROJECT_NAME || '');
+        const d = await fetchJSON(url.toString(), {}, 8000);
+        const p = extractTokenPrice(d, CONFIG.TOKEN_PROJECT_NAME);
+        if (p) { cacheSet(key, p); return p; }
+      } catch (e) {
+        console.debug('getTokenPrice error:', e.message);
       }
       return CONFIG.DEFAULT_TOKEN_PRICE || 0;
     }

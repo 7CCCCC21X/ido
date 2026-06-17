@@ -637,7 +637,11 @@
 
     /* ---------- Time helpers ---------- */
     function formatRangeForCN(st, et) {
-      const tFmt = new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hour12: false });
+      const tFmt = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hour12: false });
+      if (currentLang === 'en') {
+        const dateStr = new Intl.DateTimeFormat('en-US', { timeZone: TZ, month: 'short', day: 'numeric' }).format(st);
+        return `${dateStr} ${tFmt.format(st)}-${tFmt.format(et)} (Beijing Time)`;
+      }
       const parts = new Intl.DateTimeFormat('zh-CN', { timeZone: TZ, month: 'numeric', day: 'numeric' }).formatToParts(st);
       const m = parts.find(p => p.type === 'month')?.value ?? '';
       const d = parts.find(p => p.type === 'day')?.value ?? '';
@@ -653,7 +657,6 @@
     const START_MS = CONFIG.START_TIME.getTime();
     const END_MS   = CONFIG.END_TIME.getTime();
     const LOCK_MS  = END_MS - (CONFIG.FINAL_REFRESH_BEFORE_END_MS || 60_000);
-    const RANGE_LABEL = formatRangeForCN(CONFIG.START_TIME, CONFIG.END_TIME);
     const LOCK_LABEL  = formatClockForCN(new Date(LOCK_MS));
 
     /* ---------- Phase state machine ---------- */
@@ -1009,6 +1012,19 @@
 
     /* ---------- Dep state ---------- */
     let latestDep = 0;
+    let lastUpdateMs = 0;
+
+    // Store the update time and (re)render the hint in the current language.
+    function setLastUpdate(ms) {
+      if (Number.isFinite(ms)) lastUpdateMs = ms;
+      renderLastUpdate();
+    }
+
+    function renderLastUpdate() {
+      if (!lastUpdateMs) return;
+      const time = new Date(lastUpdateMs).toLocaleTimeString('zh-CN', { hour12: false });
+      els.lastUpdateHint.textContent = t('lastUpdate', { time });
+    }
 
     function loadCachedDepIfAny() {
       const cached = cacheGet(cacheKey('dep'));
@@ -1016,8 +1032,7 @@
         if (Number.isFinite(Number(cached.v))) latestDep = Number(cached.v);
         if (cached.t) {
           const dt = new Date(cached.t);
-          if (!isNaN(dt.getTime()))
-            els.lastUpdateHint.textContent = t('lastUpdate', { time: dt.toLocaleTimeString('zh-CN', { hour12: false }) });
+          if (!isNaN(dt.getTime())) setLastUpdate(dt.getTime());
         }
       }
     }
@@ -1026,7 +1041,8 @@
       if (CONFIG.FINAL_SNAPSHOT && Number.isFinite(CONFIG.FINAL_SNAPSHOT.dep)) {
         latestDep = CONFIG.FINAL_SNAPSHOT.dep;
         if (CONFIG.FINAL_SNAPSHOT.updatedAt) {
-          els.lastUpdateHint.textContent = t('lastUpdate', { time: new Date(CONFIG.FINAL_SNAPSHOT.updatedAt).toLocaleTimeString('zh-CN', { hour12: false }) });
+          const ms = new Date(CONFIG.FINAL_SNAPSHOT.updatedAt).getTime();
+          if (!isNaN(ms)) setLastUpdate(ms);
         }
       }
     }
@@ -1133,7 +1149,7 @@
         const dep = await fetchBalance(getTargetAddresses());
         saveDepCache(dep);
         render(dep);
-        els.lastUpdateHint.textContent = t('lastUpdate', { time: new Date().toLocaleTimeString('zh-CN', { hour12: false }) });
+        setLastUpdate(Date.now());
       } catch (e) {
         if (manual) {
           els.errBanner.textContent = e?.message || t('err.network');
@@ -1164,7 +1180,7 @@
         const s = Math.floor((diff % 6e4) / 1e3);
         const th = t('time.h'), tm = t('time.m'), ts = t('time.s');
         const txt = h > 0 ? `${h}${th}${m}${tm}` : (m > 0 ? `${m}${tm}${s}${ts}` : `${s}${ts}`);
-        els.statusCountdown.textContent = t('countdown.before', { range: RANGE_LABEL, time: txt });
+        els.statusCountdown.textContent = t('countdown.before', { range: formatRangeForCN(CONFIG.START_TIME, CONFIG.END_TIME), time: txt });
         return;
       }
 
@@ -1416,9 +1432,11 @@
       currentLang = lang;
       localStorage.setItem('lang', lang);
       applyI18n();
-      // Re-render dynamic text
+      // Re-render dynamic text that isn't tagged with data-i18n.
       computePrice();
       syncLabPriceDisplay();
+      els.statusLabel.textContent = t(PHASE_I18N[getPhase()]); // applyPhaseUI is guarded, so set directly
+      renderLastUpdate();
       tick();
       updateAutoRefreshDisplay();
     }

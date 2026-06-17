@@ -155,6 +155,7 @@
       display:grid;grid-template-columns:1fr 1fr;gap:8px
     }
     .result-header p{margin:0;font-size:13px;line-height:1.5}
+    .result-header p:last-child{grid-column:1/-1}
     .result-body{padding:16px 18px}
     .result-body p{margin:6px 0;font-size:14px;line-height:1.6}
 
@@ -338,6 +339,32 @@
     body.profitOnlyMode #resultBox .profit-card{margin:0;border-radius:16px;border:none}
     body.profitOnlyMode #resultBox .profit-card .profit-value{font-size:36px}
 
+    /* --- Skeleton loading placeholder --- */
+    .skel{
+      color:transparent!important;border-radius:6px;min-width:90px;
+      background:linear-gradient(90deg,var(--c-border) 25%,var(--c-card2) 37%,var(--c-border) 63%);
+      background-size:400% 100%;animation:skelShimmer 1.4s ease infinite
+    }
+    @keyframes skelShimmer{0%{background-position:100% 50%}100%{background-position:0 50%}}
+
+    /* --- Value update pulse --- */
+    @keyframes valuePulse{0%{transform:scale(1)}30%{transform:scale(1.05)}100%{transform:scale(1)}}
+    .value-pulse{animation:valuePulse .45s ease;display:inline-block}
+
+    /* --- Refresh spinner --- */
+    .spin{
+      display:inline-block;width:12px;height:12px;margin-right:6px;
+      border:2px solid currentColor;border-top-color:transparent;border-radius:50%;
+      animation:spin .6s linear infinite;vertical-align:-1px
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* --- Screen-reader only --- */
+    .sr-only{
+      position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+      overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0
+    }
+
     @media(prefers-reduced-motion:reduce){
       *{
         animation:none!important;
@@ -353,7 +380,8 @@
       .priceBox{flex-direction:column;gap:8px}
       .priceItem{padding:10px 12px}
       .referral-card{flex-direction:column;align-items:flex-start;gap:10px}
-      .result-header{grid-template-columns:1fr;gap:4px}
+      .result-header{grid-template-columns:1fr 1fr;gap:6px 12px;padding:12px 14px}
+      .result-header p{font-size:12px}
       .profit-card .profit-value{font-size:22px}
       .viewRow{justify-content:center}
     }
@@ -394,11 +422,11 @@
 
     <div class="priceBox" id="priceBox">
       <div class="priceItem">
-        <div class="v" id="bnbPriceV">—</div>
+        <div class="v skel" id="bnbPriceV">—</div>
         <div class="t" data-i18n="price.bnb">当前 BNB 价格（USDT）</div>
       </div>
       <div class="priceItem">
-        <div class="v" id="labPriceV">—</div>
+        <div class="v skel" id="labPriceV">—</div>
         <div class="t"><a href="https://trade.aspecta.ai/projects/usdt/Re" target="_blank" rel="noopener noreferrer" title="前往 Aspecta 查看"><span data-i18n="price.token">RE 参考价（价格来源Aspecta）</span><span class="ext" aria-hidden="true">↗</span></a></div>
       </div>
     </div>
@@ -417,9 +445,10 @@
     <!-- Activity Status -->
     <div class="status-section" id="statusSection">
       <div class="status-row">
-        <span class="status-badge before" id="statusBadge"><span class="dot"></span><span id="statusLabel">加载中</span></span>
-        <span class="status-countdown" id="statusCountdown" aria-live="polite">—</span>
+        <span class="status-badge before" id="statusBadge" aria-live="polite"><span class="dot"></span><span id="statusLabel">加载中</span></span>
+        <span class="status-countdown" id="statusCountdown">—</span>
       </div>
+      <span id="srCountdown" class="sr-only" aria-live="polite"></span>
       <div class="progress-container" id="progressWrap">
         <div class="progress-bg" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBg">
           <div class="progress-bar" id="progressBar"></div>
@@ -534,6 +563,9 @@
       // 同源后端代理：前端请求它，由它去请求 Aspecta 并补上 CORS 头。
       // 实现见仓库 /api/aspecta-kline.js（部署到 Vercel 等支持 serverless 的平台）。
       TOKEN_PRICE_PROXY: '/api/aspecta-kline',
+      // 同源后端：活动结束后返回全局「最终数据」快照（资金池 + 价格 + 时间），
+      // 让换设备 / 新访客也能看到。实现见 /api/pool-snapshot.js（需挂 Vercel KV）。
+      POOL_SNAPSHOT_API: '/api/pool-snapshot',
       // Aspecta 用项目英文名（不是合约地址）作为 project_address。
       TOKEN_PROJECT_NAME: 'Re',
 
@@ -579,6 +611,7 @@
       statusBadge: $('statusBadge'),
       statusLabel: $('statusLabel'),
       statusCountdown: $('statusCountdown'),
+      srCountdown: $('srCountdown'),
       progressWrap: $('progressWrap'),
       progressBar: $('progressBar'),
       progressBg: $('progressBg'),
@@ -725,6 +758,7 @@
     function syncLabPriceDisplay() {
       const p = +els.tokenPrice.value || 0;
       els.labPriceV.textContent = p ? (p.toFixed(6) + ' USDT') : '—';
+      if (p) els.labPriceV.classList.remove('skel');
     }
 
     async function getBNBPrice() {
@@ -810,6 +844,8 @@
         if (tokP) STATE.tokenUSDT = tokP;
 
         els.bnbPriceV.textContent = STATE.bnbUSDT ? (fmt(STATE.bnbUSDT, 4) + ' USDT') : '—';
+        // First fetch resolved — stop the skeleton shimmer regardless of success.
+        els.bnbPriceV.classList.remove('skel');
 
         if (tokP && !els.tokenPrice.dataset.userEdited) {
           els.tokenPrice.value = Number(tokP).toFixed(6);
@@ -1049,6 +1085,95 @@
 
     function saveDepCache(dep) { cacheSet(cacheKey('dep'), dep); }
 
+    // Self-contained "last data" snapshot: pool + prices + the price actually
+    // shown, so the ended-state result can render even when no live price fetch
+    // succeeds on a later visit. Refreshed on every successful live refresh, so
+    // it always holds the most recent data the moment the event ends.
+    function saveFinalSnapshot() {
+      if (!(latestDep > 0)) return;
+      cacheSet(cacheKey('final'), {
+        dep: latestDep,
+        bnbUSDT: STATE.bnbUSDT || 0,
+        tokenUSDT: (+els.tokenPrice.value || STATE.tokenUSDT || 0)
+      });
+    }
+
+    // Restore the local final snapshot. Pool/time always win (they're frozen);
+    // prices only fill in when a live fetch didn't already provide them, so a
+    // returning user still sees fresh prices when online but never a blank result.
+    function loadLocalFinalSnapshot() {
+      const cached = cacheGet(cacheKey('final'));
+      const snap = cached && cached.v;
+      if (!snap || !Number.isFinite(Number(snap.dep)) || Number(snap.dep) <= 0) return false;
+
+      latestDep = Number(snap.dep);
+
+      if ((!STATE.bnbUSDT || STATE.bnbUSDT <= 0) && Number(snap.bnbUSDT) > 0) {
+        STATE.bnbUSDT = Number(snap.bnbUSDT);
+        els.bnbPriceV.textContent = fmt(STATE.bnbUSDT, 4) + ' USDT';
+        els.bnbPriceV.classList.remove('skel');
+      }
+      if (Number(snap.tokenUSDT) > 0) {
+        STATE.tokenUSDT = Number(snap.tokenUSDT);
+        if (!els.tokenPrice.dataset.userEdited) {
+          els.tokenPrice.value = Number(snap.tokenUSDT).toFixed(6);
+        }
+      }
+      if (cached.t) setLastUpdate(cached.t);
+      return true;
+    }
+
+    // Restore preserved data for the locked/ended phase, most authoritative first.
+    function restoreEndedData() {
+      if (!loadLocalFinalSnapshot()) loadCachedDepIfAny();
+      if (!latestDep) loadFinalSnapshot();
+    }
+
+    // Global final snapshot from the backend (works across devices / new visitors).
+    async function fetchServerSnapshot() {
+      if (!CONFIG.POOL_SNAPSHOT_API) return null;
+      try {
+        const url = new URL(CONFIG.POOL_SNAPSHOT_API, location.href);
+        const d = await fetchJSON(url.toString(), {}, 6000);
+        if (d && Number.isFinite(Number(d.dep)) && Number(d.dep) > 0) return d;
+      } catch (e) {
+        console.debug('fetchServerSnapshot error:', e?.message);
+      }
+      return null;
+    }
+
+    // Apply the global snapshot: pool/time win; prices only fill gaps so a user
+    // who is online still sees live prices. Also persist locally for next time.
+    function applyServerSnapshot(d) {
+      latestDep = Number(d.dep);
+      if (Number(d.bnbUSDT) > 0 && (!STATE.bnbUSDT || STATE.bnbUSDT <= 0)) {
+        STATE.bnbUSDT = Number(d.bnbUSDT);
+        els.bnbPriceV.textContent = fmt(STATE.bnbUSDT, 4) + ' USDT';
+        els.bnbPriceV.classList.remove('skel');
+      }
+      if (Number(d.tokenUSDT) > 0) {
+        STATE.tokenUSDT = Number(d.tokenUSDT);
+        if (!els.tokenPrice.dataset.userEdited) els.tokenPrice.value = Number(d.tokenUSDT).toFixed(6);
+      }
+      const ms = d.t || (d.updatedAt ? new Date(d.updatedAt).getTime() : 0);
+      if (ms) setLastUpdate(ms);
+      saveFinalSnapshot();
+    }
+
+    /* ---------- Value-change pulse ---------- */
+    const prevValues = {};
+    // Re-trigger the CSS pulse animation only when the displayed text actually
+    // changes (and not on the very first render, to avoid pulsing everything).
+    function pulseIfChanged(el, key, text) {
+      const had = key in prevValues;
+      const changed = prevValues[key] !== text;
+      prevValues[key] = text;
+      if (!had || !changed) return;
+      el.classList.remove('value-pulse');
+      void el.offsetWidth; // force reflow to restart the animation
+      el.classList.add('value-pulse');
+    }
+
     /* ---------- Render (display only) ---------- */
     function renderProjection(result, dep, user) {
       if (!result) {
@@ -1057,6 +1182,7 @@
       }
 
       els.bnbBalance.textContent = fmt(dep, 4);
+      pulseIfChanged(els.bnbBalance, 'bnbBalance', els.bnbBalance.textContent);
       els.multiplier.textContent = fmt(result.multiplier, 2);
       els.participantCount.textContent = Math.floor(dep / 3);
       els.userInput.textContent = fmt(user, 2);
@@ -1071,6 +1197,7 @@
       els.profitUSD.textContent = (profit >= 0 ? '+' : '') + fmt(profit, 2) + ' USDT';
       els.profitUSD.classList.remove('success', 'deduct');
       els.profitUSD.classList.add(profit >= 0 ? 'success' : 'deduct');
+      pulseIfChanged(els.profitUSD, 'profitUSD', els.profitUSD.textContent);
 
       const pc = $('profitCard');
       if (pc) {
@@ -1126,6 +1253,14 @@
     let refreshing = false;
     let pendingForcedRefresh = false;
 
+    function setRefreshLoading(on) {
+      if (on) {
+        els.refreshBtn.innerHTML = `<span class="spin" aria-hidden="true"></span>${t('btn.refreshing')}`;
+      } else {
+        els.refreshBtn.textContent = t('btn.refresh');
+      }
+    }
+
     async function refresh(manual = false, force = false) {
       if (refreshing) {
         if (force) pendingForcedRefresh = true;
@@ -1134,15 +1269,17 @@
 
       const phase = getPhase();
       if (!force && (phase === 'locked' || phase === 'ended')) {
-        loadCachedDepIfAny();
-        if (!latestDep) loadFinalSnapshot();
+        restoreEndedData();
         render(latestDep);
         return;
       }
 
       refreshing = true;
       els.refreshBtn.disabled = true;
-      if (manual) els.errBanner.style.display = 'none';
+      if (manual) {
+        els.errBanner.style.display = 'none';
+        setRefreshLoading(true);
+      }
 
       try {
         await updatePriceDisplay();
@@ -1150,6 +1287,7 @@
         saveDepCache(dep);
         render(dep);
         setLastUpdate(Date.now());
+        saveFinalSnapshot();
       } catch (e) {
         if (manual) {
           els.errBanner.textContent = e?.message || t('err.network');
@@ -1159,6 +1297,7 @@
       } finally {
         els.refreshBtn.disabled = false;
         refreshing = false;
+        if (manual) setRefreshLoading(false);
 
         if (pendingForcedRefresh) {
           pendingForcedRefresh = false;
@@ -1168,6 +1307,16 @@
     }
 
     /* ---------- Activity countdown ---------- */
+    // Throttled live-region announcer: the visible countdown ticks every second,
+    // but screen readers should only be notified when the minute changes (or on
+    // a phase change) to avoid being interrupted constantly.
+    let lastSrAnnounced = '';
+    function announceCountdown(sig, text) {
+      if (sig === lastSrAnnounced) return;
+      lastSrAnnounced = sig;
+      if (els.srCountdown) els.srCountdown.textContent = text;
+    }
+
     function tick() {
       const nowMs = Date.now();
       const phase = getPhase(nowMs);
@@ -1181,16 +1330,20 @@
         const th = t('time.h'), tm = t('time.m'), ts = t('time.s');
         const txt = h > 0 ? `${h}${th}${m}${tm}` : (m > 0 ? `${m}${tm}${s}${ts}` : `${s}${ts}`);
         els.statusCountdown.textContent = t('countdown.before', { range: formatRangeForCN(CONFIG.START_TIME, CONFIG.END_TIME), time: txt });
+        const totalMinB = Math.ceil(diff / 6e4);
+        announceCountdown('before:' + totalMinB, t('sr.beforeStart', { m: totalMinB }));
         return;
       }
 
       if (phase === 'ended') {
         els.statusCountdown.textContent = t('countdown.ended');
+        announceCountdown('ended', t('countdown.ended'));
         return;
       }
 
       if (phase === 'locked') {
         els.statusCountdown.textContent = t('countdown.locked', { time: LOCK_LABEL });
+        announceCountdown('locked', t('countdown.locked', { time: LOCK_LABEL }));
         return;
       }
 
@@ -1202,6 +1355,8 @@
       const th = t('time.h'), tm = t('time.m'), ts = t('time.s');
       const txt = h > 0 ? `${h}${th}${m}${tm}` : (m > 0 ? `${m}${tm}${s}${ts}` : `${(diff / 1e3).toFixed(1)}${ts}`);
       els.statusCountdown.textContent = t('countdown.remaining', { time: txt });
+      const totalMin = Math.ceil(diff / 6e4);
+      announceCountdown('live:' + totalMin, t('sr.remaining', { m: totalMin }));
 
       const pct = ((nowMs - START_MS) / (END_MS - START_MS) * 100).toFixed(2);
       els.progressBar.style.width = pct + '%';
@@ -1256,16 +1411,39 @@
       els.tutorialsPanel.classList.toggle('open', !expanded);
     });
 
+    // Copy with a legacy fallback for non-secure contexts / older browsers
+    // where navigator.clipboard is unavailable.
+    async function copyText(text) {
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+      } catch (e) {
+        console.debug('clipboard API failed, falling back:', e);
+      }
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        return ok;
+      } catch (e) {
+        console.debug('execCommand copy failed:', e);
+        return false;
+      }
+    }
+
     $('copyCodeBtn').addEventListener('click', async () => {
       const btn = $('copyCodeBtn');
-      try {
-        await navigator.clipboard.writeText('XIAOCC');
-        btn.textContent = t('copy.done');
-        setTimeout(() => { btn.textContent = t('copy.btn'); }, 1500);
-      } catch {
-        btn.textContent = t('copy.fail');
-        setTimeout(() => { btn.textContent = t('copy.btn'); }, 1500);
-      }
+      const ok = await copyText('XIAOCC');
+      btn.textContent = t(ok ? 'copy.done' : 'copy.fail');
+      setTimeout(() => { btn.textContent = t('copy.btn'); }, 1500);
     });
 
     $('darkToggle').addEventListener('click', toggleTheme);
@@ -1296,6 +1474,7 @@
         'price.bnb': '当前 BNB 价格（USDT）',
         'price.token': 'RE 参考价（价格来源Aspecta）',
         'btn.refresh': '手动刷新',
+        'btn.refreshing': '刷新中…',
         'hint.profitToggle': '（再次点击恢复全部）',
         'result.raised': '已募集 BNB',
         'result.target': '目标',
@@ -1341,6 +1520,11 @@
         'time.h': '时',
         'time.m': '分',
         'time.s': '秒',
+        'theme.auto': '主题：跟随系统',
+        'theme.light': '主题：浅色',
+        'theme.dark': '主题：深色',
+        'sr.remaining': '剩余约 {m} 分钟',
+        'sr.beforeStart': '距开始约 {m} 分钟',
         'err.429': '请求过于频繁（429），请稍后重试',
         'err.timeout': '请求超时，请稍后重试或更换节点',
         'err.network': '网络错误'
@@ -1357,6 +1541,7 @@
         'price.bnb': 'Current BNB Price (USDT)',
         'price.token': 'RE Ref. Price (source: Aspecta)',
         'btn.refresh': 'Refresh',
+        'btn.refreshing': 'Refreshing…',
         'hint.profitToggle': '(Click again to restore all)',
         'result.raised': 'Raised BNB',
         'result.target': 'Target',
@@ -1402,6 +1587,11 @@
         'time.h': 'h',
         'time.m': 'm',
         'time.s': 's',
+        'theme.auto': 'Theme: System',
+        'theme.light': 'Theme: Light',
+        'theme.dark': 'Theme: Dark',
+        'sr.remaining': 'About {m} minutes left',
+        'sr.beforeStart': 'Starts in about {m} minutes',
         'err.429': 'Rate limited (429), please retry later',
         'err.timeout': 'Request timed out, please retry',
         'err.network': 'Network error'
@@ -1437,6 +1627,7 @@
       syncLabPriceDisplay();
       els.statusLabel.textContent = t(PHASE_I18N[getPhase()]); // applyPhaseUI is guarded, so set directly
       renderLastUpdate();
+      applyTheme(getDarkPref()); // refresh theme-button title in the new language
       tick();
       updateAutoRefreshDisplay();
     }
@@ -1448,6 +1639,9 @@
       return 'auto';
     }
 
+    // Icon shown for each mode. 'auto' uses a half-moon to signal "follow system".
+    const THEME_ICON = { auto: '🌗', light: '☀️', dark: '🌙' };
+
     function applyTheme(mode) {
       const root = document.documentElement;
       if (mode === 'dark') {
@@ -1458,21 +1652,19 @@
         root.removeAttribute('data-theme');
       }
       const btn = $('darkToggle');
-      const isDark = mode === 'dark' || (mode === 'auto' && window.matchMedia('(prefers-color-scheme:dark)').matches);
-      if (btn) btn.textContent = isDark ? '☀️' : '🌙';
+      if (btn) {
+        btn.textContent = THEME_ICON[mode] || THEME_ICON.dark;
+        const label = t('theme.' + mode);
+        btn.setAttribute('title', label);
+        btn.setAttribute('aria-label', label);
+      }
     }
 
+    // Cycle: 跟随系统 → 深色 → 浅色 → 跟随系统
     function toggleTheme() {
+      const order = ['auto', 'dark', 'light'];
       const current = getDarkPref();
-      let next;
-      if (current === 'auto') {
-        const systemDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
-        next = systemDark ? 'light' : 'dark';
-      } else if (current === 'dark') {
-        next = 'light';
-      } else {
-        next = 'dark';
-      }
+      const next = order[(order.indexOf(current) + 1) % order.length];
       localStorage.setItem('theme', next);
       applyTheme(next);
     }
@@ -1498,10 +1690,16 @@
       const phase = getPhase();
 
       if (phase === 'locked' || phase === 'ended') {
-        loadCachedDepIfAny();
-        if (!latestDep) loadFinalSnapshot();
+        // 1) Instant render from local snapshot (same-device returning users).
+        restoreEndedData();
         render(latestDep);
         applyPhaseUI(phase);
+        // 2) Upgrade with the global snapshot so new devices / visitors see it too.
+        const srv = await fetchServerSnapshot();
+        if (srv) {
+          applyServerSnapshot(srv);
+          render(latestDep);
+        }
       } else {
         startTimers();
         await refresh(false);

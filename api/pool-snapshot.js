@@ -43,6 +43,11 @@ const CONFIG = {
 const KV_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || '';
 const KV_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || '';
 const KV_KEY = `tge:final:${CONFIG.SYMBOL}:${CONFIG.ADDRESS}`;
+// Global time-series history of the fundraise, so any device / new visitor can
+// review past records (not just whoever happened to have it in localStorage).
+const HISTORY_KEY = `tge:history:${CONFIG.SYMBOL}:${CONFIG.ADDRESS}`;
+const HISTORY_MAX = 600;            // hard cap (~10h at 1/min) to bound KV size
+const HISTORY_MIN_INTERVAL_MS = 55_000; // record at most ~1 point per minute
 
 /* ---------- KV (Upstash REST) helpers ---------- */
 async function kvGet(key) {
@@ -112,6 +117,25 @@ async function fetchBNBPrice() {
   return 0;
 }
 
+/* ---------- History (global time-series) ---------- */
+async function readHistory() {
+  const h = await kvGet(HISTORY_KEY);
+  return Array.isArray(h) ? h : [];
+}
+
+// Append one point, throttled to ~1/min so frequent visitor-driven captures
+// (the read path opportunistically captures) don't flood the series.
+async function appendHistory(point) {
+  try {
+    const arr = await readHistory();
+    const last = arr[arr.length - 1];
+    if (last && point.t - last.t < HISTORY_MIN_INTERVAL_MS) return;
+    arr.push(point);
+    if (arr.length > HISTORY_MAX) arr.splice(0, arr.length - HISTORY_MAX);
+    await kvSet(HISTORY_KEY, arr);
+  } catch (e) { /* non-fatal: history is best-effort */ }
+}
+
 /* ---------- Capture (guarded) ---------- */
 async function capture() {
   const now = Date.now();
@@ -129,6 +153,7 @@ async function capture() {
 
   const snap = { dep, bnbUSDT, t: now, updatedAt: new Date(now).toISOString() };
   await kvSet(KV_KEY, snap);
+  await appendHistory({ t: now, dep, bnbUSDT }); // global, throttled
   return { captured: snap };
 }
 
@@ -147,7 +172,26 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const isCapture = (req.query?.action || '') === 'capture';
+  const action = req.query?.action || '';
+  const isCapture = action === 'capture';
+
+  // Read path for the global history series. Self-heals like the snapshot read:
+  // if a visitor opens during the live window, opportunistically capture first
+  // so the series keeps filling even when the cron is sparse.
+  if (action === 'history') {
+    try {
+      const now = Date.now();
+      if (now >= CONFIG.START_MS && now <= CONFIG.END_MS) {
+        try { await capture(); } catch (e) { /* non-fatal */ }
+      }
+      const history = await readHistory();
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.setHeader('Cache-Control', 's-maxage=20, stale-while-revalidate=60');
+      return res.status(200).json({ history });
+    } catch (e) {
+      return res.status(200).json({ history: [] });
+    }
+  }
 
   if (isCapture) {
     if (!captureAllowed(req)) return res.status(401).json({ ok: false, error: 'unauthorized' });

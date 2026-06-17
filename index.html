@@ -329,6 +329,44 @@
     .miniBtn:focus-visible{outline:2px solid var(--c-primary);outline-offset:2px}
     .miniHint{font-size:11px;color:var(--c-sub);font-weight:500}
 
+    /* ---- History panel ---- */
+    .history-panel{align-items:stretch;gap:0}
+    .history-bar{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:2px 2px 8px;width:100%
+    }
+    .history-count{font-size:11px;color:var(--c-sub);font-weight:500}
+    .history-clear{
+      width:auto;padding:4px 12px;font-size:11px;font-weight:600;
+      border-radius:999px;background:transparent;color:var(--c-sub);
+      border:1px solid var(--c-border);margin-top:0;box-shadow:none;
+      transition:background .15s,color .15s,border-color .15s
+    }
+    .history-clear:hover{color:var(--c-error,#e5484d);border-color:var(--c-error,#e5484d);background:rgba(229,72,77,.08);box-shadow:none}
+    .history-clear:disabled{opacity:.4;cursor:default}
+    .history-list{
+      display:flex;flex-direction:column;gap:6px;width:100%;
+      max-height:280px;overflow-y:auto;padding-right:2px
+    }
+    .history-empty{
+      text-align:center;color:var(--c-sub);font-size:12px;
+      padding:18px 0;font-weight:500
+    }
+    .history-item{
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
+      padding:8px 12px;border-radius:10px;
+      background:var(--c-card2);border:1px solid var(--c-border)
+    }
+    .history-item .hi-time{font-size:11px;color:var(--c-sub);font-weight:600;white-space:nowrap}
+    .history-item .hi-stats{
+      display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px 12px;
+      font-size:12px;font-weight:600;text-align:right
+    }
+    .history-item .hi-stats span{color:var(--c-text)}
+    .history-item .hi-stats .hi-k{color:var(--c-sub);font-weight:500;margin-right:3px}
+    .history-item .hi-profit.pos{color:var(--c-success,#30a46c)}
+    .history-item .hi-profit.neg{color:var(--c-error,#e5484d)}
+
     body.profitOnlyMode #saleSection{display:none!important}
     body.profitOnlyMode #priceBox{display:none!important}
     body.profitOnlyMode .second-screen{display:none!important}
@@ -482,8 +520,20 @@
 
     <div class="ended-banner" id="endedMsg" data-i18n="status.ended">活动已结束，数据已锁定。</div>
 
-    <!-- ===== Second Screen: Tutorials, Invite, Resources ===== -->
+    <!-- ===== Second Screen: History, Tutorials, Invite, Resources ===== -->
     <div class="second-screen">
+
+      <button type="button" class="tutorials-toggle" id="historyToggle" aria-expanded="false" aria-controls="historyPanel" style="margin-bottom:8px">
+        <span data-i18n="history.title">历史记录</span>
+        <span class="arrow" aria-hidden="true">▼</span>
+      </button>
+      <div class="tutorials-panel history-panel" id="historyPanel" role="region">
+        <div class="history-bar">
+          <span class="history-count" id="historyCount">—</span>
+          <button type="button" class="history-clear" id="historyClear" data-i18n="history.clear">清空</button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+      </div>
 
       <button type="button" class="tutorials-toggle" id="tutorialsToggle" aria-expanded="false" aria-controls="tutorialsPanel">
         <span data-i18n="tutorial.title">相关教程</span>
@@ -627,7 +677,13 @@
 
       profitOnlyBtn: $('profitOnlyBtn'),
       tutorialsToggle: $('tutorialsToggle'),
-      tutorialsPanel: $('tutorialsPanel')
+      tutorialsPanel: $('tutorialsPanel'),
+
+      historyToggle: $('historyToggle'),
+      historyPanel: $('historyPanel'),
+      historyList: $('historyList'),
+      historyCount: $('historyCount'),
+      historyClear: $('historyClear')
     };
 
     /* ---------- State ---------- */
@@ -1160,6 +1216,151 @@
       saveFinalSnapshot();
     }
 
+    /* ---------- History log ----------
+     * Time-series of the fundraise progress so a user can scroll back through
+     * past records. Two sources are merged:
+     *   - local (this device's localStorage) — works offline / before the server
+     *     has anything, and updates instantly on each refresh;
+     *   - server (Vercel KV, via /api/pool-snapshot?action=history) — GLOBAL, so a
+     *     brand-new visitor with an empty cache still sees the past records.
+     * Each stored point is just { t, dep, bnbUSDT }; the oversubscription and the
+     * estimated profit are computed at render time from the user's current input,
+     * which keeps local and server points uniform and mergeable.
+     * Recording is throttled to ~1 point per minute on both sides.
+     */
+    const HISTORY = (() => {
+      const MAX = 300;
+      const MIN_INTERVAL_MS = 60_000;
+      const BUCKET_MS = 60_000; // dedupe granularity when merging the two sources
+
+      const key = () => cacheKey('history');
+      let serverPoints = []; // in-memory cache of the global series
+
+      function load() {
+        try {
+          const arr = JSON.parse(localStorage.getItem(key()) || '[]');
+          return Array.isArray(arr) ? arr : [];
+        } catch (e) {
+          console.debug('history load error:', e);
+          return [];
+        }
+      }
+
+      function save(arr) {
+        try { localStorage.setItem(key(), JSON.stringify(arr.slice(-MAX))); }
+        catch (e) { console.debug('history save error:', e); }
+      }
+
+      // Merge local + server points, dedup to one point per minute (keep newest
+      // within the bucket), sorted oldest→newest.
+      function merged() {
+        const map = new Map();
+        for (const p of [...load(), ...serverPoints]) {
+          if (!p || !(Number(p.dep) > 0) || !Number.isFinite(Number(p.t))) continue;
+          const bucket = Math.floor(p.t / BUCKET_MS);
+          const prev = map.get(bucket);
+          if (!prev || p.t > prev.t) map.set(bucket, p);
+        }
+        return [...map.values()].sort((a, b) => a.t - b.t);
+      }
+
+      // Estimated profit for a historical point, using that point's BNB price
+      // (fallback to the current one) and the user's current inputs.
+      function pointProfit(p) {
+        const target = CONFIG.TOTAL_TARGET_BNB;
+        const user = +els.userAmount.value || 0;
+        const price = +els.tokenPrice.value || 0;
+        const bnb = Number(p.bnbUSDT) > 0 ? Number(p.bnbUSDT) : (STATE.bnbUSDT || 0);
+        if (!(user && price && bnb && target && p.dep > 0)) return null;
+        const r = calcProjection({
+          userAmount: user, currentPool: p.dep, targetBNB: target,
+          totalTokens: CONFIG.TOTAL_TOKENS, tokenPrice: price,
+          bnbPrice: bnb, includeUserInPool: true
+        });
+        return r.profitUSD;
+      }
+
+      function record() {
+        const dep = latestDep;
+        if (!(dep > 0)) return;
+        const arr = load();
+        const last = arr[arr.length - 1];
+        const now = Date.now();
+        // Throttle: at most one local record per minute.
+        if (last && now - last.t < MIN_INTERVAL_MS) return;
+        arr.push({ t: now, dep, bnbUSDT: STATE.bnbUSDT || 0 });
+        save(arr);
+        render();
+      }
+
+      // Pull the global series from the backend (best-effort) and re-render so a
+      // cache-less visitor still sees past records.
+      async function fetchServer() {
+        if (!CONFIG.POOL_SNAPSHOT_API) return;
+        try {
+          const url = new URL(CONFIG.POOL_SNAPSHOT_API, location.href);
+          url.searchParams.set('action', 'history');
+          const d = await fetchJSON(url.toString(), {}, 6000);
+          if (d && Array.isArray(d.history)) {
+            serverPoints = d.history.filter(p => p && Number(p.dep) > 0 && Number.isFinite(Number(p.t)));
+            render();
+          }
+        } catch (e) {
+          console.debug('fetchServer history error:', e?.message);
+        }
+      }
+
+      function clear() {
+        // Clears this device's local log. Global (server) records persist and
+        // will reappear from the backend.
+        try { localStorage.removeItem(key()); } catch (e) { /* ignore */ }
+        render();
+      }
+
+      function render() {
+        if (!els.historyList) return;
+        const arr = merged();
+        els.historyCount.textContent = t('history.count', { n: arr.length });
+        els.historyClear.disabled = load().length === 0;
+
+        if (!arr.length) {
+          els.historyList.innerHTML = `<div class="history-empty">${t('history.empty')}</div>`;
+          return;
+        }
+
+        const timeFmt = new Intl.DateTimeFormat(currentLang === 'en' ? 'en-GB' : 'zh-CN', {
+          timeZone: TZ, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+        });
+        const target = CONFIG.TOTAL_TARGET_BNB;
+
+        // Newest first.
+        const rows = arr.slice().reverse().map(r => {
+          const time = timeFmt.format(new Date(r.t));
+          const pool = fmt(r.dep, 2);
+          const mult = fmt(target ? r.dep / target : 0, 2);
+          const profitUSD = pointProfit(r);
+          let profitHtml = '';
+          if (Number.isFinite(profitUSD)) {
+            const cls = profitUSD >= 0 ? 'pos' : 'neg';
+            const txt = (profitUSD >= 0 ? '+' : '') + fmt(profitUSD, 2);
+            profitHtml = `<span class="hi-profit ${cls}"><span class="hi-k">${t('history.k.profit')}</span>${txt}</span>`;
+          }
+          return `<div class="history-item">
+            <span class="hi-time">${time}</span>
+            <span class="hi-stats">
+              <span><span class="hi-k">${t('history.k.pool')}</span>${pool}</span>
+              <span><span class="hi-k">${t('history.k.mult')}</span>${mult}×</span>
+              ${profitHtml}
+            </span>
+          </div>`;
+        }).join('');
+
+        els.historyList.innerHTML = rows;
+      }
+
+      return { record, clear, render, fetchServer };
+    })();
+
     /* ---------- Value-change pulse ---------- */
     const prevValues = {};
     // Re-trigger the CSS pulse animation only when the displayed text actually
@@ -1271,6 +1472,7 @@
       if (!force && (phase === 'locked' || phase === 'ended')) {
         restoreEndedData();
         render(latestDep);
+        HISTORY.record();
         return;
       }
 
@@ -1288,6 +1490,7 @@
         render(dep);
         setLastUpdate(Date.now());
         saveFinalSnapshot();
+        HISTORY.record();
       } catch (e) {
         if (manual) {
           els.errBanner.textContent = e?.message || t('err.network');
@@ -1411,6 +1614,15 @@
       els.tutorialsPanel.classList.toggle('open', !expanded);
     });
 
+    els.historyToggle.addEventListener('click', () => {
+      const expanded = els.historyToggle.getAttribute('aria-expanded') === 'true';
+      els.historyToggle.setAttribute('aria-expanded', !expanded);
+      els.historyPanel.classList.toggle('open', !expanded);
+      if (!expanded) { HISTORY.render(); HISTORY.fetchServer(); }
+    });
+
+    els.historyClear.addEventListener('click', () => HISTORY.clear());
+
     // Copy with a legacy fallback for non-secure contexts / older browsers
     // where navigator.clipboard is unavailable.
     async function copyText(text) {
@@ -1527,7 +1739,14 @@
         'sr.beforeStart': '距开始约 {m} 分钟',
         'err.429': '请求过于频繁（429），请稍后重试',
         'err.timeout': '请求超时，请稍后重试或更换节点',
-        'err.network': '网络错误'
+        'err.network': '网络错误',
+        'history.title': '历史记录',
+        'history.empty': '暂无记录，活动进行中会自动记录募集进度',
+        'history.clear': '清空',
+        'history.count': '共 {n} 条记录',
+        'history.k.pool': '募集',
+        'history.k.mult': '超募',
+        'history.k.profit': '利润'
       },
       en: {
         'title': 'Binance Web3 Wallet Prime Sale #8 Pre-TGE (RE)',
@@ -1594,7 +1813,14 @@
         'sr.beforeStart': 'Starts in about {m} minutes',
         'err.429': 'Rate limited (429), please retry later',
         'err.timeout': 'Request timed out, please retry',
-        'err.network': 'Network error'
+        'err.network': 'Network error',
+        'history.title': 'History',
+        'history.empty': 'No records yet — progress is logged automatically while the event is live',
+        'history.clear': 'Clear',
+        'history.count': '{n} records',
+        'history.k.pool': 'Raised',
+        'history.k.mult': 'Oversub.',
+        'history.k.profit': 'Profit'
       }
     };
 
@@ -1616,6 +1842,8 @@
       if (langBtn) langBtn.textContent = currentLang === 'zh' ? 'EN' : '中文';
       // Re-apply profit only button text
       els.profitOnlyBtn.textContent = t(STATE.profitOnly ? 'profitOnly.on' : 'profitOnly.off');
+      // Re-render history with the new language (its labels are built in JS).
+      if (typeof HISTORY !== 'undefined') HISTORY.render();
     }
 
     function setLang(lang) {
@@ -1694,16 +1922,22 @@
         restoreEndedData();
         render(latestDep);
         applyPhaseUI(phase);
+        HISTORY.record();
         // 2) Upgrade with the global snapshot so new devices / visitors see it too.
         const srv = await fetchServerSnapshot();
         if (srv) {
           applyServerSnapshot(srv);
           render(latestDep);
+          HISTORY.record();
         }
       } else {
         startTimers();
         await refresh(false);
       }
+
+      // Pull the global history series so even a cache-less visitor sees past
+      // records (best-effort, non-blocking).
+      HISTORY.fetchServer();
 
       // Single 1s UI tick for countdown + auto-refresh display
       if (!uiTickId) {

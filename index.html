@@ -207,6 +207,9 @@
     .priceItem:hover{border-color:var(--c-primary)}
     .priceItem .v{font-weight:800;font-size:17px;letter-spacing:-.3px}
     .priceItem .t{font-size:11px;color:var(--c-sub);margin-top:6px;line-height:1.4}
+    .priceItem .t a{color:var(--c-primary);text-decoration:none;border-bottom:1px dashed currentColor}
+    .priceItem .t a:hover{opacity:.8}
+    .priceItem .t a .ext{font-size:9px;opacity:.7;margin-left:2px}
 
     .linkBtn{
       display:inline;background:none;border:none;color:var(--c-primary);
@@ -396,7 +399,7 @@
       </div>
       <div class="priceItem">
         <div class="v" id="labPriceV">—</div>
-        <div class="t"><span data-i18n="price.token">RE 参考价（默认参考价）</span></div>
+        <div class="t"><a href="https://trade.aspecta.ai/projects/usdt/Re" target="_blank" rel="noopener noreferrer" title="前往 Aspecta 查看"><span data-i18n="price.token">RE 参考价（价格来源Aspecta）</span><span class="ext" aria-hidden="true">↗</span></a></div>
       </div>
     </div>
 
@@ -1275,7 +1278,7 @@
         'label.totalSale': '预计出售总额 (USDT)',
         'label.totalSaleNote': '（根据参考价推算）',
         'price.bnb': '当前 BNB 价格（USDT）',
-        'price.token': 'RE 参考价（默认参考价）',
+        'price.token': 'RE 参考价（价格来源Aspecta）',
         'btn.refresh': '手动刷新',
         'hint.profitToggle': '（再次点击恢复全部）',
         'result.raised': '已募集 BNB',
@@ -1336,7 +1339,7 @@
         'label.totalSale': 'Est. Total Sale (USDT)',
         'label.totalSaleNote': '(based on ref. price)',
         'price.bnb': 'Current BNB Price (USDT)',
-        'price.token': 'RE Ref. Price (Default)',
+        'price.token': 'RE Ref. Price (source: Aspecta)',
         'btn.refresh': 'Refresh',
         'hint.profitToggle': '(Click again to restore all)',
         'result.raised': 'Raised BNB',

@@ -1214,13 +1214,13 @@
     }
 
     /* ---------- History log ----------
-     * Time-series of the fundraise progress so a user can scroll back through
-     * past records. The series is GLOBAL: it lives server-side (Vercel KV, via
+     * List of PAST (ended) tokens, newest first — one entry per token with its
+     * final result. The list is GLOBAL: it lives server-side (Vercel KV, via
      * /api/pool-snapshot?action=history) and every visitor sees exactly the same
-     * records — there is no separate per-device cache. Each stored point is
-     * { t, dep, bnbUSDT, sym }; oversubscription, participants and the estimated
-     * profit are derived at render time. Recording (throttled to ~1/min) happens
-     * server-side whenever the snapshot is captured.
+     * records — there is no separate per-device cache. Each entry is
+     * { id, sym, address, dep, bnbUSDT, t, endedAt }; oversubscription,
+     * participants and the estimated profit are derived at render time. A token
+     * is recorded server-side only after it has ended (see finalizeHistory).
      */
     const HISTORY = (() => {
       let serverPoints = []; // in-memory copy of the global series
@@ -1690,8 +1690,8 @@
         'err.timeout': '请求超时，请稍后重试或更换节点',
         'err.network': '网络错误',
         'history.title': '历史记录',
-        'history.empty': '暂无记录，活动进行中会自动记录募集进度',
-        'history.count': '共 {n} 条记录',
+        'history.empty': '暂无已结束的代币记录',
+        'history.count': '共 {n} 个已结束代币',
         'history.k.pool': '募集',
         'history.k.users': '人数',
         'history.k.mult': '超募',
@@ -1764,8 +1764,8 @@
         'err.timeout': 'Request timed out, please retry',
         'err.network': 'Network error',
         'history.title': 'History',
-        'history.empty': 'No records yet — progress is logged automatically while the event is live',
-        'history.count': '{n} records',
+        'history.empty': 'No ended tokens yet',
+        'history.count': '{n} ended tokens',
         'history.k.pool': 'Raised',
         'history.k.users': 'Players',
         'history.k.mult': 'Oversub.',

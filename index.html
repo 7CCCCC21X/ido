@@ -529,6 +529,8 @@
 
       DEFAULT_TOKEN_PRICE: 0.05,
       TOKEN_PRICE_API: 'https://trade.aspecta.ai/api/hermes/trading/k-line',
+      // Aspecta uses the project's English name (not the contract) as project_address.
+      TOKEN_PROJECT_NAME: 'RE',
 
       RPC_NODES: [
         'https://bsc-dataseed.binance.org/',
@@ -734,35 +736,43 @@
       return 0;
     }
 
-    // Defensively extract the latest close price from a k-line / ticker response.
-    // Handles common shapes: {price}, {data:[...]}, {data:{list:[...]}},
-    // arrays of candle arrays [time,open,high,low,close,...] or candle objects.
-    function extractTokenPrice(d) {
-      let node = d;
-      // Unwrap common envelope keys until we reach an array or a price-bearing leaf.
-      for (let i = 0; i < 6 && node && typeof node === 'object' && !Array.isArray(node); i++) {
-        const direct = node.price ?? node.close ?? node.c ?? node.last ?? node.closePrice;
-        if (direct != null && Number(direct)) return Number(direct);
-        const next = node.data ?? node.result ?? node.list ?? node.klines ?? node.items ?? node.rows ?? node.candles;
-        if (next == null) break;
-        node = next;
+    // Aspecta returns prices as 18-decimal fixed-point integer strings.
+    function toPrice(value) {
+      if (value == null) return null;
+      const s = String(value).trim();
+      if (/^-?\d+$/.test(s)) {
+        const neg = s.startsWith('-');
+        const digits = (neg ? s.slice(1) : s).padStart(19, '0');
+        const intPart = digits.slice(0, -18) || '0';
+        const fracPart = digits.slice(-18);
+        return (neg ? -1 : 1) * Number(`${intPart}.${fracPart}`);
       }
+      const n = Number(s);
+      return Number.isFinite(n) ? n / 1e18 : null;
+    }
 
-      let candle = node;
-      if (Array.isArray(node)) {
-        if (!node.length) return 0;
-        candle = node[node.length - 1]; // latest candle
-      }
+    // Parse the Aspecta k-line response: array (or {data:[...]}) of items, each
+    // with a k_line[] of candles. Take the latest candle's close_price for the
+    // requested project (matched by project_address; falls back to first item).
+    function extractTokenPrice(raw, projectName) {
+      const list = Array.isArray(raw)
+        ? raw
+        : (raw && Array.isArray(raw.data) ? raw.data : []);
+      if (!list.length) return 0;
 
-      if (Array.isArray(candle)) {
-        // [openTime, open, high, low, close, volume, ...] -> close at index 4
-        const close = candle[4] ?? candle[candle.length - 1];
-        return Number(close) || 0;
-      }
-      if (candle && typeof candle === 'object') {
-        return Number(candle.close ?? candle.c ?? candle.price ?? candle.last ?? candle.closePrice ?? 0) || 0;
-      }
-      return Number(candle) || 0;
+      const want = (projectName || '').toLowerCase();
+      let item = want
+        ? list.find(x => String(x?.project_address ?? '').toLowerCase() === want)
+        : null;
+      if (!item) item = list.find(x => Array.isArray(x?.k_line) && x.k_line.length) || list[0];
+
+      const kline = Array.isArray(item?.k_line) ? item.k_line.slice() : [];
+      if (!kline.length) return 0;
+
+      kline.sort((a, b) => (a.ended_at - b.ended_at));
+      const latest = kline[kline.length - 1];
+      const price = toPrice(latest?.close_price);
+      return Number.isFinite(price) && price > 0 ? price : 0;
     }
 
     async function getTokenPrice() {
@@ -773,8 +783,13 @@
       if (!CONFIG.TOKEN_PRICE_API) return CONFIG.DEFAULT_TOKEN_PRICE || 0;
 
       try {
-        const d = await fetchJSON(CONFIG.TOKEN_PRICE_API, {}, 7000);
-        const p = extractTokenPrice(d);
+        const url = new URL(CONFIG.TOKEN_PRICE_API);
+        url.searchParams.set('project_address', CONFIG.TOKEN_PROJECT_NAME || '');
+        url.searchParams.set('offset', '24');
+        url.searchParams.set('window_type', '1h');
+
+        const d = await fetchJSON(url.toString(), { headers: { accept: 'application/json' } }, 7000);
+        const p = extractTokenPrice(d, CONFIG.TOKEN_PROJECT_NAME);
         if (p) { cacheSet(key, p); return p; }
       } catch (e) {
         console.debug('getTokenPrice error:', e.message);

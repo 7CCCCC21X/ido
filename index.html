@@ -532,9 +532,11 @@
       // Aspecta uses the project's English name (not the contract) as project_address.
       TOKEN_PROJECT_NAME: 'RE',
       // Aspecta sends no CORS headers, so a static page must relay through a proxy.
-      // Tried in order; '' = direct (works only if same-origin / CORS allowed).
+      // Tried in order until one works. 最稳定的做法：部署仓库里的
+      // aspecta-proxy-worker.js（Cloudflare Worker），把下面第一行取消注释
+      // 并替换成你自己的 worker 地址（结尾保留 /?url=）。
       CORS_PROXIES: [
-        '',
+        // 'https://aspecta-proxy.你的子域.workers.dev/?url=',
         'https://api.allorigins.win/raw?url=',
         'https://api.codetabs.com/v1/proxy/?quest=',
         'https://corsproxy.io/?url='

@@ -153,7 +153,7 @@ async function capture() {
 
   const snap = { dep, bnbUSDT, t: now, updatedAt: new Date(now).toISOString() };
   await kvSet(KV_KEY, snap);
-  await appendHistory({ t: now, dep, bnbUSDT }); // global, throttled
+  await appendHistory({ t: now, dep, bnbUSDT, sym: CONFIG.SYMBOL }); // global, throttled
   return { captured: snap };
 }
 

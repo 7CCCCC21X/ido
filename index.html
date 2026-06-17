@@ -358,6 +358,13 @@
       background:var(--c-card2);border:1px solid var(--c-border)
     }
     .history-item .hi-time{font-size:11px;color:var(--c-sub);font-weight:600;white-space:nowrap}
+    .history-item .hi-meta{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+    .history-item .hi-sym{
+      font-size:11px;font-weight:700;line-height:1;
+      padding:2px 7px;border-radius:999px;
+      color:var(--c-primary);background:var(--c-primary-light);
+      border:1px solid rgba(0,102,255,.2);white-space:nowrap
+    }
     .history-item .hi-stats{
       display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px 12px;
       font-size:12px;font-weight:600;text-align:right
@@ -1288,7 +1295,7 @@
         const now = Date.now();
         // Throttle: at most one local record per minute.
         if (last && now - last.t < MIN_INTERVAL_MS) return;
-        arr.push({ t: now, dep, bnbUSDT: STATE.bnbUSDT || 0 });
+        arr.push({ t: now, dep, bnbUSDT: STATE.bnbUSDT || 0, sym: CONFIG.SYMBOL });
         save(arr);
         render();
       }
@@ -1333,10 +1340,16 @@
         });
         const target = CONFIG.TOTAL_TARGET_BNB;
 
+        const esc = s => String(s).replace(/[&<>"]/g, c => (
+          { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]
+        ));
+
         // Newest first.
         const rows = arr.slice().reverse().map(r => {
           const time = timeFmt.format(new Date(r.t));
+          const sym = esc(r.sym || CONFIG.SYMBOL);
           const pool = fmt(r.dep, 2);
+          const users = fmt(Math.floor(r.dep / CONFIG.MAX_PER_USER_BNB), 0);
           const mult = fmt(target ? r.dep / target : 0, 2);
           const profitUSD = pointProfit(r);
           let profitHtml = '';
@@ -1346,9 +1359,13 @@
             profitHtml = `<span class="hi-profit ${cls}"><span class="hi-k">${t('history.k.profit')}</span>${txt}</span>`;
           }
           return `<div class="history-item">
-            <span class="hi-time">${time}</span>
+            <span class="hi-meta">
+              <span class="hi-time">${time}</span>
+              <span class="hi-sym">${sym}</span>
+            </span>
             <span class="hi-stats">
               <span><span class="hi-k">${t('history.k.pool')}</span>${pool}</span>
+              <span><span class="hi-k">${t('history.k.users')}</span>${users}</span>
               <span><span class="hi-k">${t('history.k.mult')}</span>${mult}×</span>
               ${profitHtml}
             </span>
@@ -1745,6 +1762,7 @@
         'history.clear': '清空',
         'history.count': '共 {n} 条记录',
         'history.k.pool': '募集',
+        'history.k.users': '人数',
         'history.k.mult': '超募',
         'history.k.profit': '利润'
       },
@@ -1819,6 +1837,7 @@
         'history.clear': 'Clear',
         'history.count': '{n} records',
         'history.k.pool': 'Raised',
+        'history.k.users': 'Players',
         'history.k.mult': 'Oversub.',
         'history.k.profit': 'Profit'
       }

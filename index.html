@@ -1217,16 +1217,24 @@
     }
 
     /* ---------- History log ----------
-     * Persist the fundraise progress over time (per event, in localStorage) so a
-     * user can scroll back through past records — including on a later visit or a
-     * new device-less session. Recording is throttled to at most one point per
-     * minute so the 5s live refresh loop doesn't flood the log.
+     * Time-series of the fundraise progress so a user can scroll back through
+     * past records. Two sources are merged:
+     *   - local (this device's localStorage) — works offline / before the server
+     *     has anything, and updates instantly on each refresh;
+     *   - server (Vercel KV, via /api/pool-snapshot?action=history) — GLOBAL, so a
+     *     brand-new visitor with an empty cache still sees the past records.
+     * Each stored point is just { t, dep, bnbUSDT }; the oversubscription and the
+     * estimated profit are computed at render time from the user's current input,
+     * which keeps local and server points uniform and mergeable.
+     * Recording is throttled to ~1 point per minute on both sides.
      */
     const HISTORY = (() => {
       const MAX = 300;
       const MIN_INTERVAL_MS = 60_000;
+      const BUCKET_MS = 60_000; // dedupe granularity when merging the two sources
 
       const key = () => cacheKey('history');
+      let serverPoints = []; // in-memory cache of the global series
 
       function load() {
         try {
@@ -1243,50 +1251,77 @@
         catch (e) { console.debug('history save error:', e); }
       }
 
-      // Build a record from the current state. Returns null if there's no pool
-      // value yet (nothing meaningful to log).
-      function currentPoint() {
-        const dep = latestDep;
-        if (!(dep > 0)) return null;
+      // Merge local + server points, dedup to one point per minute (keep newest
+      // within the bucket), sorted oldest→newest.
+      function merged() {
+        const map = new Map();
+        for (const p of [...load(), ...serverPoints]) {
+          if (!p || !(Number(p.dep) > 0) || !Number.isFinite(Number(p.t))) continue;
+          const bucket = Math.floor(p.t / BUCKET_MS);
+          const prev = map.get(bucket);
+          if (!prev || p.t > prev.t) map.set(bucket, p);
+        }
+        return [...map.values()].sort((a, b) => a.t - b.t);
+      }
+
+      // Estimated profit for a historical point, using that point's BNB price
+      // (fallback to the current one) and the user's current inputs.
+      function pointProfit(p) {
         const target = CONFIG.TOTAL_TARGET_BNB;
-        const mult = target ? dep / target : 0;
         const user = +els.userAmount.value || 0;
         const price = +els.tokenPrice.value || 0;
-        const bnbUSDT = STATE.bnbUSDT || 0;
-        let profitUSD = null;
-        if (user && price && bnbUSDT && target) {
-          const r = calcProjection({
-            userAmount: user, currentPool: dep, targetBNB: target,
-            totalTokens: CONFIG.TOTAL_TOKENS, tokenPrice: price,
-            bnbPrice: bnbUSDT, includeUserInPool: true
-          });
-          profitUSD = r.profitUSD;
-        }
-        return { t: Date.now(), dep, mult, bnbUSDT, profitUSD };
+        const bnb = Number(p.bnbUSDT) > 0 ? Number(p.bnbUSDT) : (STATE.bnbUSDT || 0);
+        if (!(user && price && bnb && target && p.dep > 0)) return null;
+        const r = calcProjection({
+          userAmount: user, currentPool: p.dep, targetBNB: target,
+          totalTokens: CONFIG.TOTAL_TOKENS, tokenPrice: price,
+          bnbPrice: bnb, includeUserInPool: true
+        });
+        return r.profitUSD;
       }
 
       function record() {
-        const point = currentPoint();
-        if (!point) return;
+        const dep = latestDep;
+        if (!(dep > 0)) return;
         const arr = load();
         const last = arr[arr.length - 1];
-        // Throttle: at most one record per minute.
-        if (last && point.t - last.t < MIN_INTERVAL_MS) return;
-        arr.push(point);
+        const now = Date.now();
+        // Throttle: at most one local record per minute.
+        if (last && now - last.t < MIN_INTERVAL_MS) return;
+        arr.push({ t: now, dep, bnbUSDT: STATE.bnbUSDT || 0 });
         save(arr);
         render();
       }
 
+      // Pull the global series from the backend (best-effort) and re-render so a
+      // cache-less visitor still sees past records.
+      async function fetchServer() {
+        if (!CONFIG.POOL_SNAPSHOT_API) return;
+        try {
+          const url = new URL(CONFIG.POOL_SNAPSHOT_API, location.href);
+          url.searchParams.set('action', 'history');
+          const d = await fetchJSON(url.toString(), {}, 6000);
+          if (d && Array.isArray(d.history)) {
+            serverPoints = d.history.filter(p => p && Number(p.dep) > 0 && Number.isFinite(Number(p.t)));
+            render();
+          }
+        } catch (e) {
+          console.debug('fetchServer history error:', e?.message);
+        }
+      }
+
       function clear() {
+        // Clears this device's local log. Global (server) records persist and
+        // will reappear from the backend.
         try { localStorage.removeItem(key()); } catch (e) { /* ignore */ }
         render();
       }
 
       function render() {
         if (!els.historyList) return;
-        const arr = load();
+        const arr = merged();
         els.historyCount.textContent = t('history.count', { n: arr.length });
-        els.historyClear.disabled = arr.length === 0;
+        els.historyClear.disabled = load().length === 0;
 
         if (!arr.length) {
           els.historyList.innerHTML = `<div class="history-empty">${t('history.empty')}</div>`;
@@ -1296,17 +1331,18 @@
         const timeFmt = new Intl.DateTimeFormat(currentLang === 'en' ? 'en-GB' : 'zh-CN', {
           timeZone: TZ, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
         });
+        const target = CONFIG.TOTAL_TARGET_BNB;
 
         // Newest first.
         const rows = arr.slice().reverse().map(r => {
           const time = timeFmt.format(new Date(r.t));
           const pool = fmt(r.dep, 2);
-          const mult = fmt(r.mult || 0, 2);
+          const mult = fmt(target ? r.dep / target : 0, 2);
+          const profitUSD = pointProfit(r);
           let profitHtml = '';
-          if (Number.isFinite(r.profitUSD)) {
-            const p = r.profitUSD;
-            const cls = p >= 0 ? 'pos' : 'neg';
-            const txt = (p >= 0 ? '+' : '') + fmt(p, 2);
+          if (Number.isFinite(profitUSD)) {
+            const cls = profitUSD >= 0 ? 'pos' : 'neg';
+            const txt = (profitUSD >= 0 ? '+' : '') + fmt(profitUSD, 2);
             profitHtml = `<span class="hi-profit ${cls}"><span class="hi-k">${t('history.k.profit')}</span>${txt}</span>`;
           }
           return `<div class="history-item">
@@ -1322,7 +1358,7 @@
         els.historyList.innerHTML = rows;
       }
 
-      return { record, clear, render };
+      return { record, clear, render, fetchServer };
     })();
 
     /* ---------- Value-change pulse ---------- */
@@ -1582,7 +1618,7 @@
       const expanded = els.historyToggle.getAttribute('aria-expanded') === 'true';
       els.historyToggle.setAttribute('aria-expanded', !expanded);
       els.historyPanel.classList.toggle('open', !expanded);
-      if (!expanded) HISTORY.render();
+      if (!expanded) { HISTORY.render(); HISTORY.fetchServer(); }
     });
 
     els.historyClear.addEventListener('click', () => HISTORY.clear());
@@ -1898,6 +1934,10 @@
         startTimers();
         await refresh(false);
       }
+
+      // Pull the global history series so even a cache-less visitor sees past
+      // records (best-effort, non-blocking).
+      HISTORY.fetchServer();
 
       // Single 1s UI tick for countdown + auto-refresh display
       if (!uiTickId) {

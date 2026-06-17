@@ -531,6 +531,14 @@
       TOKEN_PRICE_API: 'https://trade.aspecta.ai/api/hermes/trading/k-line',
       // Aspecta uses the project's English name (not the contract) as project_address.
       TOKEN_PROJECT_NAME: 'RE',
+      // Aspecta sends no CORS headers, so a static page must relay through a proxy.
+      // Tried in order; '' = direct (works only if same-origin / CORS allowed).
+      CORS_PROXIES: [
+        '',
+        'https://api.allorigins.win/raw?url=',
+        'https://api.codetabs.com/v1/proxy/?quest=',
+        'https://corsproxy.io/?url='
+      ],
 
       RPC_NODES: [
         'https://bsc-dataseed.binance.org/',
@@ -782,17 +790,22 @@
 
       if (!CONFIG.TOKEN_PRICE_API) return CONFIG.DEFAULT_TOKEN_PRICE || 0;
 
-      try {
-        const url = new URL(CONFIG.TOKEN_PRICE_API);
-        url.searchParams.set('project_address', CONFIG.TOKEN_PROJECT_NAME || '');
-        url.searchParams.set('offset', '24');
-        url.searchParams.set('window_type', '1h');
+      const url = new URL(CONFIG.TOKEN_PRICE_API);
+      url.searchParams.set('project_address', CONFIG.TOKEN_PROJECT_NAME || '');
+      url.searchParams.set('offset', '24');
+      url.searchParams.set('window_type', '1h');
+      const target = url.toString();
 
-        const d = await fetchJSON(url.toString(), { headers: { accept: 'application/json' } }, 7000);
-        const p = extractTokenPrice(d, CONFIG.TOKEN_PROJECT_NAME);
-        if (p) { cacheSet(key, p); return p; }
-      } catch (e) {
-        console.debug('getTokenPrice error:', e.message);
+      // Aspecta blocks cross-origin requests; relay through a CORS proxy if direct fails.
+      for (const proxy of (CONFIG.CORS_PROXIES?.length ? CONFIG.CORS_PROXIES : [''])) {
+        const reqUrl = proxy ? proxy + encodeURIComponent(target) : target;
+        try {
+          const d = await fetchJSON(reqUrl, {}, 7000);
+          const p = extractTokenPrice(d, CONFIG.TOKEN_PROJECT_NAME);
+          if (p) { cacheSet(key, p); return p; }
+        } catch (e) {
+          console.debug('getTokenPrice failed via', proxy || '(direct)', e.message);
+        }
       }
       return CONFIG.DEFAULT_TOKEN_PRICE || 0;
     }

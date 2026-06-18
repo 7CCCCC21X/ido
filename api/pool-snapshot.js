@@ -43,11 +43,11 @@ const CONFIG = {
 const KV_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || '';
 const KV_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || '';
 const KV_KEY = `tge:final:${CONFIG.SYMBOL}:${CONFIG.ADDRESS}`;
-// Global time-series history of the fundraise, so any device / new visitor can
-// review past records (not just whoever happened to have it in localStorage).
-const HISTORY_KEY = `tge:history:${CONFIG.SYMBOL}:${CONFIG.ADDRESS}`;
-const HISTORY_MAX = 600;            // hard cap (~10h at 1/min) to bound KV size
-const HISTORY_MIN_INTERVAL_MS = 55_000; // record at most ~1 point per minute
+// Global history of PAST (ended) tokens — one final entry per token, shared
+// across all events so a new visitor sees every past sale, not just this one.
+const HISTORY_KEY = 'tge:history:ended';
+const HISTORY_MAX = 200;        // hard cap on the number of past tokens kept
+const TOKEN_ID = `${CONFIG.SYMBOL}:${CONFIG.ADDRESS}`;
 
 /* ---------- KV (Upstash REST) helpers ---------- */
 async function kvGet(key) {
@@ -117,23 +117,35 @@ async function fetchBNBPrice() {
   return 0;
 }
 
-/* ---------- History (global time-series) ---------- */
+/* ---------- History (ended tokens only) ---------- */
 async function readHistory() {
   const h = await kvGet(HISTORY_KEY);
   return Array.isArray(h) ? h : [];
 }
 
-// Append one point, throttled to ~1/min so frequent visitor-driven captures
-// (the read path opportunistically captures) don't flood the series.
-async function appendHistory(point) {
-  try {
-    const arr = await readHistory();
-    const last = arr[arr.length - 1];
-    if (last && point.t - last.t < HISTORY_MIN_INTERVAL_MS) return;
-    arr.push(point);
-    if (arr.length > HISTORY_MAX) arr.splice(0, arr.length - HISTORY_MAX);
-    await kvSet(HISTORY_KEY, arr);
-  } catch (e) { /* non-fatal: history is best-effort */ }
+// Record this token into the global history — but ONLY once it has ended, and
+// only once per token. Uses the final snapshot (captured during the window;
+// after END the on-chain balance drops as refunds process, so we can't read it
+// live anymore). Idempotent: re-running after it's recorded does nothing.
+async function finalizeHistory() {
+  if (Date.now() <= CONFIG.END_MS) return; // not ended yet → don't record
+  const snap = await kvGet(KV_KEY);
+  if (!snap || !(Number(snap.dep) > 0)) return; // no usable final value
+
+  const arr = await readHistory();
+  if (arr.some(e => e && e.id === TOKEN_ID)) return; // already recorded
+
+  arr.push({
+    id: TOKEN_ID,
+    sym: CONFIG.SYMBOL,
+    address: CONFIG.ADDRESS,
+    dep: Number(snap.dep),
+    bnbUSDT: Number(snap.bnbUSDT) || 0,
+    t: Number(snap.t) || CONFIG.END_MS,
+    endedAt: new Date(CONFIG.END_MS).toISOString()
+  });
+  if (arr.length > HISTORY_MAX) arr.splice(0, arr.length - HISTORY_MAX);
+  try { await kvSet(HISTORY_KEY, arr); } catch (e) { /* non-fatal */ }
 }
 
 /* ---------- Capture (guarded) ---------- */
@@ -153,7 +165,6 @@ async function capture() {
 
   const snap = { dep, bnbUSDT, t: now, updatedAt: new Date(now).toISOString() };
   await kvSet(KV_KEY, snap);
-  await appendHistory({ t: now, dep, bnbUSDT, sym: CONFIG.SYMBOL }); // global, throttled
   return { captured: snap };
 }
 
@@ -175,15 +186,12 @@ export default async function handler(req, res) {
   const action = req.query?.action || '';
   const isCapture = action === 'capture';
 
-  // Read path for the global history series. Self-heals like the snapshot read:
-  // if a visitor opens during the live window, opportunistically capture first
-  // so the series keeps filling even when the cron is sparse.
+  // Read path for the global history of ended tokens. Self-heals: once this
+  // token has ended, fold its final snapshot into the global list before
+  // returning, so it shows up without needing a separate cron.
   if (action === 'history') {
     try {
-      const now = Date.now();
-      if (now >= CONFIG.START_MS && now <= CONFIG.END_MS) {
-        try { await capture(); } catch (e) { /* non-fatal */ }
-      }
+      try { await finalizeHistory(); } catch (e) { /* non-fatal */ }
       const history = await readHistory();
       res.setHeader('Content-Type', 'application/json; charset=utf-8');
       res.setHeader('Cache-Control', 's-maxage=20, stale-while-revalidate=60');
@@ -210,6 +218,9 @@ export default async function handler(req, res) {
     const now = Date.now();
     if (now >= CONFIG.START_MS && now <= CONFIG.END_MS) {
       try { await capture(); } catch (e) { /* non-fatal */ }
+    } else if (now > CONFIG.END_MS) {
+      // Event is over: make sure this token is recorded into the global history.
+      try { await finalizeHistory(); } catch (e) { /* non-fatal */ }
     }
     const snap = (await kvGet(KV_KEY)) || {};
     res.setHeader('Content-Type', 'application/json; charset=utf-8');

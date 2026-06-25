@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>币安 Web3 钱包 第8期Prime Sale Pre-TGE（RE）</title>
+  <title>币安 Web3 钱包 第47期 独家TGE（CAP）</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <meta name="color-scheme" content="light dark" />
 <style>
@@ -429,14 +429,14 @@
   <div class="container">
     <div id="errBanner" class="error-banner" role="alert"></div>
 
-    <h2 data-i18n="title">币安 Web3 钱包 第8期Prime Sale Pre-TGE（RE）</h2>
+    <h2 data-i18n="title">币安 Web3 钱包 第47期 独家TGE（CAP）</h2>
 
     <div class="subline">
       合约：
       <a id="contractLink" href="#" target="_blank" rel="noopener noreferrer">—</a>
     </div>
 
-    <input id="targetAddress" type="hidden" value="0xc5510b179d80451d3b062732b1768085d9ef8689" />
+    <input id="targetAddress" type="hidden" value="0xa43d3f9f24a4ad3406a434be411af77e5d410b3b" />
 
     <!-- ===== First Screen: Input + Core Result + Status ===== -->
 
@@ -446,14 +446,14 @@
     <label for="tokenPrice"><span data-i18n="label.price">参考价格 (USDT)</span><span class="note" data-i18n="label.priceNote">默认使用参考价（可手动修改）</span></label>
     <div class="row" style="align-items:center;gap:8px">
       <div class="col">
-        <input id="tokenPrice" type="number" step="0.000001" value="0.050000" min="0" inputmode="decimal" />
+        <input id="tokenPrice" type="number" step="0.000001" value="0.004000" min="0" inputmode="decimal" />
       </div>
       <button type="button" class="linkBtn" id="resetPriceBtn" style="flex:0 0 auto;margin-top:0" data-i18n="btn.resetPrice">恢复默认价</button>
     </div>
 
     <div id="saleSection">
       <label for="airdropUSD"><span data-i18n="label.totalSale">预计空投总额 (USDT)</span><span class="note" data-i18n="label.totalSaleNote">（根据参考价推算）</span></label>
-      <input id="airdropUSD" type="number" step="1" value="500000" readonly />
+      <input id="airdropUSD" type="number" step="1" value="400000" readonly />
       <div class="note" id="airdropFmt">—</div>
     </div>
 
@@ -464,7 +464,7 @@
       </div>
       <div class="priceItem">
         <div class="v skel" id="labPriceV">—</div>
-        <div class="t"><a href="https://trade.aspecta.ai/projects/usdt/Re" target="_blank" rel="noopener noreferrer" title="前往 Aspecta 查看"><span data-i18n="price.token">RE 参考价（价格来源Aspecta）</span><span class="ext" aria-hidden="true">↗</span></a></div>
+        <div class="t"><a href="https://trade.aspecta.ai/projects/usdt/Cap" target="_blank" rel="noopener noreferrer" title="前往 Aspecta 查看"><span data-i18n="price.token">CAP 参考价（价格来源Aspecta）</span><span class="ext" aria-hidden="true">↗</span></a></div>
       </div>
     </div>
 
@@ -500,12 +500,12 @@
         <p><span data-i18n="result.target">目标</span>：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
         <p><span data-i18n="result.multiplier">超募倍数</span>：<span class="highlight" id="multiplier">—</span></p>
         <p><span data-i18n="result.participants">参加人数</span>：<span class="highlight" id="participantCount">—</span></p>
-        <p><span data-i18n="result.sale">出售：10,000,000 RE（占总供应量1%）</span></p>
+        <p><span data-i18n="result.sale">出售：100,000,000 CAP（占总供应量1%）</span></p>
       </div>
       <div class="result-body">
         <p>
           <span data-i18n="result.invest">投入</span> <span class="highlight" id="userInput">—</span> BNB（<span data-i18n="result.share">占比</span> <span class="highlight" id="percent">—</span>%）<br>
-          <span data-i18n="result.receive">可获得</span> <span class="success" id="tokenAmt">—</span> <span data-i18n="result.tokens">枚 RE</span> ≈ <span class="success" id="usdValue">—</span>
+          <span data-i18n="result.receive">可获得</span> <span class="success" id="tokenAmt">—</span> <span data-i18n="result.tokens">枚 CAP</span> ≈ <span class="success" id="usdValue">—</span>
         </p>
         <p><span data-i18n="result.deducted">实际扣款</span>：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
         <p><span data-i18n="result.refund">退回</span>：<span class="refund" id="refundBNB">—</span> BNB</p>
@@ -554,7 +554,7 @@
 
       <div class="hintBanner">
         <span class="hintMsg">
-          <span data-i18n="hint.banner">22点结束后，未被用于认购的BNB可以退回，获得的代币18号在交易所内交易。</span>
+          <span data-i18n="hint.banner">21点结束后，未被用于认购的BNB可以退回，获得的代币可以直接交易。</span>
         </span>
       </div>
 
@@ -589,13 +589,13 @@
 
   <script>
     const CONFIG = {
-      SYMBOL: 'RE',
-      TOTAL_TARGET_BNB: 809.82,
-      TOTAL_TOKENS: 10_000_000,
+      SYMBOL: 'CAP',
+      TOTAL_TARGET_BNB: 605.96,
+      TOTAL_TOKENS: 100_000_000,
       MAX_PER_USER_BNB: 3,
 
-      START_TIME: new Date('2026-06-17T20:00:00+08:00'),
-      END_TIME: new Date('2026-06-17T22:00:00+08:00'),
+      START_TIME: new Date('2026-06-26T19:00:00+08:00'),
+      END_TIME: new Date('2026-06-26T21:00:00+08:00'),
 
       PRICE_CACHE_MS: 60_000,
       REFRESH_INTERVAL_SEC: 5,
@@ -607,7 +607,7 @@
         'https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD'
       ],
 
-      DEFAULT_TOKEN_PRICE: 0.05,
+      DEFAULT_TOKEN_PRICE: 0.004,
       // 同源后端代理：前端请求它，由它去请求 Aspecta 并补上 CORS 头。
       // 实现见仓库 /api/aspecta-kline.js（部署到 Vercel 等支持 serverless 的平台）。
       TOKEN_PRICE_PROXY: '/api/aspecta-kline',
@@ -615,7 +615,7 @@
       // 让换设备 / 新访客也能看到。实现见 /api/pool-snapshot.js（需挂 Vercel KV）。
       POOL_SNAPSHOT_API: '/api/pool-snapshot',
       // Aspecta 用项目英文名（不是合约地址）作为 project_address。
-      TOKEN_PROJECT_NAME: 'Re',
+      TOKEN_PROJECT_NAME: 'Cap',
 
       RPC_NODES: [
         'https://bsc-dataseed.binance.org/',
@@ -627,7 +627,7 @@
       FINAL_REFRESH_BEFORE_END_MS: 60_000,
 
       // Fallback snapshot for new visitors after activity ends (update after event)
-      FINAL_SNAPSHOT: { dep: 0, updatedAt: '2026-06-17T21:59:00+08:00' }
+      FINAL_SNAPSHOT: { dep: 0, updatedAt: '2026-06-26T20:59:00+08:00' }
     };
 
     /* ---------- DOM refs ---------- */
@@ -1624,7 +1624,7 @@
     /* ---------- i18n ---------- */
     const I18N = {
       zh: {
-        'title': '币安 Web3 钱包 第8期Prime Sale Pre-TGE（RE）',
+        'title': '币安 Web3 钱包 第47期 独家TGE（CAP）',
         'label.invest': '投入 BNB',
         'label.investNote': '单人上限 3 BNB',
         'label.price': '参考价格 (USDT)',
@@ -1633,7 +1633,7 @@
         'label.totalSale': '预计空投总额 (USDT)',
         'label.totalSaleNote': '（根据参考价推算）',
         'price.bnb': '当前 BNB 价格（USDT）',
-        'price.token': 'RE 参考价（价格来源Aspecta）',
+        'price.token': 'CAP 参考价（价格来源Aspecta）',
         'btn.refresh': '手动刷新',
         'btn.refreshing': '刷新中…',
         'hint.profitToggle': '（再次点击恢复全部）',
@@ -1641,11 +1641,11 @@
         'result.target': '目标',
         'result.multiplier': '超募倍数',
         'result.participants': '参加人数',
-        'result.sale': '出售：10,000,000 RE（占总供应量1%）',
+        'result.sale': '出售：100,000,000 CAP（占总供应量1%）',
         'result.invest': '投入',
         'result.share': '占比',
         'result.receive': '可获得',
-        'result.tokens': '枚 RE',
+        'result.tokens': '枚 CAP',
         'result.deducted': '实际扣款',
         'result.refund': '退回',
         'result.profit': '预估利润',
@@ -1654,7 +1654,7 @@
         'tutorial.onchain': '链上借BNB教程',
         'tutorial.exchange': '交易所借BNB教程',
         'tutorial.wallet': '币安钱包借BNB教程',
-        'hint.banner': '22点结束后，未被用于认购的BNB可以退回，获得的代币18号在交易所内交易。',
+        'hint.banner': '21点结束后，未被用于认购的BNB可以退回，获得的代币可以直接交易。',
         'referral.headline': '币安钱包绑定邀请码 享手续费优惠 30%（全网最高）',
         'referral.sub': '10秒完成绑定',
         'referral.cta': '点击这里一键前往绑定',
@@ -1698,7 +1698,7 @@
         'history.k.profit': '利润'
       },
       en: {
-        'title': 'Binance Web3 Wallet Prime Sale #8 Pre-TGE (RE)',
+        'title': 'Binance Web3 Wallet #47 Exclusive TGE (CAP)',
         'label.invest': 'Invest BNB',
         'label.investNote': 'Max 3 BNB per user',
         'label.price': 'Ref. Price (USDT)',
@@ -1707,7 +1707,7 @@
         'label.totalSale': 'Est. Total Sale (USDT)',
         'label.totalSaleNote': '(based on ref. price)',
         'price.bnb': 'Current BNB Price (USDT)',
-        'price.token': 'RE Ref. Price (source: Aspecta)',
+        'price.token': 'CAP Ref. Price (source: Aspecta)',
         'btn.refresh': 'Refresh',
         'btn.refreshing': 'Refreshing…',
         'hint.profitToggle': '(Click again to restore all)',
@@ -1715,11 +1715,11 @@
         'result.target': 'Target',
         'result.multiplier': 'Oversubscription',
         'result.participants': 'Participants',
-        'result.sale': 'Sale: 10,000,000 RE (1% of supply)',
+        'result.sale': 'Sale: 100,000,000 CAP (1% of supply)',
         'result.invest': 'Invest',
         'result.share': 'Share',
         'result.receive': 'Receive',
-        'result.tokens': 'RE',
+        'result.tokens': 'CAP',
         'result.deducted': 'Deducted',
         'result.refund': 'Refund',
         'result.profit': 'Est. Profit',
@@ -1728,7 +1728,7 @@
         'tutorial.onchain': 'On-chain BNB Borrow Guide',
         'tutorial.exchange': 'Exchange BNB Borrow Guide',
         'tutorial.wallet': 'Binance Wallet BNB Borrow Guide',
-        'hint.banner': 'After 22:00, unused BNB will be refunded. Tokens will be tradable on exchanges on the 18th.',
+        'hint.banner': 'After 21:00, unused BNB will be refunded. Tokens will be tradable immediately.',
         'referral.headline': 'Binance Wallet Referral Code — 30% Fee Discount (Best Offer)',
         'referral.sub': 'Bind in 10 seconds',
         'referral.cta': 'Go to Bind',

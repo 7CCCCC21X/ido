@@ -141,7 +141,11 @@ async function finalizeHistory() {
     address: CONFIG.ADDRESS,
     dep: Number(snap.dep),
     bnbUSDT: Number(snap.bnbUSDT) || 0,
-    t: Number(snap.t) || CONFIG.END_MS,
+    // Time shown in history is the event's END moment (the final second), not
+    // the moment the snapshot happened to be captured (cron at 21:59, or a
+    // visitor mid-window). The value (dep) still comes from the last captured
+    // snapshot; only the displayed timestamp is pinned to END.
+    t: CONFIG.END_MS,
     endedAt: new Date(CONFIG.END_MS).toISOString()
   });
   if (arr.length > HISTORY_MAX) arr.splice(0, arr.length - HISTORY_MAX);

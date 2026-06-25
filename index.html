@@ -616,6 +616,8 @@
       POOL_SNAPSHOT_API: '/api/pool-snapshot',
       // Aspecta 用项目英文名（不是合约地址）作为 project_address。
       TOKEN_PROJECT_NAME: 'Cap',
+      // Aspecta 行情按「1 key ≈ 100 CAP」计价，需把抓到的价格除以该系数换算成单枚 CAP 单价。
+      TOKEN_PRICE_DIVISOR: 100,
 
       RPC_NODES: [
         'https://bsc-dataseed.binance.org/',
@@ -882,7 +884,8 @@
         const url = new URL(CONFIG.TOKEN_PRICE_PROXY, location.href);
         url.searchParams.set('project', CONFIG.TOKEN_PROJECT_NAME || '');
         const d = await fetchJSON(url.toString(), {}, 8000);
-        const p = extractTokenPrice(d, CONFIG.TOKEN_PROJECT_NAME);
+        const raw = extractTokenPrice(d, CONFIG.TOKEN_PROJECT_NAME);
+        const p = raw / (CONFIG.TOKEN_PRICE_DIVISOR || 1);
         if (p) { cacheSet(key, p); return p; }
       } catch (e) {
         console.debug('getTokenPrice error:', e.message);

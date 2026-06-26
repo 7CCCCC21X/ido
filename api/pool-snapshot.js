@@ -24,8 +24,8 @@
 const CONFIG = {
   SYMBOL: 'RE',
   ADDRESS: (process.env.POOL_ADDRESS || '0xc5510b179d80451d3b062732b1768085d9ef8689').toLowerCase(),
-  START_MS: new Date('2026-06-17T18:00:00+08:00').getTime(),
-  END_MS: new Date('2026-06-17T20:00:00+08:00').getTime(),
+  START_MS: new Date('2026-06-26T18:00:00+08:00').getTime(),
+  END_MS: new Date('2026-06-26T20:00:00+08:00').getTime(),
   RPC_NODES: [
     'https://bsc-dataseed.binance.org/',
     'https://bsc-dataseed1.defibit.io/',

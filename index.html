@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>币安 Web3 钱包 第47期 独家TGE（CAP）</title>
+  <title>币安 Web3 钱包 Prime Sale Pre-TGE（PREDICT）</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <meta name="color-scheme" content="light dark" />
 <style>
@@ -429,31 +429,31 @@
   <div class="container">
     <div id="errBanner" class="error-banner" role="alert"></div>
 
-    <h2 data-i18n="title">币安 Web3 钱包 第47期 独家TGE（CAP）</h2>
+    <h2 data-i18n="title">币安 Web3 钱包 Prime Sale Pre-TGE（PREDICT）</h2>
 
     <div class="subline">
       合约：
       <a id="contractLink" href="#" target="_blank" rel="noopener noreferrer">—</a>
     </div>
 
-    <input id="targetAddress" type="hidden" value="0xa43d3f9f24a4ad3406a434be411af77e5d410b3b" />
+    <input id="targetAddress" type="hidden" value="0x46c84f9493acb866a8465b0eb16ae2da1e404922" />
 
     <!-- ===== First Screen: Input + Core Result + Status ===== -->
 
-    <label for="userAmount"><span data-i18n="label.invest">投入 BNB</span> <span class="note" data-i18n="label.investNote">单人上限 3 BNB</span></label>
-    <input id="userAmount" type="number" step="0.01" value="3" min="0" max="3" inputmode="decimal" />
+    <label for="userAmount"><span data-i18n="label.invest">投入 BNB</span> <span class="note" data-i18n="label.investNote">单人上限 6 BNB</span></label>
+    <input id="userAmount" type="number" step="0.01" value="6" min="0" max="6" inputmode="decimal" />
 
     <label for="tokenPrice"><span data-i18n="label.price">参考价格 (USDT)</span><span class="note" data-i18n="label.priceNote">默认使用参考价（可手动修改）</span></label>
     <div class="row" style="align-items:center;gap:8px">
       <div class="col">
-        <input id="tokenPrice" type="number" step="0.000001" value="0.004000" min="0" inputmode="decimal" />
+        <input id="tokenPrice" type="number" step="0.000001" value="1.380000" min="0" inputmode="decimal" />
       </div>
       <button type="button" class="linkBtn" id="resetPriceBtn" style="flex:0 0 auto;margin-top:0" data-i18n="btn.resetPrice">恢复默认价</button>
     </div>
 
     <div id="saleSection">
       <label for="airdropUSD"><span data-i18n="label.totalSale">预计空投总额 (USDT)</span><span class="note" data-i18n="label.totalSaleNote">（根据参考价推算）</span></label>
-      <input id="airdropUSD" type="number" step="1" value="400000" readonly />
+      <input id="airdropUSD" type="number" step="1" value="27600000" readonly />
       <div class="note" id="airdropFmt">—</div>
     </div>
 
@@ -464,7 +464,7 @@
       </div>
       <div class="priceItem">
         <div class="v skel" id="labPriceV">—</div>
-        <div class="t"><a href="https://trade.aspecta.ai/projects/usdt/Cap" target="_blank" rel="noopener noreferrer" title="前往 Aspecta 查看"><span data-i18n="price.token">CAP 参考价（价格来源Aspecta）</span><span class="ext" aria-hidden="true">↗</span></a></div>
+        <div class="t"><a href="https://www.binance.com/zh-CN/futures/PREDICTUSDT" target="_blank" rel="noopener noreferrer" title="前往币安合约查看"><span data-i18n="price.token">PREDICT 参考价（价格来源币安合约）</span><span class="ext" aria-hidden="true">↗</span></a></div>
       </div>
     </div>
 
@@ -500,12 +500,12 @@
         <p><span data-i18n="result.target">目标</span>：<span class="highlight" id="targetBNBShow">—</span> BNB</p>
         <p><span data-i18n="result.multiplier">超募倍数</span>：<span class="highlight" id="multiplier">—</span></p>
         <p><span data-i18n="result.participants">参加人数</span>：<span class="highlight" id="participantCount">—</span></p>
-        <p><span data-i18n="result.sale">出售：100,000,000 CAP（占总供应量1%）</span></p>
+        <p><span data-i18n="result.sale">出售：20,000,000 PREDICT（占总供应量2%）</span></p>
       </div>
       <div class="result-body">
         <p>
           <span data-i18n="result.invest">投入</span> <span class="highlight" id="userInput">—</span> BNB（<span data-i18n="result.share">占比</span> <span class="highlight" id="percent">—</span>%）<br>
-          <span data-i18n="result.receive">可获得</span> <span class="success" id="tokenAmt">—</span> <span data-i18n="result.tokens">枚 CAP</span> ≈ <span class="success" id="usdValue">—</span>
+          <span data-i18n="result.receive">可获得</span> <span class="success" id="tokenAmt">—</span> <span data-i18n="result.tokens">枚 PREDICT</span> ≈ <span class="success" id="usdValue">—</span>
         </p>
         <p><span data-i18n="result.deducted">实际扣款</span>：<span class="deduct" id="principalBNB">—</span> BNB ≈ <span class="deduct" id="principalUSD">—</span></p>
         <p><span data-i18n="result.refund">退回</span>：<span class="refund" id="refundBNB">—</span> BNB</p>
@@ -554,7 +554,7 @@
 
       <div class="hintBanner">
         <span class="hintMsg">
-          <span data-i18n="hint.banner">20点结束后，未被用于认购的BNB可以退回，获得的代币可以直接交易。</span>
+          <span data-i18n="hint.banner">18点结束后，未被用于认购的BNB可以退回，获得的代币等项目TGE才能交易。</span>
         </span>
       </div>
 
@@ -589,13 +589,13 @@
 
   <script>
     const CONFIG = {
-      SYMBOL: 'CAP',
-      TOTAL_TARGET_BNB: 605.96,
-      TOTAL_TOKENS: 100_000_000,
-      MAX_PER_USER_BNB: 3,
+      SYMBOL: 'PREDICT',
+      TOTAL_TARGET_BNB: 7794.12,
+      TOTAL_TOKENS: 20_000_000,
+      MAX_PER_USER_BNB: 6,
 
-      START_TIME: new Date('2026-06-26T18:00:00+08:00'),
-      END_TIME: new Date('2026-06-26T20:00:00+08:00'),
+      START_TIME: new Date('2026-10-29T16:00:00+08:00'),
+      END_TIME: new Date('2026-10-29T18:00:00+08:00'),
 
       PRICE_CACHE_MS: 60_000,
       REFRESH_INTERVAL_SEC: 5,
@@ -607,17 +607,19 @@
         'https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD'
       ],
 
-      DEFAULT_TOKEN_PRICE: 0.004,
-      // 同源后端代理：前端请求它，由它去请求 Aspecta 并补上 CORS 头。
-      // 实现见仓库 /api/aspecta-kline.js（部署到 Vercel 等支持 serverless 的平台）。
-      TOKEN_PRICE_PROXY: '/api/aspecta-kline',
+      // 兜底默认价（币安合约盘前 PREDICTUSDT 接口抓不到时才用）；页面加载后会被实时价覆盖。
+      DEFAULT_TOKEN_PRICE: 1.38,
+      // 参考盘前价格：币安合约（U 本位盘前永续 PREDICTUSDT）。
+      // 先直接请求币安合约公开行情接口（带 CORS 头，浏览器可直连）；
+      // 若被拦截/限流，再退回同源后端代理 /api/binance-futures-price（见仓库 api/ 目录）。
+      TOKEN_FUTURES_SYMBOL: 'PREDICTUSDT',
+      TOKEN_PRICE_APIS: [
+        'https://fapi.binance.com/fapi/v1/ticker/price?symbol=PREDICTUSDT',
+        '/api/binance-futures-price?symbol=PREDICTUSDT'
+      ],
       // 同源后端：活动结束后返回全局「最终数据」快照（资金池 + 价格 + 时间），
       // 让换设备 / 新访客也能看到。实现见 /api/pool-snapshot.js（需挂 Vercel KV）。
       POOL_SNAPSHOT_API: '/api/pool-snapshot',
-      // Aspecta 用项目英文名（不是合约地址）作为 project_address。
-      TOKEN_PROJECT_NAME: 'Cap',
-      // Aspecta 行情按「1 key ≈ 100 CAP」计价，需把抓到的价格除以该系数换算成单枚 CAP 单价。
-      TOKEN_PRICE_DIVISOR: 100,
 
       RPC_NODES: [
         'https://bsc-dataseed.binance.org/',
@@ -629,7 +631,7 @@
       FINAL_REFRESH_BEFORE_END_MS: 60_000,
 
       // Fallback snapshot for new visitors after activity ends (update after event)
-      FINAL_SNAPSHOT: { dep: 0, updatedAt: '2026-06-26T19:59:00+08:00' }
+      FINAL_SNAPSHOT: { dep: 0, updatedAt: '2026-10-29T17:59:00+08:00' }
     };
 
     /* ---------- DOM refs ---------- */
@@ -833,43 +835,11 @@
       return 0;
     }
 
-    // Aspecta returns prices as 18-decimal fixed-point integer strings.
-    function toPrice(value) {
-      if (value == null) return null;
-      const s = String(value).trim();
-      if (/^-?\d+$/.test(s)) {
-        const neg = s.startsWith('-');
-        const digits = (neg ? s.slice(1) : s).padStart(19, '0');
-        const intPart = digits.slice(0, -18) || '0';
-        const fracPart = digits.slice(-18);
-        return (neg ? -1 : 1) * Number(`${intPart}.${fracPart}`);
-      }
-      const n = Number(s);
-      return Number.isFinite(n) ? n / 1e18 : null;
-    }
-
-    // Parse the Aspecta k-line response: array (or {data:[...]}) of items, each
-    // with a k_line[] of candles. Take the latest candle's close_price for the
-    // requested project (matched by project_address; falls back to first item).
-    function extractTokenPrice(raw, projectName) {
-      const list = Array.isArray(raw)
-        ? raw
-        : (raw && Array.isArray(raw.data) ? raw.data : []);
-      if (!list.length) return 0;
-
-      const want = (projectName || '').toLowerCase();
-      let item = want
-        ? list.find(x => String(x?.project_address ?? '').toLowerCase() === want)
-        : null;
-      if (!item) item = list.find(x => Array.isArray(x?.k_line) && x.k_line.length) || list[0];
-
-      const kline = Array.isArray(item?.k_line) ? item.k_line.slice() : [];
-      if (!kline.length) return 0;
-
-      kline.sort((a, b) => (a.ended_at - b.ended_at));
-      const latest = kline[kline.length - 1];
-      const price = toPrice(latest?.close_price);
-      return Number.isFinite(price) && price > 0 ? price : 0;
+    // Binance Futures ticker: { symbol: 'PREDICTUSDT', price: '0.4123', time: ... }
+    function extractTokenPrice(raw) {
+      const d = Array.isArray(raw) ? raw[0] : raw;
+      const p = Number(d?.price ?? d?.markPrice ?? d?.lastPrice ?? 0);
+      return Number.isFinite(p) && p > 0 ? p : 0;
     }
 
     async function getTokenPrice() {
@@ -877,18 +847,17 @@
       const cached = cacheGet(key, CONFIG.PRICE_CACHE_MS);
       if (cached) return cached.v;
 
-      if (!CONFIG.TOKEN_PRICE_PROXY) return CONFIG.DEFAULT_TOKEN_PRICE || 0;
-
-      try {
-        // 请求同源后端代理（/api/aspecta-kline），由后端去请求 Aspecta，避免浏览器 CORS 拦截。
-        const url = new URL(CONFIG.TOKEN_PRICE_PROXY, location.href);
-        url.searchParams.set('project', CONFIG.TOKEN_PROJECT_NAME || '');
-        const d = await fetchJSON(url.toString(), {}, 8000);
-        const raw = extractTokenPrice(d, CONFIG.TOKEN_PROJECT_NAME);
-        const p = raw / (CONFIG.TOKEN_PRICE_DIVISOR || 1);
-        if (p) { cacheSet(key, p); return p; }
-      } catch (e) {
-        console.debug('getTokenPrice error:', e.message);
+      const apis = Array.isArray(CONFIG.TOKEN_PRICE_APIS) ? CONFIG.TOKEN_PRICE_APIS : [];
+      for (const api of apis) {
+        try {
+          // 币安合约公开行情直连；失败则走同源后端代理（/api/binance-futures-price）。
+          const url = new URL(api, location.href);
+          const d = await fetchJSON(url.toString(), {}, 8000);
+          const p = extractTokenPrice(d);
+          if (p) { cacheSet(key, p); return p; }
+        } catch (e) {
+          console.debug('getTokenPrice fallback:', api, e.message);
+        }
       }
       return CONFIG.DEFAULT_TOKEN_PRICE || 0;
     }
@@ -1627,16 +1596,16 @@
     /* ---------- i18n ---------- */
     const I18N = {
       zh: {
-        'title': '币安 Web3 钱包 第47期 独家TGE（CAP）',
+        'title': '币安 Web3 钱包 Prime Sale Pre-TGE（PREDICT）',
         'label.invest': '投入 BNB',
-        'label.investNote': '单人上限 3 BNB',
+        'label.investNote': '单人上限 6 BNB',
         'label.price': '参考价格 (USDT)',
         'label.priceNote': '默认使用参考价（可手动修改）',
         'btn.resetPrice': '恢复默认价',
         'label.totalSale': '预计空投总额 (USDT)',
         'label.totalSaleNote': '（根据参考价推算）',
         'price.bnb': '当前 BNB 价格（USDT）',
-        'price.token': 'CAP 参考价（价格来源Aspecta）',
+        'price.token': 'PREDICT 参考价（价格来源币安合约）',
         'btn.refresh': '手动刷新',
         'btn.refreshing': '刷新中…',
         'hint.profitToggle': '（再次点击恢复全部）',
@@ -1644,11 +1613,11 @@
         'result.target': '目标',
         'result.multiplier': '超募倍数',
         'result.participants': '参加人数',
-        'result.sale': '出售：100,000,000 CAP（占总供应量1%）',
+        'result.sale': '出售：20,000,000 PREDICT（占总供应量2%）',
         'result.invest': '投入',
         'result.share': '占比',
         'result.receive': '可获得',
-        'result.tokens': '枚 CAP',
+        'result.tokens': '枚 PREDICT',
         'result.deducted': '实际扣款',
         'result.refund': '退回',
         'result.profit': '预估利润',
@@ -1657,7 +1626,7 @@
         'tutorial.onchain': '链上借BNB教程',
         'tutorial.exchange': '交易所借BNB教程',
         'tutorial.wallet': '币安钱包借BNB教程',
-        'hint.banner': '20点结束后，未被用于认购的BNB可以退回，获得的代币可以直接交易。',
+        'hint.banner': '18点结束后，未被用于认购的BNB可以退回，获得的代币等项目TGE才能交易。',
         'referral.headline': '币安钱包绑定邀请码 享手续费优惠 30%（全网最高）',
         'referral.sub': '10秒完成绑定',
         'referral.cta': '点击这里一键前往绑定',
@@ -1701,16 +1670,16 @@
         'history.k.profit': '利润'
       },
       en: {
-        'title': 'Binance Web3 Wallet #47 Exclusive TGE (CAP)',
+        'title': 'Binance Web3 Wallet Prime Sale Pre-TGE (PREDICT)',
         'label.invest': 'Invest BNB',
-        'label.investNote': 'Max 3 BNB per user',
+        'label.investNote': 'Max 6 BNB per user',
         'label.price': 'Ref. Price (USDT)',
         'label.priceNote': 'Default reference price (editable)',
         'btn.resetPrice': 'Reset Price',
         'label.totalSale': 'Est. Total Sale (USDT)',
         'label.totalSaleNote': '(based on ref. price)',
         'price.bnb': 'Current BNB Price (USDT)',
-        'price.token': 'CAP Ref. Price (source: Aspecta)',
+        'price.token': 'PREDICT Ref. Price (source: Binance Futures)',
         'btn.refresh': 'Refresh',
         'btn.refreshing': 'Refreshing…',
         'hint.profitToggle': '(Click again to restore all)',
@@ -1718,11 +1687,11 @@
         'result.target': 'Target',
         'result.multiplier': 'Oversubscription',
         'result.participants': 'Participants',
-        'result.sale': 'Sale: 100,000,000 CAP (1% of supply)',
+        'result.sale': 'Sale: 20,000,000 PREDICT (2% of supply)',
         'result.invest': 'Invest',
         'result.share': 'Share',
         'result.receive': 'Receive',
-        'result.tokens': 'CAP',
+        'result.tokens': 'PREDICT',
         'result.deducted': 'Deducted',
         'result.refund': 'Refund',
         'result.profit': 'Est. Profit',
@@ -1731,7 +1700,7 @@
         'tutorial.onchain': 'On-chain BNB Borrow Guide',
         'tutorial.exchange': 'Exchange BNB Borrow Guide',
         'tutorial.wallet': 'Binance Wallet BNB Borrow Guide',
-        'hint.banner': 'After 20:00, unused BNB will be refunded. Tokens will be tradable immediately.',
+        'hint.banner': 'After 18:00, unused BNB will be refunded. Tokens will only be tradable after the project TGE.',
         'referral.headline': 'Binance Wallet Referral Code — 30% Fee Discount (Best Offer)',
         'referral.sub': 'Bind in 10 seconds',
         'referral.cta': 'Go to Bind',

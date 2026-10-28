@@ -11,7 +11,7 @@
  * 两种用法（同一个文件，按请求自动区分）：
  *   - 读取：GET /api/pool-snapshot            → 返回已存的快照 JSON
  *   - 抓取：GET /api/pool-snapshot?action=capture
- *       由 Vercel Cron 定时调用（见仓库 vercel.json，19:59 北京时间）。
+ *       由 Vercel Cron 定时调用（见仓库 vercel.json，17:59 北京时间）。
  *       带防呆：只在活动窗口内、且新值不小于已存值时才写入，所以即便被
  *       重复/延迟调用也不会把好数据覆盖坏。
  *
@@ -22,10 +22,10 @@
  */
 
 const CONFIG = {
-  SYMBOL: 'RE',
-  ADDRESS: (process.env.POOL_ADDRESS || '0xc5510b179d80451d3b062732b1768085d9ef8689').toLowerCase(),
-  START_MS: new Date('2026-06-26T18:00:00+08:00').getTime(),
-  END_MS: new Date('2026-06-26T20:00:00+08:00').getTime(),
+  SYMBOL: 'PREDICT',
+  ADDRESS: (process.env.POOL_ADDRESS || '0x46c84f9493acb866a8465b0eb16ae2da1e404922').toLowerCase(),
+  START_MS: new Date('2026-10-29T16:00:00+08:00').getTime(),
+  END_MS: new Date('2026-10-29T18:00:00+08:00').getTime(),
   RPC_NODES: [
     'https://bsc-dataseed.binance.org/',
     'https://bsc-dataseed1.defibit.io/',
@@ -142,7 +142,7 @@ async function finalizeHistory() {
     dep: Number(snap.dep),
     bnbUSDT: Number(snap.bnbUSDT) || 0,
     // Time shown in history is the event's END moment (the final second), not
-    // the moment the snapshot happened to be captured (cron at 21:59, or a
+    // the moment the snapshot happened to be captured (cron at 17:59, or a
     // visitor mid-window). The value (dep) still comes from the last captured
     // snapshot; only the displayed timestamp is pinned to END.
     t: CONFIG.END_MS,
@@ -217,7 +217,7 @@ export default async function handler(req, res) {
 
   // Read path. Also self-heals: if a visitor opens the page during the live
   // window, opportunistically refresh the snapshot so the last visitor before
-  // 22:00 captures the near-final value even if the cron is delayed.
+  // 18:00 captures the near-final value even if the cron is delayed.
   try {
     const now = Date.now();
     if (now >= CONFIG.START_MS && now <= CONFIG.END_MS) {

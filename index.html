@@ -628,10 +628,7 @@
         'https://bsc-dataseed1.ninicoin.io/'
       ],
 
-      FINAL_REFRESH_BEFORE_END_MS: 60_000,
-
-      // Fallback snapshot for new visitors after activity ends (update after event)
-      FINAL_SNAPSHOT: { dep: 0, updatedAt: '2026-10-29T17:59:00+08:00' }
+      FINAL_REFRESH_BEFORE_END_MS: 60_000
     };
 
     /* ---------- DOM refs ---------- */
@@ -1045,7 +1042,15 @@
 
     function applyPhaseUI(phase) {
       if (appliedPhase === phase) return;
+      const prevPhase = appliedPhase;
       appliedPhase = phase;
+
+      // Page was opened before the start and is still open at 16:00: kick off
+      // the auto-refresh loop now (it is only scheduled during the live phase).
+      if (phase === 'live' && prevPhase === 'before' && !document.hidden) {
+        clearTimeout(refreshTimeoutId);
+        refresh(false).finally(scheduleNextRefresh);
+      }
 
       // Update status badge
       const cfg = PHASE_CONFIG[phase];
@@ -1098,16 +1103,6 @@
       }
     }
 
-    function loadFinalSnapshot() {
-      if (CONFIG.FINAL_SNAPSHOT && Number.isFinite(CONFIG.FINAL_SNAPSHOT.dep)) {
-        latestDep = CONFIG.FINAL_SNAPSHOT.dep;
-        if (CONFIG.FINAL_SNAPSHOT.updatedAt) {
-          const ms = new Date(CONFIG.FINAL_SNAPSHOT.updatedAt).getTime();
-          if (!isNaN(ms)) setLastUpdate(ms);
-        }
-      }
-    }
-
     function saveDepCache(dep) { cacheSet(cacheKey('dep'), dep); }
 
     // Self-contained "last data" snapshot: pool + prices + the price actually
@@ -1151,7 +1146,6 @@
     // Restore preserved data for the locked/ended phase, most authoritative first.
     function restoreEndedData() {
       if (!loadLocalFinalSnapshot()) loadCachedDepIfAny();
-      if (!latestDep) loadFinalSnapshot();
     }
 
     // Global final snapshot from the backend (works across devices / new visitors).
@@ -1197,17 +1191,38 @@
     const HISTORY = (() => {
       let serverPoints = []; // in-memory copy of the global series
 
-      // Estimated profit for a historical point, using that point's BNB price
-      // (fallback to the current one) and the user's current inputs.
-      function pointProfit(p) {
-        const target = CONFIG.TOTAL_TARGET_BNB;
-        const user = +els.userAmount.value || 0;
-        const price = +els.tokenPrice.value || 0;
+      // Sale parameters of past tokens recorded before the backend started
+      // storing them per entry. Newer entries carry target/maxPerUser/totalTokens
+      // themselves; anything unknown falls back to the current CONFIG.
+      const LEGACY_META = {
+        RE:  { target: 809.82, maxPerUser: 3, totalTokens: 10_000_000 },
+        CAP: { target: 605.96, maxPerUser: 3, totalTokens: 100_000_000 }
+      };
+
+      function pointMeta(p) {
+        const legacy = LEGACY_META[String(p.sym || '').toUpperCase()] || {};
+        const pick = (k, cfgKey) => (Number(p[k]) > 0 ? Number(p[k]) : (legacy[k] || CONFIG[cfgKey]));
+        return {
+          target: pick('target', 'TOTAL_TARGET_BNB'),
+          maxPerUser: pick('maxPerUser', 'MAX_PER_USER_BNB'),
+          totalTokens: pick('totalTokens', 'TOTAL_TOKENS')
+        };
+      }
+
+      // Estimated profit for a historical point, using that sale's own
+      // parameters and end-moment prices (fallback to the current ones) and the
+      // user's current BNB input (capped at that sale's per-user limit).
+      function pointProfit(p, meta) {
+        const user = Math.min(+els.userAmount.value || 0, meta.maxPerUser);
+        // A past token's profit needs that token's own end price; the current
+        // input price only applies to the token this page is about.
+        const isCurrent = String(p.sym || '').toUpperCase() === CONFIG.SYMBOL;
+        const price = Number(p.tokenUSDT) > 0 ? Number(p.tokenUSDT) : (isCurrent ? (+els.tokenPrice.value || 0) : 0);
         const bnb = Number(p.bnbUSDT) > 0 ? Number(p.bnbUSDT) : (STATE.bnbUSDT || 0);
-        if (!(user && price && bnb && target && p.dep > 0)) return null;
+        if (!(user && price && bnb && meta.target && meta.totalTokens && p.dep > 0)) return null;
         const r = calcProjection({
-          userAmount: user, currentPool: p.dep, targetBNB: target,
-          totalTokens: CONFIG.TOTAL_TOKENS, tokenPrice: price,
+          userAmount: user, currentPool: p.dep, targetBNB: meta.target,
+          totalTokens: meta.totalTokens, tokenPrice: price,
           bnbPrice: bnb, includeUserInPool: true
         });
         return r.profitUSD;
@@ -1246,8 +1261,6 @@
           timeZone: TZ, month: '2-digit', day: '2-digit',
           hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
         });
-        const target = CONFIG.TOTAL_TARGET_BNB;
-
         const esc = s => String(s).replace(/[&<>"]/g, c => (
           { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]
         ));
@@ -1256,10 +1269,11 @@
         const rows = arr.slice().reverse().map(r => {
           const time = timeFmt.format(new Date(r.t));
           const sym = esc(r.sym || CONFIG.SYMBOL);
+          const meta = pointMeta(r);
           const pool = fmt(r.dep, 2);
-          const users = fmt(Math.floor(r.dep / CONFIG.MAX_PER_USER_BNB), 0);
-          const mult = fmt(target ? r.dep / target : 0, 2);
-          const profitUSD = pointProfit(r);
+          const users = fmt(Math.floor(r.dep / meta.maxPerUser), 0);
+          const mult = fmt(meta.target ? r.dep / meta.target : 0, 2);
+          const profitUSD = pointProfit(r, meta);
           let profitHtml = '';
           if (Number.isFinite(profitUSD)) {
             const cls = profitUSD >= 0 ? 'pos' : 'neg';
@@ -1310,7 +1324,7 @@
       els.bnbBalance.textContent = fmt(dep, 4);
       pulseIfChanged(els.bnbBalance, 'bnbBalance', els.bnbBalance.textContent);
       els.multiplier.textContent = fmt(result.multiplier, 2);
-      els.participantCount.textContent = Math.floor(dep / 3);
+      els.participantCount.textContent = fmt(Math.floor(dep / CONFIG.MAX_PER_USER_BNB), 0);
       els.userInput.textContent = fmt(user, 2);
       els.percent.textContent = fmt(result.share * 100, 4);
       els.tokenAmt.textContent = fmt(result.tokens, 2);

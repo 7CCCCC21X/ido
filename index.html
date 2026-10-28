@@ -1310,7 +1310,7 @@
       els.bnbBalance.textContent = fmt(dep, 4);
       pulseIfChanged(els.bnbBalance, 'bnbBalance', els.bnbBalance.textContent);
       els.multiplier.textContent = fmt(result.multiplier, 2);
-      els.participantCount.textContent = Math.floor(dep / 3);
+      els.participantCount.textContent = fmt(Math.floor(dep / CONFIG.MAX_PER_USER_BNB), 0);
       els.userInput.textContent = fmt(user, 2);
       els.percent.textContent = fmt(result.share * 100, 4);
       els.tokenAmt.textContent = fmt(result.tokens, 2);

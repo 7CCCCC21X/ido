@@ -1,5 +1,6 @@
 {
   "crons": [
-    { "path": "/api/pool-snapshot?action=capture", "schedule": "59 9 * * *" }
+    { "path": "/api/pool-snapshot?action=capture", "schedule": "52 9 * * *" },
+    { "path": "/api/pool-snapshot?action=capture", "schedule": "57 9 * * *" }
   ]
 }

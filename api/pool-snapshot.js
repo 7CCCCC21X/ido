@@ -11,7 +11,8 @@
  * 两种用法（同一个文件，按请求自动区分）：
  *   - 读取：GET /api/pool-snapshot            → 返回已存的快照 JSON
  *   - 抓取：GET /api/pool-snapshot?action=capture
- *       由 Vercel Cron 定时调用（见仓库 vercel.json，17:59 北京时间）。
+ *       由 Vercel Cron 定时调用（见仓库 vercel.json，17:52 / 17:57 北京时间，
+       两次是为了防止单次调用延迟到 18:00 之后被窗口保护跳过）。
  *       带防呆：只在活动窗口内、且新值不小于已存值时才写入，所以即便被
  *       重复/延迟调用也不会把好数据覆盖坏。
  *
@@ -26,6 +27,16 @@ const CONFIG = {
   ADDRESS: (process.env.POOL_ADDRESS || '0x46c84f9493acb866a8465b0eb16ae2da1e404922').toLowerCase(),
   START_MS: new Date('2026-10-29T16:00:00+08:00').getTime(),
   END_MS: new Date('2026-10-29T18:00:00+08:00').getTime(),
+  // Sale parameters, stored with each history entry so past tokens keep
+  // rendering with their own target / per-user cap / token count.
+  TOTAL_TARGET_BNB: 7794.12,
+  TOTAL_TOKENS: 20_000_000,
+  MAX_PER_USER_BNB: 6,
+  // 参考盘前价格：币安合约 PREDICTUSDT（与前端一致）。
+  TOKEN_PRICE_APIS: [
+    'https://fapi.binance.com/fapi/v1/ticker/price?symbol=PREDICTUSDT',
+    'https://fapi1.binance.com/fapi/v1/ticker/price?symbol=PREDICTUSDT'
+  ],
   RPC_NODES: [
     'https://bsc-dataseed.binance.org/',
     'https://bsc-dataseed1.defibit.io/',
@@ -117,6 +128,17 @@ async function fetchBNBPrice() {
   return 0;
 }
 
+async function fetchTokenPrice() {
+  for (const url of CONFIG.TOKEN_PRICE_APIS || []) {
+    try {
+      const d = await fetchJSON(url, {}, 5000);
+      const v = Number(d?.price ?? d?.markPrice ?? 0);
+      if (v > 0) return v;
+    } catch (e) { /* try next */ }
+  }
+  return 0;
+}
+
 /* ---------- History (ended tokens only) ---------- */
 async function readHistory() {
   const h = await kvGet(HISTORY_KEY);
@@ -141,6 +163,10 @@ async function finalizeHistory() {
     address: CONFIG.ADDRESS,
     dep: Number(snap.dep),
     bnbUSDT: Number(snap.bnbUSDT) || 0,
+    tokenUSDT: Number(snap.tokenUSDT) || 0,
+    target: CONFIG.TOTAL_TARGET_BNB,
+    maxPerUser: CONFIG.MAX_PER_USER_BNB,
+    totalTokens: CONFIG.TOTAL_TOKENS,
     // Time shown in history is the event's END moment (the final second), not
     // the moment the snapshot happened to be captured (cron at 17:59, or a
     // visitor mid-window). The value (dep) still comes from the last captured
@@ -165,9 +191,10 @@ async function capture() {
   // The pool only grows during the sale — never overwrite with a smaller value.
   if (existing && Number(existing.dep) > dep) return { skipped: 'not_greater', existing };
 
-  const bnbUSDT = await fetchBNBPrice(); // best-effort; 0 is fine, frontend can fetch live
+  // Best-effort prices; 0 is fine, the frontend can still fetch live ones.
+  const [bnbUSDT, tokenUSDT] = await Promise.all([fetchBNBPrice(), fetchTokenPrice()]);
 
-  const snap = { dep, bnbUSDT, t: now, updatedAt: new Date(now).toISOString() };
+  const snap = { dep, bnbUSDT, tokenUSDT, t: now, updatedAt: new Date(now).toISOString() };
   await kvSet(KV_KEY, snap);
   return { captured: snap };
 }

@@ -446,14 +446,14 @@
     <label for="tokenPrice"><span data-i18n="label.price">参考价格 (USDT)</span><span class="note" data-i18n="label.priceNote">默认使用参考价（可手动修改）</span></label>
     <div class="row" style="align-items:center;gap:8px">
       <div class="col">
-        <input id="tokenPrice" type="number" step="0.000001" value="0.400000" min="0" inputmode="decimal" />
+        <input id="tokenPrice" type="number" step="0.000001" value="1.380000" min="0" inputmode="decimal" />
       </div>
       <button type="button" class="linkBtn" id="resetPriceBtn" style="flex:0 0 auto;margin-top:0" data-i18n="btn.resetPrice">恢复默认价</button>
     </div>
 
     <div id="saleSection">
       <label for="airdropUSD"><span data-i18n="label.totalSale">预计空投总额 (USDT)</span><span class="note" data-i18n="label.totalSaleNote">（根据参考价推算）</span></label>
-      <input id="airdropUSD" type="number" step="1" value="8000000" readonly />
+      <input id="airdropUSD" type="number" step="1" value="27600000" readonly />
       <div class="note" id="airdropFmt">—</div>
     </div>
 
@@ -607,7 +607,8 @@
         'https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD'
       ],
 
-      DEFAULT_TOKEN_PRICE: 0.4,
+      // 兜底默认价（币安合约盘前 PREDICTUSDT 接口抓不到时才用）；页面加载后会被实时价覆盖。
+      DEFAULT_TOKEN_PRICE: 1.38,
       // 参考盘前价格：币安合约（U 本位盘前永续 PREDICTUSDT）。
       // 先直接请求币安合约公开行情接口（带 CORS 头，浏览器可直连）；
       // 若被拦截/限流，再退回同源后端代理 /api/binance-futures-price（见仓库 api/ 目录）。

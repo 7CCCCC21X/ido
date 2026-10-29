@@ -597,7 +597,8 @@
       START_TIME: new Date('2026-10-29T16:00:00+08:00'),
       END_TIME: new Date('2026-10-29T18:00:00+08:00'),
 
-      PRICE_CACHE_MS: 60_000,
+      // 价格缓存时长：与链上募集额同步，每次刷新（5 秒）都重新拉取币安合约盘前价和 BNB 价。
+      PRICE_CACHE_MS: 5_000,
       REFRESH_INTERVAL_SEC: 5,
 
       PRICE_APIS: [

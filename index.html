@@ -623,10 +623,16 @@
 
       RPC_NODES: [
         'https://bsc-dataseed.binance.org/',
+        'https://bsc-dataseed2.binance.org/',
+        'https://bsc-dataseed3.binance.org/',
         'https://bsc-dataseed1.defibit.io/',
         'https://bsc-dataseed4.defibit.io/',
-        'https://bsc-dataseed1.ninicoin.io/'
+        'https://bsc-dataseed1.ninicoin.io/',
+        'https://bsc-rpc.publicnode.com/',
+        'https://1rpc.io/bnb'
       ],
+      // 活动高峰期公共节点会变慢；给足时间，拿到最快一个节点的结果即可。
+      RPC_TIMEOUT_MS: 10_000,
 
       FINAL_REFRESH_BEFORE_END_MS: 60_000
     };
@@ -891,6 +897,9 @@
       }
     }
 
+    // Resolves to the balance in BNB, or null when EVERY node failed (timeout,
+    // rate limit, RPC error). null is deliberately distinct from 0: a failed
+    // read must never be mistaken for an empty pool.
     async function fetchAddressBalance(addr) {
       if (!addr) return 0;
       const body = JSON.stringify({ jsonrpc: '2.0', method: 'eth_getBalance', params: [addr, 'latest'], id: 1 });
@@ -900,20 +909,27 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body
-        }, 4000).then(({ result }) => weiHexToBNB(result))
+        }, CONFIG.RPC_TIMEOUT_MS || 10_000).then(d => {
+          if (d?.error || typeof d?.result !== 'string') {
+            throw new Error(d?.error?.message || 'bad RPC response');
+          }
+          return weiHexToBNB(d.result);
+        })
       );
 
       try {
         return await Promise.any(tasks);
       } catch (e) {
         console.debug('fetchAddressBalance all failed:', addr, e);
-        return 0;
+        return null;
       }
     }
 
+    // Sum over all target addresses; null if any address could not be read.
     async function fetchBalance(addresses) {
       const list = Array.isArray(addresses) ? addresses : [addresses];
       const balances = await Promise.all(list.map(addr => fetchAddressBalance(addr)));
+      if (balances.some(v => v == null)) return null;
       return balances.reduce((sum, v) => sum + (Number(v) || 0), 0);
     }
 
@@ -993,7 +1009,9 @@
         return;
       }
       const s = Math.max(0, Math.ceil((nextRefreshAt - Date.now()) / 1000));
-      els.autoRefreshCountdown.textContent = t('autoRefresh.next', { s });
+      els.autoRefreshCountdown.textContent = (refreshing && s === 0)
+        ? t('autoRefresh.refreshing')
+        : t('autoRefresh.next', { s });
     }
 
     function startTimers() {
@@ -1423,7 +1441,14 @@
 
       try {
         await updatePriceDisplay();
-        const dep = await fetchBalance(getTargetAddresses());
+        let dep = await fetchBalance(getTargetAddresses());
+        // All nodes failed: keep showing the last good data instead of
+        // collapsing the result to "0 raised" and overwriting the cache.
+        if (dep == null) throw new Error(t('err.rpc'));
+        // During the sale the pool only grows; a lagging node can report a
+        // slightly older (smaller) balance, so never step backwards.
+        const ph = getPhase();
+        if ((ph === 'live' || ph === 'locked') && latestDep > dep) dep = latestDep;
         saveDepCache(dep);
         render(dep);
         setLastUpdate(Date.now());
@@ -1650,6 +1675,7 @@
         'autoRefresh.before': '活动开始后自动刷新',
         'autoRefresh.locked': '数据已锁定：保持 {time} 更新结果',
         'autoRefresh.next': '下次自动刷新：{s} 秒',
+        'autoRefresh.refreshing': '正在刷新链上数据…',
         'status.loading': '加载中',
         'status.before': '未开始',
         'status.live': '进行中',
@@ -1675,6 +1701,7 @@
         'err.429': '请求过于频繁（429），请稍后重试',
         'err.timeout': '请求超时，请稍后重试或更换节点',
         'err.network': '网络错误',
+        'err.rpc': '链上节点暂时无响应，已保留上次数据',
         'history.title': '历史记录',
         'history.empty': '暂无已结束的代币记录',
         'history.count': '共 {n} 个已结束代币',
@@ -1724,6 +1751,7 @@
         'autoRefresh.before': 'Auto-refresh after event starts',
         'autoRefresh.locked': 'Data locked: snapshot at {time}',
         'autoRefresh.next': 'Next refresh: {s}s',
+        'autoRefresh.refreshing': 'Refreshing on-chain data…',
         'status.loading': 'Loading',
         'status.before': 'Not Started',
         'status.live': 'Live',
@@ -1749,6 +1777,7 @@
         'err.429': 'Rate limited (429), please retry later',
         'err.timeout': 'Request timed out, please retry',
         'err.network': 'Network error',
+        'err.rpc': 'RPC nodes not responding, showing last data',
         'history.title': 'History',
         'history.empty': 'No ended tokens yet',
         'history.count': '{n} ended tokens',
